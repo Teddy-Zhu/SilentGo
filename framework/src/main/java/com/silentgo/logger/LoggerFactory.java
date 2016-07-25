@@ -15,12 +15,17 @@ public class LoggerFactory {
     private static final String slf4j = "org.slf4j.Logger";
     private static final String log4j = "org.apache.log4j.Logger";
 
-    public static Logger getLogger(Class<?> clazz) {
-        if (ClassKit.isAvailable(slf4j)) {
-            return new Slf4jLogger(org.slf4j.LoggerFactory.getLogger(clazz));
-        }
-        if (ClassKit.isAvailable(log4j)) {
+    private static final boolean log4jAvailable = ClassKit.isAvailable(log4j);
+    private static final boolean slf4jAvailable = ClassKit.isAvailable(slf4j);
+
+
+
+    public static Logger getLog(Class<?> clazz) {
+        if (log4jAvailable) {
             return new Log4jLogger(org.apache.log4j.Logger.getLogger(clazz));
+        }
+        if (slf4jAvailable) {
+            return new Slf4jLogger(org.slf4j.LoggerFactory.getLogger(clazz));
         }
         return new SilentGoLogger(clazz);
     }
