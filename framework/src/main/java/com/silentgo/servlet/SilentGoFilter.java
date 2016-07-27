@@ -1,11 +1,14 @@
 package com.silentgo.servlet;
 
+import com.silentgo.config.Config;
 import com.silentgo.config.Const;
 import com.silentgo.config.SilentGoConfig;
 import com.silentgo.core.action.ActionChain;
-import com.silentgo.core.action.ActionDispatcher;
+import com.silentgo.core.action.support.ActionDispatcher;
 import com.silentgo.core.action.ActionParam;
 import com.silentgo.core.SilentGo;
+import com.silentgo.core.ioc.bean.support.BeanBuilder;
+import com.silentgo.core.support.AnnotationManager;
 import com.silentgo.kit.StringKit;
 import com.silentgo.logger.Logger;
 import com.silentgo.logger.LoggerFactory;
@@ -29,9 +32,11 @@ public class SilentGoFilter implements Filter {
 
     private static Logger LOGGER = LoggerFactory.getLog(SilentGoFilter.class);
 
-    private SilentGoConfig config;
+    private Config configInit;
 
     private static SilentGo appContext = SilentGo.getInstance();
+
+    private SilentGoConfig globalConfig;
 
     public SilentGoFilter() {
     }
@@ -39,38 +44,54 @@ public class SilentGoFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         if (!appContext.isLoaded()) {
+            SilentGoConfig config = null;
 
-            LOGGER.info("Start SilentGo Loader ...");
-
+            LOGGER.info("Start SilentGo Init ...");
             LOGGER.info("file.encoding = {}", System.getProperty("file.encoding"));
 
             long startTime = System.currentTimeMillis();
 
-            this.config = appContext.getConfig();
-
             ServletContext context = filterConfig.getServletContext();
-
 
             String contextPath = context.getContextPath();
             int contextPathLength = contextPath == null || "/".equals(contextPath) ? 0 : contextPath.length();
 
-            if (null == config) {
-                String configClassName = filterConfig.getInitParameter("config");
-                if (!StringKit.isNullOrEmpty(configClassName)) {
-                    this.config = getConfig(configClassName);
-                } else {
-                    //noinspection unchecked
-                    this.config = new SilentGoConfig(Const.BasePackages, Const.EmptyArray, true, Const.Encoding, contextPathLength);
-                }
+            //noinspection unchecked
+            config = new SilentGoConfig(Const.BasePackages, Const.EmptyArray, true, Const.Encoding, contextPathLength);
+
+            String configClassName = filterConfig.getInitParameter("config");
+            if (!StringKit.isNullOrEmpty(configClassName)) {
+                configInit = getConfig(configClassName);
+            } else {
+                LOGGER.warn("Config class can not be found , the application may be run unnromally");
             }
 
-            ActionChain actionChain = ActionDispatcher.getAction();
+            configInit.init(config);
 
             config.setContextPathLength(contextPathLength);
 
-            appContext.setActionChain(actionChain);
             appContext.setContext(context);
+
+
+            AnnotationManager manager = new AnnotationManager(config);
+            appContext.setAnnotationManager(manager);
+
+            //Init Bean
+            BeanBuilder.Build(appContext);
+
+            //Init
+            ActionChain actionChain = ActionDispatcher.getAction();
+
+            config.setActionChain(actionChain);
+
+
+            configInit.afterInit(config);
+
+            globalConfig = appContext.getConfig();
+
             appContext.setLoaded(true);
+
+
             LOGGER.info("SilentGo Loader initialize successfully, Time : {} ms.", System.currentTimeMillis() - startTime);
         }
     }
@@ -80,16 +101,16 @@ public class SilentGoFilter implements Filter {
         Request request = new Request((HttpServletRequest) servletRequest);
         Response response = new Response((HttpServletResponse) servletResponse);
 
-        request.setCharacterEncoding(config.getEncoding());
+        request.setCharacterEncoding(globalConfig.getEncoding());
 
         String requestPath = request.getRequestURI();
 
-        requestPath = config.getContextPathLength() == 0 ?
-                requestPath : requestPath.substring(config.getContextPathLength());
+        requestPath = globalConfig.getContextPathLength() == 0 ?
+                requestPath : requestPath.substring(globalConfig.getContextPathLength());
         ActionParam param = new ActionParam(false, request, response, requestPath);
 
         try {
-            appContext.getActionChain().doAction(param);
+            globalConfig.getActionChain().doAction(param);
         } catch (Exception e) {
 
         }
@@ -121,17 +142,20 @@ public class SilentGoFilter implements Filter {
         return new File(dir);
     }
 
-    private SilentGoConfig getConfig(String className) throws ServletException {
-        SilentGoConfig configClass = null;
+    private Config getConfig(String className) throws ServletException {
+        Config configInit = null;
         try {
-            Class<SilentGoConfig> applicationClass = (Class<SilentGoConfig>) Class.forName(className);
+            Class configInitClass = Class.forName(className);
 
-            configClass = applicationClass == null ? configClass : applicationClass.newInstance();
+            if (Config.class.isAssignableFrom(configInitClass)) {
+                configInit = (Config) configInitClass.newInstance();
+            }
 
         } catch (Exception e) {
             throw new ServletException(e);
         }
-        return configClass;
+        return configInit == null ? new Config() {
+        } : configInit;
     }
 
 }

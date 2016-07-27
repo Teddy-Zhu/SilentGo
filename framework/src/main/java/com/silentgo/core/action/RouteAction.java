@@ -6,7 +6,7 @@ import java.io.IOException;
  * Project : silentgo
  * com.silentgo.core.action
  *
- * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
+ * @author <Acc href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</Acc>
  *         <p>
  *         Created by  on 16/7/18.
  */
@@ -20,8 +20,6 @@ public class RouteAction extends ActionChain {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        param.setHandled(true);
-
     }
 
 }

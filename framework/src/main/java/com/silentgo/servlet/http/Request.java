@@ -8,7 +8,7 @@ import java.util.Map;
  * Project : silentgo
  * com.silentgo.servlet.web
  *
- * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
+ * @author <Acc href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</Acc>
  *         <p>
  *         Created by  on 16/7/18.
  */
@@ -16,6 +16,7 @@ public class Request extends HttpServletRequestWrapper {
 
     private Map<String, String[]> paramsMap = new HashMap<>();
 
+    private Map<String, Object> parsedParamMap = new HashMap<>();
 
     public Request(javax.servlet.http.HttpServletRequest request) {
         super(request);
@@ -58,6 +59,10 @@ public class Request extends HttpServletRequestWrapper {
                 paramsMap.put(name, new String[]{String.valueOf(value)});
             }
         }
+    }
+
+    public Object getParsedParameter(String name) {
+        return parsedParamMap.get(name);
     }
 
 }

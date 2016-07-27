@@ -4,19 +4,16 @@ import com.silentgo.config.Const;
 import com.silentgo.core.ioc.annotation.Inject;
 import com.silentgo.kit.CGLib;
 import net.sf.cglib.reflect.FastClass;
-import net.sf.cglib.reflect.FastMethod;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * Project : silentgo
  * com.silentgo.core.ioc.bean
  *
- * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
+ * @author <Acc href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</Acc>
  *         <p>
  *         Created by teddyzhu on 16/7/20.
  */
@@ -26,12 +23,13 @@ public class BeanDefinition extends BeanWrapper {
 
     Class<?> clz;
 
+    FastClass fastClass;
+
     Object target;
 
     Object proxyTarget;
 
     Map<String, Field> fieldBeans;
-
 
     boolean injectComplete = false;
 
@@ -55,6 +53,7 @@ public class BeanDefinition extends BeanWrapper {
         this.beanName = beanName;
         this.clz = clz;
         try {
+            fastClass = FastClass.create(clz);
             target = clz.newInstance();
             proxyTarget = CGLib.Proxy(target);
         } catch (InstantiationException | IllegalAccessException e) {
@@ -85,7 +84,11 @@ public class BeanDefinition extends BeanWrapper {
     }
 
     @Override
-    public Class<?> getBeanClass() {
+    public FastClass getBeanClass() {
+        return fastClass;
+    }
+
+    public Class<?> getSourceClass() {
         return clz;
     }
 

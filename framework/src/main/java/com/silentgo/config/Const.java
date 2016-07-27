@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * Project : silentgo
  * com.silentgo.config
  *
- * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
+ * @author <Acc href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</Acc>
  *         <p>
  *         Created by  on 16/7/18.
  */
@@ -14,8 +14,10 @@ public class Const {
 
     static {
         //noinspection unchecked
-        Const.BasePackages.add("com.silentgo");
+        Const.BasePackages.add(Const.BasePackageString);
     }
+
+    public static final String BasePackageString = "com.silentgo";
 
     public static final String Encoding = "UTF-8";
 

@@ -1,7 +1,6 @@
 package com.silentgo.kit;
 
 import com.silentgo.core.aop.support.AOPInterceptor;
-import com.silentgo.core.aop.support.DefaultInterceptResolver;
 import com.silentgo.logger.Logger;
 import com.silentgo.logger.LoggerFactory;
 import net.sf.cglib.proxy.Enhancer;
@@ -12,7 +11,7 @@ import java.lang.reflect.Field;
  * Project : silentgo
  * com.silentgo.kit
  *
- * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
+ * @author <Acc href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</Acc>
  *         <p>
  *         Created by teddyzhu on 16/7/19.
  */
@@ -38,7 +37,7 @@ public class CGLib {
                 e.printStackTrace();
             }
         } else
-            LOGGER.error("The object [{}] is not a cglib-proxy class", target.getClass().getName());
+            LOGGER.error("The object [{}] is not Acc cglib-proxy class", target.getClass().getName());
         return null;
     }
 

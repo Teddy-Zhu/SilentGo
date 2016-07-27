@@ -11,7 +11,7 @@ import java.io.IOException;
  * Project : silentgo
  * com.silentgo.core.render.support
  *
- * @author    <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
+ * @author    <Acc href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</Acc>
  * <p>
  * Created by teddyzhu on 16/7/25.
  */

@@ -2,7 +2,7 @@
  * Project : silentgo
  * com.silentgo.core.aop
  *
- * @author    <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
+ * @author    <Acc href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</Acc>
  * <p>
  * Created by  on 16/7/18.
  */

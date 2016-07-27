@@ -1,6 +1,11 @@
 package com.silentgo.config;
 
-import com.silentgo.core.aop.IInterceptor;
+import com.silentgo.core.action.ActionChain;
+import com.silentgo.core.aop.annotationintercept.AnnotationInterceptor;
+import com.silentgo.core.ioc.bean.BeanFactory;
+import com.silentgo.core.ioc.bean.SilentGoBean;
+import com.silentgo.core.render.RenderFactory;
+import com.silentgo.core.route.RouteFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -9,13 +14,21 @@ import java.util.Map;
  * Project : silentgo
  * com.silentgo.config
  *
- * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
+ * @author <Acc href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</Acc>
  *         <p>
  *         Created by teddyzhu on 16/7/15.
  */
 public class SilentGoConfig {
 
-    private Map<String, List<IInterceptor>> methodOrClassInterceptorMap;
+    private ActionChain actionChain;
+
+    private RouteFactory routeFactory;
+
+    private RenderFactory renderFactory;
+
+    private BeanFactory beanFactory = new SilentGoBean();
+
+    private Map<String, List<AnnotationInterceptor>> methodOrClassInterceptorMap;
 
     private List<String> scanPackages;
 
@@ -60,4 +73,51 @@ public class SilentGoConfig {
         this.contextPathLength = contextPathLength;
     }
 
+    public List<String> getScanPackages() {
+        return scanPackages;
+    }
+
+    public void setScanPackages(List<String> scanPackages) {
+        this.scanPackages = scanPackages;
+    }
+
+    public List<String> getScanJars() {
+        return scanJars;
+    }
+
+    public void setScanJars(List<String> scanJars) {
+        this.scanJars = scanJars;
+    }
+
+    public BeanFactory getBeanFactory() {
+        return beanFactory;
+    }
+
+    public void setBeanFactory(BeanFactory beanFactory) {
+        this.beanFactory = beanFactory;
+    }
+
+    public ActionChain getActionChain() {
+        return actionChain;
+    }
+
+    public void setActionChain(ActionChain actionChain) {
+        this.actionChain = actionChain;
+    }
+
+    public RouteFactory getRouteFactory() {
+        return routeFactory;
+    }
+
+    public void setRouteFactory(RouteFactory routeFactory) {
+        this.routeFactory = routeFactory;
+    }
+
+    public RenderFactory getRenderFactory() {
+        return renderFactory;
+    }
+
+    public void setRenderFactory(RenderFactory renderFactory) {
+        this.renderFactory = renderFactory;
+    }
 }

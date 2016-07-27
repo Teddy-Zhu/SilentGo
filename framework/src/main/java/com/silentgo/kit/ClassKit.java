@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.annotation.*;
+import java.lang.reflect.ParameterizedType;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -12,7 +13,7 @@ import java.util.jar.JarFile;
  * Project : silentgo
  * com.silentgo.kit
  *
- * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
+ * @author <Acc href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</Acc>
  *         <p>
  *         Created by  on 16/7/15.
  */
@@ -233,4 +234,12 @@ public class ClassKit {
     }
 
 
+    public static Class<?> getGenericClass(Object object, int index) {
+        return getGenericClass(object.getClass(), index);
+    }
+
+    public static Class<?> getGenericClass(Class<?> clz, int index) {
+        ParameterizedType type = (ParameterizedType) clz.getGenericInterfaces()[0];
+        return type.getActualTypeArguments()[index].getClass();
+    }
 }

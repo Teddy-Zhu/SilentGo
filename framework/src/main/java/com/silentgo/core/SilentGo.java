@@ -3,10 +3,12 @@ package com.silentgo.core;
 import com.silentgo.config.SilentGoConfig;
 import com.silentgo.core.action.ActionChain;
 import com.silentgo.core.ioc.bean.BeanDefinition;
+import com.silentgo.core.ioc.bean.BeanFactory;
 import com.silentgo.core.ioc.bean.SilentGoBean;
 import com.silentgo.core.render.RenderFactory;
 import com.silentgo.core.render.SilentGoRender;
 import com.silentgo.core.route.RouteFactory;
+import com.silentgo.core.support.AnnotationManager;
 
 import javax.servlet.ServletContext;
 import java.util.List;
@@ -15,7 +17,7 @@ import java.util.List;
  * Project : silentgo
  * com.silentgo.core
  *
- * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
+ * @author <Acc href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</Acc>
  *         <p>
  *         Created by  on 16/7/15.
  */
@@ -29,22 +31,13 @@ public class SilentGo {
         return SilentGoHolder.instance;
     }
 
+    private AnnotationManager annotationManager;
+
     private SilentGoConfig config;
-
-    private ActionChain actionChain;
-
-    private RouteFactory routeFactory;
-
-    private SilentGoBean beanFactory;
-
-    private RenderFactory renderFactory;
-
 
     private ServletContext Context;
 
-
     private boolean isLoaded = false;
-
 
     public void setLoaded(boolean loaded) {
         isLoaded = loaded;
@@ -66,25 +59,16 @@ public class SilentGo {
         this.config = config;
     }
 
-    public ActionChain getActionChain() {
-        return actionChain;
-    }
-
-    public void setActionChain(ActionChain actionChain) {
-        this.actionChain = actionChain;
-    }
-
     public void setContext(ServletContext context) {
         Context = context;
     }
 
-
-    public void initBeanFactory(List<BeanDefinition> beanDefinitions) {
-        this.beanFactory = new SilentGoBean(beanDefinitions, config);
+    public void setAnnotationManager(AnnotationManager annotationManager) {
+        this.annotationManager = annotationManager;
     }
 
-    public void initRenderFactory(SilentGoRender render) {
-        this.renderFactory = new RenderFactory(render , config);
+    public AnnotationManager getAnnotationManager() {
+        return annotationManager;
     }
 
 }

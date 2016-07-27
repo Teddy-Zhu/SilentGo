@@ -17,7 +17,7 @@ import java.util.Map;
  * Project : silentgo
  * com.silentgo.core.ioc.bean
  *
- * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
+ * @author <Acc href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</Acc>
  *         <p>
  *         Created by teddyzhu on 16/7/22.
  */
@@ -27,7 +27,12 @@ public class SilentGoBean extends BeanFactory<BeanDefinition> {
 
     private Map<String, BeanDefinition> beansMap = new HashMap<>();
 
-    public SilentGoBean(List<BeanDefinition> beans, SilentGoConfig config) {
+    public SilentGoBean() {
+
+    }
+
+    @Override
+    public void build(List<BeanDefinition> beans, SilentGoConfig config) {
         beans.forEach(beanDefinition -> {
             if (!beansMap.containsKey(beanDefinition.getBeanName())) {
                 beansMap.put(beanDefinition.getBeanName(), beanDefinition);
@@ -38,31 +43,6 @@ public class SilentGoBean extends BeanFactory<BeanDefinition> {
             }
         });
         beans.forEach(this::depend);
-    }
-
-    private void depend(BeanDefinition beanDefinition) {
-        if (beanDefinition.isInjectComplete()) return;
-        beanDefinition.getFieldBeans().forEach((k, v) -> {
-            BeanDefinition bean = beansMap.get(k);
-            if (bean == null) {
-                bean = addBean(v.getType());
-            }
-            try {
-                PropertyDescriptor pd = new PropertyDescriptor(v.getName(), beanDefinition.getBeanClass());
-
-                Method method = pd.getWriteMethod();
-                if (method != null) {
-                    method.setAccessible(true);
-                    method.invoke(beanDefinition.getTarget(), bean);
-                } else {
-                    v.setAccessible(true);
-                    v.set(beanDefinition.getTarget(), bean);
-                }
-            } catch (IllegalAccessException | IntrospectionException | InvocationTargetException e) {
-                e.printStackTrace();
-            }
-        });
-        beanDefinition.setInjectComplete(true);
     }
 
     public boolean has(String name) {
@@ -80,6 +60,31 @@ public class SilentGoBean extends BeanFactory<BeanDefinition> {
         beansMap.put(beanDefinition.getBeanName(), beanDefinition);
         depend(beanDefinition);
         return beanDefinition;
+    }
+
+    private void depend(BeanDefinition beanDefinition) {
+        if (beanDefinition.isInjectComplete()) return;
+        beanDefinition.getFieldBeans().forEach((k, v) -> {
+            BeanDefinition bean = beansMap.get(k);
+            if (bean == null) {
+                bean = addBean(v.getType());
+            }
+            try {
+                PropertyDescriptor pd = new PropertyDescriptor(v.getName(), beanDefinition.getSourceClass());
+
+                Method method = pd.getWriteMethod();
+                if (method != null) {
+                    method.setAccessible(true);
+                    method.invoke(beanDefinition.getTarget(), bean);
+                } else {
+                    v.setAccessible(true);
+                    v.set(beanDefinition.getTarget(), bean);
+                }
+            } catch (IllegalAccessException | IntrospectionException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        });
+        beanDefinition.setInjectComplete(true);
     }
 
 }

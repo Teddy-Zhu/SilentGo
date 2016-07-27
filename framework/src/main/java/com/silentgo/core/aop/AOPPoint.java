@@ -1,6 +1,7 @@
 package com.silentgo.core.aop;
 
-import net.sf.cglib.proxy.MethodInterceptor;
+import com.silentgo.servlet.http.Request;
+import com.silentgo.servlet.http.Response;
 import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.Method;
@@ -9,7 +10,7 @@ import java.lang.reflect.Method;
  * Project : silentgo
  * com.silentgo.core.aop
  *
- * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
+ * @author <Acc href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</Acc>
  *         <p>
  *         Created by  on 16/7/18.
  */
@@ -20,11 +21,22 @@ public class AOPPoint {
     Object[] objects;
     MethodProxy methodProxy;
 
-    public AOPPoint(Object obj, Method method, Object[] objects, MethodProxy methodProxy) {
+    MethodAdviser adviser;
+    Response response;
+    Request request;
+
+    public AOPPoint(Object obj, Method method, Object[] objects, MethodProxy methodProxy, MethodAdviser adviser, Response response, Request request) {
         this.obj = obj;
         this.method = method;
         this.objects = objects;
         this.methodProxy = methodProxy;
+        this.adviser = adviser;
+        this.response = response;
+        this.request = request;
+    }
+
+    public MethodAdviser getAdviser() {
+        return adviser;
     }
 
     public Object getObj() {
@@ -45,5 +57,17 @@ public class AOPPoint {
 
     public Object resolve(Object[] params) throws Throwable {
         return methodProxy.invokeSuper(obj, params);
+    }
+
+    public Object resolve() throws Throwable {
+        return methodProxy.invokeSuper(obj, objects);
+    }
+
+    public Response getResponse() {
+        return response;
+    }
+
+    public Request getRequest() {
+        return request;
     }
 }
