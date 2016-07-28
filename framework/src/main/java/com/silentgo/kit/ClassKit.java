@@ -13,7 +13,7 @@ import java.util.jar.JarFile;
  * Project : silentgo
  * com.silentgo.kit
  *
- * @author <Acc href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</Acc>
+ * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>
  *         Created by  on 16/7/15.
  */
@@ -116,7 +116,7 @@ public class ClassKit {
 
         } else {
             String[] filelist = baseDir.list();
-            for (int i = 0; i < filelist.length; i++) {
+            for (int i = 0; i < (filelist != null ? filelist.length : 0); i++) {
                 File readfile = new File(baseDirName + File.separator + filelist[i]);
                 if (readfile.isDirectory()) {
                     classFiles.addAll(findFiles(baseDirName + File.separator + filelist[i], targetFileName));
@@ -182,7 +182,7 @@ public class ClassKit {
 
             } else {
                 String[] filelist = baseDir.list((dir, name) -> includeAllJarsInLib || includeJars.contains(name));
-                for (int i = 0; i < filelist.length; i++) {
+                for (int i = 0; i < (filelist != null ? filelist.length : 0); i++) {
                     JarFile localJarFile = new JarFile(new File(baseDirName + File.separator + filelist[i]));
                     Enumeration<JarEntry> entries = localJarFile.entries();
                     while (entries.hasMoreElements()) {

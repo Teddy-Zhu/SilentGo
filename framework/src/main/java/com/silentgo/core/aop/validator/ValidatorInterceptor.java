@@ -1,12 +1,10 @@
 package com.silentgo.core.aop.validator;
 
+import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.AOPPoint;
 import com.silentgo.core.aop.Interceptor;
-import com.silentgo.core.aop.annotationintercept.AnnotationInterceptor;
 import com.silentgo.core.aop.MethodParam;
 import com.silentgo.core.aop.validator.exception.ValidateException;
-import com.silentgo.servlet.http.Request;
-import com.silentgo.servlet.http.Response;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
@@ -16,14 +14,14 @@ import java.util.Map;
  * Project : silentgo
  * com.silentgo.core.aop.validator
  *
- * @author <Acc href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</Acc>
+ * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>
  *         Created by  on 16/7/18.
  */
 public class ValidatorInterceptor implements Interceptor {
 
     @Override
-    public boolean build() {
+    public boolean build(SilentGo me) {
         return false;
     }
 

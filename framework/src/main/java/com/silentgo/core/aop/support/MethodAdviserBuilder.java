@@ -1,40 +1,86 @@
 package com.silentgo.core.aop.support;
 
+import com.silentgo.config.Const;
+import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.MethodAdviser;
 import com.silentgo.core.aop.MethodParam;
+import com.silentgo.core.ioc.bean.BeanDefinition;
+import com.silentgo.core.route.annotation.RequestParam;
+import net.sf.cglib.reflect.FastClass;
+import net.sf.cglib.reflect.FastMethod;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * Project : silentgo
  * com.silentgo.core.aop.support
  *
- * @author <Acc href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</Acc>
+ * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>
  *         Created by teddyzhu on 16/7/27.
  */
 public class MethodAdviserBuilder {
 
-    public static MethodParam BuildParam(Parameter parameter) {
+    private MethodAdviserBuilder() {
+    }
+
+    //should build after bean
+    // for default SilentGoBean
+    @SuppressWarnings("unchecked")
+    public static void Build(SilentGo me) {
+        Map<String, BeanDefinition> beansMap = (Map<String, BeanDefinition>) me.getConfig().getBeanFactory().getBeans();
+        beansMap.forEach((k, v) -> {
+            List<Annotation> annotations = Arrays.asList(v.getSourceClass().getAnnotations());
+            filterAnnotation(annotations);
+            Method[] methods = v.getSourceClass().getMethods();
+            FastClass clz = v.getBeanClass();
+            for (Method method : methods) {
+                MethodAOPFactory.addMethodAdviser(BuildAdviser(clz.getMethod(method), annotations));
+            }
+        });
+    }
+
+    private static MethodParam BuildParam(Parameter parameter) {
 
         Class<?> type = parameter.getType();
 
 
         List<Annotation> annotations = Arrays.asList(parameter.getAnnotations());
 
-
-        return null;
+        String name = parameter.getName();
+        Optional<Annotation> requestParam = annotations.stream().filter(annotation -> annotation.annotationType().equals(RequestParam.class)).findFirst();
+        if (requestParam.isPresent()) {
+            String tmpName = ((RequestParam) requestParam.get()).value();
+            name = Const.DEFAULT_NONE.equals(tmpName) ? name : tmpName;
+        }
+        return new MethodParam(type, name, annotations);
     }
 
-    public static MethodAdviser BuildAdviser(Method method) {
+    private static List<MethodParam> BuildParam(Parameter[] parameter) {
+        List<MethodParam> methodParams = new ArrayList<>();
+        for (Parameter parm : parameter) {
+            methodParams.add(BuildParam(parm));
+        }
+        return methodParams;
+    }
+
+    private static MethodAdviser BuildAdviser(FastMethod method, List<Annotation> parentAnnotations) {
 
         String name = method.getDeclaringClass().getName() + "." + method.getName();
 
-        return null;
+        List<Annotation> annotations = Arrays.asList(method.getJavaMethod().getAnnotations());
 
+        annotations.addAll(parentAnnotations);
+
+        return new MethodAdviser(name, method.getJavaMethod().getDeclaringClass().getName(), method, BuildParam(method.getJavaMethod().getParameters()), annotations);
     }
+
+    private static void filterAnnotation(List<Annotation> annotations) {
+        annotations.stream().filter(annotation -> Const.KeyAnnotations.contains(annotation.annotationType()))
+                .forEach(annotations::remove);
+    }
+
 }

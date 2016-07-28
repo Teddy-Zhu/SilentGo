@@ -1,23 +1,15 @@
 package com.silentgo.core;
 
 import com.silentgo.config.SilentGoConfig;
-import com.silentgo.core.action.ActionChain;
-import com.silentgo.core.ioc.bean.BeanDefinition;
-import com.silentgo.core.ioc.bean.BeanFactory;
-import com.silentgo.core.ioc.bean.SilentGoBean;
-import com.silentgo.core.render.RenderFactory;
-import com.silentgo.core.render.SilentGoRender;
-import com.silentgo.core.route.RouteFactory;
 import com.silentgo.core.support.AnnotationManager;
 
 import javax.servlet.ServletContext;
-import java.util.List;
 
 /**
  * Project : silentgo
  * com.silentgo.core
  *
- * @author <Acc href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</Acc>
+ * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>
  *         Created by  on 16/7/15.
  */

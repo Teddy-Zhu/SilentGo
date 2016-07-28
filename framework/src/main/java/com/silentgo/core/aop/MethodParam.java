@@ -16,7 +16,7 @@ import java.util.Map;
  * Project : silentgo
  * com.silentgo.core
  *
- * @author <Acc href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</Acc>
+ * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>
  *         Created by teddyzhu on 16/7/27.
  */
@@ -49,13 +49,10 @@ public class MethodParam {
     public boolean addValidator(IValidator iValidator) {
         Class<?> an = ((ParameterizedType) iValidator.getClass().getGenericSuperclass()).getActualTypeArguments()[0].getClass();
 
-        if (an != null) {
-            Annotation annotation = findAnnotation(an);
-            if (annotation != null && !validatorMap.containsKey(annotation))
-                validatorMap.put(annotation, iValidator);
-            return true;
-        }
-        return false;
+        Annotation annotation = findAnnotation(an);
+        if (!validatorMap.containsKey(annotation))
+            validatorMap.put(annotation, iValidator);
+        return true;
     }
 
     private Annotation findAnnotation(Class<?> clz) {

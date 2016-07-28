@@ -6,7 +6,6 @@ import com.silentgo.config.SilentGoConfig;
 import com.silentgo.core.action.ActionChain;
 import com.silentgo.core.action.support.ActionDispatcher;
 import com.silentgo.core.action.ActionParam;
-import com.silentgo.core.SilentGo;
 import com.silentgo.core.ioc.bean.support.BeanBuilder;
 import com.silentgo.core.support.AnnotationManager;
 import com.silentgo.kit.StringKit;
@@ -34,7 +33,7 @@ public class SilentGoFilter implements Filter {
 
     private Config configInit;
 
-    private static SilentGo appContext = SilentGo.getInstance();
+    private static com.silentgo.core.SilentGo appContext = com.silentgo.core.SilentGo.getInstance();
 
     private SilentGoConfig globalConfig;
 
@@ -46,7 +45,7 @@ public class SilentGoFilter implements Filter {
         if (!appContext.isLoaded()) {
             SilentGoConfig config = null;
 
-            LOGGER.info("Start SilentGo Init ...");
+            LOGGER.info("Start SilentGoConfig Init ...");
             LOGGER.info("file.encoding = {}", System.getProperty("file.encoding"));
 
             long startTime = System.currentTimeMillis();
@@ -92,7 +91,7 @@ public class SilentGoFilter implements Filter {
             appContext.setLoaded(true);
 
 
-            LOGGER.info("SilentGo Loader initialize successfully, Time : {} ms.", System.currentTimeMillis() - startTime);
+            LOGGER.info("SilentGoConfig Loader initialize successfully, Time : {} ms.", System.currentTimeMillis() - startTime);
         }
     }
 

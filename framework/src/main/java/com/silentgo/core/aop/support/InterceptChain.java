@@ -14,22 +14,22 @@ import java.util.List;
  * Project : silentgo
  * com.silentgo.core.aop.support
  *
- * @author <Acc href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</Acc>
+ * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>
  *         Created by teddyzhu on 16/7/20.
  */
-public class InterceptResolver {
+public class InterceptChain {
     public int index;
 
     private AOPPoint point;
 
     private boolean[] isResolved;
 
-    private List<Interceptor> interceptors = new ArrayList<>();
+    private List<Interceptor> interceptors;
 
     private int size = 0;
 
-    public InterceptResolver(AOPPoint point, boolean[] isResolved, List<Interceptor> interceptors) {
+    public InterceptChain(AOPPoint point, boolean[] isResolved, List<Interceptor> interceptors) {
         this.point = point;
         this.isResolved = isResolved;
         this.interceptors = interceptors;

@@ -1,20 +1,25 @@
 package com.silentgo.config;
 
 import com.silentgo.core.action.ActionChain;
+import com.silentgo.core.aop.Interceptor;
 import com.silentgo.core.aop.annotationintercept.AnnotationInterceptor;
+import com.silentgo.core.aop.validator.ValidatorInterceptor;
 import com.silentgo.core.ioc.bean.BeanFactory;
 import com.silentgo.core.ioc.bean.SilentGoBean;
 import com.silentgo.core.render.RenderFactory;
-import com.silentgo.core.route.RouteFactory;
+import com.silentgo.core.route.support.RouteFactory;
+import com.silentgo.kit.CollectionKit;
 
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 /**
  * Project : silentgo
  * com.silentgo.config
  *
- * @author <Acc href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</Acc>
+ * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>
  *         Created by teddyzhu on 16/7/15.
  */
@@ -28,7 +33,10 @@ public class SilentGoConfig {
 
     private BeanFactory beanFactory = new SilentGoBean();
 
-    private Map<String, List<AnnotationInterceptor>> methodOrClassInterceptorMap;
+    private final ArrayList interceptors = new ArrayList() {{
+        add(new AnnotationInterceptor());
+        add(new ValidatorInterceptor());
+    }};
 
     private List<String> scanPackages;
 
@@ -119,5 +127,13 @@ public class SilentGoConfig {
 
     public void setRenderFactory(RenderFactory renderFactory) {
         this.renderFactory = renderFactory;
+    }
+
+    public boolean addInterceptor(Interceptor interceptor) {
+        return CollectionKit.ListAdd(interceptors, interceptor, false);
+    }
+
+    public ArrayList getInterceptors() {
+        return interceptors;
     }
 }

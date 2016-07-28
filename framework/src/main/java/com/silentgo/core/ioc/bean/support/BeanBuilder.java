@@ -15,7 +15,7 @@ import java.util.List;
  * Project : silentgo
  * com.silentgo.core.ioc.bean.support
  *
- * @author <Acc href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</Acc>
+ * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>
  *         Created by teddyzhu on 16/7/26.
  */
@@ -36,6 +36,7 @@ public class BeanBuilder {
         me.getAnnotationManager().getClasses(Controller.class).forEach(aClass -> {
             beanDefinitions.add(new BeanDefinition(aClass));
         });
+
 
         //noinspection unchecked
         me.getConfig().getBeanFactory().build(beanDefinitions,me.getConfig());

@@ -8,6 +8,7 @@ import com.silentgo.kit.CollectionKit;
 import com.silentgo.logger.Logger;
 import com.silentgo.logger.LoggerFactory;
 
+import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,7 +16,7 @@ import java.util.Map;
  * Project : silentgo
  * com.silentgo.core.aop.validator
  *
- * @author <Acc href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</Acc>
+ * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>
  *         Created by  on 16/7/18.
  */
@@ -25,20 +26,20 @@ public class ValidatorFactory {
     /**
      * Key : Annotation Class Name  Value : Sorted ValidatorInterceptor
      */
-    private static Map<String, IValidator> validatorHashMap = new HashMap<>();
+    private static Map<Class<? extends Annotation>, IValidator> validatorHashMap = new HashMap<>();
 
     static {
-        validatorHashMap.put(RequestString.class.getName(), new StringValidator());
+        validatorHashMap.put(RequestString.class, new StringValidator());
 
     }
 
     @SuppressWarnings("unchecked")
     public static void addValidator(Class<? extends IValidator> clz) {
-        Class<?> an = ClassKit.getGenericClass(clz, 0);
+        Class<? extends Annotation> an = (Class<? extends Annotation>) ClassKit.getGenericClass(clz, 0);
 
         if (an != null) {
             try {
-                addValidator(an.getName(), clz.newInstance());
+                addValidator(an, clz.newInstance());
             } catch (InstantiationException | IllegalAccessException e) {
                 LOGGER.error("Add Validator Error,Class : [{}]", clz.getName());
                 e.printStackTrace();
@@ -47,8 +48,8 @@ public class ValidatorFactory {
 
     }
 
-    public static void addValidator(String name, IValidator validator) {
-        CollectionKit.MapAdd(validatorHashMap, name, validator);
+    public static void addValidator(Class<? extends Annotation> clz, IValidator validator) {
+        CollectionKit.MapAdd(validatorHashMap, clz, validator);
     }
 
 }

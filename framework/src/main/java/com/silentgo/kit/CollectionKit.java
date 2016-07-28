@@ -1,5 +1,7 @@
 package com.silentgo.kit;
 
+import com.silentgo.core.aop.Interceptor;
+
 import java.util.*;
 
 /**
@@ -33,6 +35,7 @@ public class CollectionKit {
     }
 
     public static <K, V> boolean MapAdd(Map<K, V> map, K key, V value) {
+        if (value == null) return false;
         if (map.containsKey(key)) {
             map.put(key, value);
             return true;
@@ -40,4 +43,32 @@ public class CollectionKit {
         return false;
     }
 
+    public static <T> boolean ListAdd(Collection<T> list, T source) {
+        return ListAdd(list, source, false);
+    }
+
+    public static <T> boolean ListAdd(Collection<T> list, T source, boolean allowDuplicate) {
+        if (source == null) return false;
+        if (allowDuplicate)
+            return list.add(source);
+        else {
+            if (!list.contains(source))
+                return list.add(source);
+        }
+        return false;
+    }
+
+    public static <T> boolean ListAdd(Collection<T> list, Collection<T> source) {
+        return ListAdd(list, source, false);
+    }
+
+    public static <T> boolean ListAdd(Collection<T> list, Collection<T> source, boolean allowDuplicate) {
+        if (source == null) return false;
+        if (allowDuplicate)
+            return list.addAll(source);
+        else {
+            source.forEach(s -> ListAdd(list, s, false));
+        }
+        return false;
+    }
 }

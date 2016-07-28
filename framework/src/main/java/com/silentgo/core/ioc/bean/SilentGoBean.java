@@ -1,9 +1,9 @@
 package com.silentgo.core.ioc.bean;
 
 import com.silentgo.config.SilentGoConfig;
+import com.silentgo.core.aop.Interceptor;
 import com.silentgo.logger.Logger;
 import com.silentgo.logger.LoggerFactory;
-import sun.dc.pr.PRError;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -17,7 +17,7 @@ import java.util.Map;
  * Project : silentgo
  * com.silentgo.core.ioc.bean
  *
- * @author <Acc href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</Acc>
+ * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>
  *         Created by teddyzhu on 16/7/22.
  */
@@ -45,7 +45,7 @@ public class SilentGoBean extends BeanFactory<BeanDefinition> {
         beans.forEach(this::depend);
     }
 
-    public boolean has(String name) {
+    public boolean contain(String name) {
         return beansMap.containsKey(name);
     }
 
@@ -60,6 +60,11 @@ public class SilentGoBean extends BeanFactory<BeanDefinition> {
         beansMap.put(beanDefinition.getBeanName(), beanDefinition);
         depend(beanDefinition);
         return beanDefinition;
+    }
+
+    @Override
+    public Object getBeans() {
+        return beansMap;
     }
 
     private void depend(BeanDefinition beanDefinition) {
