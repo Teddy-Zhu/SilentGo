@@ -1,8 +1,8 @@
 package com.silentgo.kit;
 
 import com.silentgo.core.aop.support.AOPInterceptor;
-import com.silentgo.logger.Logger;
-import com.silentgo.logger.LoggerFactory;
+import com.silentgo.kit.logger.Logger;
+import com.silentgo.kit.logger.LoggerFactory;
 import net.sf.cglib.proxy.Enhancer;
 
 import java.lang.reflect.Field;

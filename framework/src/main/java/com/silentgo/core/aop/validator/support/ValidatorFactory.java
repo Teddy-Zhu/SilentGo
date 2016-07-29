@@ -1,16 +1,14 @@
 package com.silentgo.core.aop.validator.support;
 
 import com.silentgo.core.aop.validator.IValidator;
-import com.silentgo.core.aop.validator.ValidatorInterceptor;
 import com.silentgo.core.aop.validator.annotation.RequestString;
 import com.silentgo.kit.ClassKit;
 import com.silentgo.kit.CollectionKit;
-import com.silentgo.logger.Logger;
-import com.silentgo.logger.LoggerFactory;
+import com.silentgo.kit.logger.Logger;
+import com.silentgo.kit.logger.LoggerFactory;
 
 import java.lang.annotation.Annotation;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Project : silentgo
@@ -26,7 +24,7 @@ public class ValidatorFactory {
     /**
      * Key : Annotation Class Name  Value : Sorted ValidatorInterceptor
      */
-    private static Map<Class<? extends Annotation>, IValidator> validatorHashMap = new HashMap<>();
+    private final static Map<Class<? extends Annotation>, IValidator> validatorHashMap = new HashMap<>();
 
     static {
         validatorHashMap.put(RequestString.class, new StringValidator());
@@ -45,11 +43,13 @@ public class ValidatorFactory {
                 e.printStackTrace();
             }
         }
-
     }
 
-    public static void addValidator(Class<? extends Annotation> clz, IValidator validator) {
-        CollectionKit.MapAdd(validatorHashMap, clz, validator);
+    public static boolean addValidator(Class<? extends Annotation> clz, IValidator validator) {
+        return CollectionKit.MapAdd(validatorHashMap, clz, validator);
     }
 
+    public static IValidator getValidator(Class<? extends Annotation> an) {
+        return validatorHashMap.get(an);
+    }
 }

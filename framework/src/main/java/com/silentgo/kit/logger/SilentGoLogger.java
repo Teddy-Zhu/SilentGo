@@ -1,4 +1,4 @@
-package com.silentgo.logger;
+package com.silentgo.kit.logger;
 
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;

@@ -1,8 +1,8 @@
-package com.silentgo.logger;
+package com.silentgo.kit.logger;
 
 /**
  * Project : silentgo
- * com.silentgo.logger
+ * com.silentgo.kit.logger
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>

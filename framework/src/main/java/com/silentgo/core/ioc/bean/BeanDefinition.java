@@ -28,6 +28,8 @@ public class BeanDefinition extends BeanWrapper {
 
     String beanName;
 
+    Class<?> interfaceClass;
+
     Class<?> clz;
 
     FastClass fastClass;
@@ -48,21 +50,34 @@ public class BeanDefinition extends BeanWrapper {
         this.injectComplete = injectComplete;
     }
 
+    public BeanDefinition(Class<?> clz, boolean inject) {
+        Create(clz.getName(), clz, inject);
+    }
+
+    public BeanDefinition(String beanName, Class<?> clz, boolean inject) {
+        Create(beanName, clz, inject);
+    }
+
+
     public BeanDefinition(Class<?> clz) {
-        Create(clz.getName(), clz);
+        Create(clz.getName(), clz, true);
     }
 
     public BeanDefinition(String beanName, Class<?> clz) {
-        Create(beanName, clz);
+        Create(beanName, clz, true);
     }
 
-    private void Create(String beanName, Class<?> clz) {
+    private void Create(String beanName, Class<?> clz, boolean needInject) {
         this.beanName = beanName;
         this.clz = clz;
         try {
             fastClass = FastClass.create(clz);
             target = clz.newInstance();
-            proxyTarget = CGLib.Proxy(target);
+            interfaceClass = clz.getInterfaces().length > 0 ? clz.getInterfaces()[0] : clz;
+            if (needInject)
+                proxyTarget = CGLib.Proxy(target);
+            else
+                proxyTarget = target;
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -81,16 +96,17 @@ public class BeanDefinition extends BeanWrapper {
         }
     }
 
-    private boolean containAnnotation(Field field){
+    private boolean containAnnotation(Field field) {
         Class<?> clz = field.getType();
-        if(clz.getAnnotation(com.silentgo.core.route.annotation.Controller.class) != null)
+        if (clz.getAnnotation(com.silentgo.core.route.annotation.Controller.class) != null)
             return true;
-        if(clz.getAnnotation(Component.class) != null)
+        if (clz.getAnnotation(Component.class) != null)
             return true;
-        if(clz.getAnnotation(Service.class) != null)
+        if (clz.getAnnotation(Service.class) != null)
             return true;
         return false;
     }
+
     public Map<String, Field> getFieldBeans() {
         return fieldBeans;
     }
@@ -112,6 +128,11 @@ public class BeanDefinition extends BeanWrapper {
     @Override
     public String getBeanName() {
         return beanName;
+    }
+
+    @Override
+    public Class<?> getInterfaceClass() {
+        return interfaceClass;
     }
 
     public Object getTarget() {

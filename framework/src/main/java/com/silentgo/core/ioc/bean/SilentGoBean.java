@@ -1,9 +1,9 @@
 package com.silentgo.core.ioc.bean;
 
 import com.silentgo.config.SilentGoConfig;
-import com.silentgo.core.aop.Interceptor;
-import com.silentgo.logger.Logger;
-import com.silentgo.logger.LoggerFactory;
+import com.silentgo.kit.CollectionKit;
+import com.silentgo.kit.logger.Logger;
+import com.silentgo.kit.logger.LoggerFactory;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 /**
  * Project : silentgo
@@ -34,12 +35,8 @@ public class SilentGoBean extends BeanFactory<BeanDefinition> {
     @Override
     public void build(List<BeanDefinition> beans, SilentGoConfig config) {
         beans.forEach(beanDefinition -> {
-            if (!beansMap.containsKey(beanDefinition.getBeanName())) {
-                beansMap.put(beanDefinition.getBeanName(), beanDefinition);
-            } else {
-                if (config.isDevMode()) {
-                    LOGGER.debug("Bean [{}] has been registered.", beanDefinition.getBeanName());
-                }
+            if (!CollectionKit.MapAdd(beansMap, beanDefinition.getBeanName(), beanDefinition) && config.isDevMode()) {
+                LOGGER.debug("Bean [{}] has been registered.", beanDefinition.getBeanName());
             }
         });
         beans.forEach(this::depend);
@@ -70,7 +67,19 @@ public class SilentGoBean extends BeanFactory<BeanDefinition> {
     private void depend(BeanDefinition beanDefinition) {
         if (beanDefinition.isInjectComplete()) return;
         beanDefinition.getFieldBeans().forEach((k, v) -> {
-            BeanDefinition bean = beansMap.get(k);
+            BeanDefinition bean = null;
+            if (v.getType().isInterface() && k.equals(v.getType().getName())) {
+                try {
+                    bean = beansMap.entrySet().stream().filter(keyset -> keyset.getValue().getInterfaceClass().getName().equals(k))
+                            .findFirst().get().getValue();
+                } catch (NoSuchElementException ex) {
+                    LOGGER.error("Can not find [{}] find implemented class bean", k);
+                    return;
+                }
+
+            } else {
+                bean = beansMap.get(k);
+            }
             if (bean == null) {
                 bean = addBean(v.getType());
             }

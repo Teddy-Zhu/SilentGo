@@ -1,20 +1,21 @@
-package com.silentgo.logger;
+package com.silentgo.kit.logger;
 
-public class Log4jLogger implements Logger {
+public class Slf4jLogger implements Logger {
 
-    private final org.apache.log4j.Logger logger;
+    private final org.slf4j.Logger logger;
     
-    public Log4jLogger(org.apache.log4j.Logger logger) {
+    public Slf4jLogger(org.slf4j.Logger logger) {
         this.logger = logger;
     }
     
     @Override
+    public void debug(String msg, Object... args) {
+    	logger.debug(msg, args);
+    }
+
+    @Override
     public void debug(String msg) {
     	logger.debug(msg);
-    }
-    
-    @Override
-    public void debug(String msg, Object... args) {
     }
 
     public void warn(String msg) {
@@ -32,6 +33,7 @@ public class Log4jLogger implements Logger {
 
 	@Override
 	public void info(String msg, Object... args) {
+		logger.info(msg, args);
 	}
 
 	@Override
@@ -41,6 +43,7 @@ public class Log4jLogger implements Logger {
 
 	@Override
 	public void error(String msg, Object... args) {
+		logger.error(msg, args);
 	}
 
 	@Override
@@ -50,6 +53,6 @@ public class Log4jLogger implements Logger {
 
 	@Override
 	public void warn(String msg, Object... args) {
+		logger.warn(msg, args);
 	}
-	
 }

@@ -29,25 +29,18 @@ public class InterceptChain {
 
     private int size = 0;
 
-    public InterceptChain(AOPPoint point, boolean[] isResolved, List<Interceptor> interceptors) {
+    public InterceptChain(AOPPoint point, boolean[] isResolved) {
         this.point = point;
         this.isResolved = isResolved;
-        this.interceptors = interceptors;
+        this.interceptors = point.getAdviser().getInterceptors();
         this.index = 0;
         this.size = this.interceptors.size();
     }
 
-    public void Init() {
-        this.index = 0;
-    }
-
-    public Object excute() throws Throwable {
+    public Object resolve() throws Throwable {
         Object returnValue = null;
         if (index < size) {
-
-            Interceptor interceptor = interceptors.get(index++);
-
-            returnValue = interceptor.resolve(point, isResolved);
+            returnValue = interceptors.get(index++).resolve(point, isResolved);
 
             if (isResolved[0]) {
                 return returnValue;

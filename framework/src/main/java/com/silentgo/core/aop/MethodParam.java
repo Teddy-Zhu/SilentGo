@@ -1,9 +1,8 @@
 package com.silentgo.core.aop;
 
 import com.silentgo.core.aop.validator.IValidator;
-import com.silentgo.core.aop.validator.ValidatorInterceptor;
-import com.silentgo.logger.Logger;
-import com.silentgo.logger.LoggerFactory;
+import com.silentgo.kit.logger.Logger;
+import com.silentgo.kit.logger.LoggerFactory;
 import com.silentgo.servlet.http.Request;
 
 import java.lang.annotation.Annotation;
@@ -47,6 +46,7 @@ public class MethodParam {
     }
 
     public boolean addValidator(IValidator iValidator) {
+        if (iValidator == null) return false;
         Class<?> an = ((ParameterizedType) iValidator.getClass().getGenericSuperclass()).getActualTypeArguments()[0].getClass();
 
         Annotation annotation = findAnnotation(an);
@@ -68,4 +68,7 @@ public class MethodParam {
     }
 
 
+    public List<Annotation> getAnnotations() {
+        return annotations;
+    }
 }

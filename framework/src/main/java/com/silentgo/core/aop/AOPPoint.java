@@ -1,5 +1,6 @@
 package com.silentgo.core.aop;
 
+import com.silentgo.core.aop.support.InterceptChain;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
 import net.sf.cglib.proxy.MethodProxy;
@@ -24,6 +25,8 @@ public class AOPPoint {
     MethodAdviser adviser;
     Response response;
     Request request;
+
+    InterceptChain chain;
 
     public AOPPoint(Object obj, Method method, Object[] objects, MethodProxy methodProxy, MethodAdviser adviser, Response response, Request request) {
         this.obj = obj;
@@ -55,10 +58,6 @@ public class AOPPoint {
         return methodProxy;
     }
 
-    public Object resolve(Object[] params) throws Throwable {
-        return methodProxy.invokeSuper(obj, params);
-    }
-
     public Object resolve() throws Throwable {
         return methodProxy.invokeSuper(obj, objects);
     }
@@ -69,5 +68,13 @@ public class AOPPoint {
 
     public Request getRequest() {
         return request;
+    }
+
+    public void setChain(InterceptChain chain) {
+        this.chain = chain;
+    }
+
+    public Object doChain() throws Throwable {
+        return chain.resolve();
     }
 }

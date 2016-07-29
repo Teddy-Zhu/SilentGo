@@ -4,14 +4,12 @@ import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.AOPPoint;
 import com.silentgo.core.aop.Interceptor;
 import com.silentgo.core.aop.annotationintercept.annotation.CustomInterceptor;
-import com.silentgo.core.aop.support.MethodAOPFactory;
-import com.silentgo.core.aop.support.MethodAdviserBuilder;
+import com.silentgo.core.aop.support.InterceptChain;
 import com.silentgo.kit.ClassKit;
-import com.silentgo.logger.Logger;
-import com.silentgo.logger.LoggerFactory;
+import com.silentgo.kit.logger.Logger;
+import com.silentgo.kit.logger.LoggerFactory;
 
 import java.lang.annotation.Annotation;
-import java.util.Map;
 
 /**
  * Project : silentgo
@@ -24,7 +22,7 @@ import java.util.Map;
 public class AnnotationInterceptor implements Interceptor {
 
 
-    public static final Logger LOGGER = LoggerFactory.getLog(AnnotationInterceptor.class);
+    private static final Logger LOGGER = LoggerFactory.getLog(AnnotationInterceptor.class);
 
     @SuppressWarnings("unchecked")
     @Override
@@ -45,13 +43,13 @@ public class AnnotationInterceptor implements Interceptor {
                 }
             }
         });
-        MethodAOPFactory.refreshSortIAnnotation();
         return true;
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public Object resolve(AOPPoint point, boolean[] isResolved) throws Throwable {
-        return new AnnotationInterceptChain(point, isResolved, point.getAdviser().getAnnotationMap()).excute();
+
+        return new AnnotationInterceptChain(point, isResolved, point.getAdviser().getAnnotationMap()).intercept();
     }
 }

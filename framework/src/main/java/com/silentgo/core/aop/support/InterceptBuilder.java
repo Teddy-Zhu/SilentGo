@@ -5,6 +5,7 @@ import com.silentgo.core.aop.Interceptor;
 import com.silentgo.core.ioc.bean.BeanDefinition;
 import com.silentgo.kit.CollectionKit;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,9 +28,7 @@ public class InterceptBuilder {
     public static void Build(SilentGo me) {
         Map<String, BeanDefinition> beansMap = (Map<String, BeanDefinition>) me.getConfig().getBeanFactory().getBeans();
 
-        beansMap.forEach((k, v) -> {
-            CollectionKit.ListMapAdd(classInterceptors, v.getClassName(), me.getConfig().getInterceptors());
-        });
+        beansMap.forEach((k, v) -> CollectionKit.ListMapAdd(classInterceptors, v.getClassName(), me.getConfig().getInterceptors()));
     }
 
     public static Map<String, List<Interceptor>> getClassInterceptors() {

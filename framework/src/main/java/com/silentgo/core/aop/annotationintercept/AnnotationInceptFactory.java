@@ -24,13 +24,6 @@ public class AnnotationInceptFactory {
 
 
     public static boolean addAnnotationInterceptor(Class<? extends Annotation> clz, IAnnotation interceptor) {
-//        if (refresh && !annotationInterceptors.isEmpty()) {
-//            annotationInterceptors.sort((o1, o2) -> {
-//                int x = o1.priority();
-//                int y = o2.priority();
-//                return (x < y) ? -1 : ((x == y) ? 0 : 1);
-//            });
-//        }
         return CollectionKit.MapAdd(annotationInterceptorMap, clz, interceptor);
     }
 

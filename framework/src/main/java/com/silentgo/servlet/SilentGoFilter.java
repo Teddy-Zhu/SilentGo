@@ -9,8 +9,8 @@ import com.silentgo.core.action.ActionParam;
 import com.silentgo.core.ioc.bean.support.BeanBuilder;
 import com.silentgo.core.support.AnnotationManager;
 import com.silentgo.kit.StringKit;
-import com.silentgo.logger.Logger;
-import com.silentgo.logger.LoggerFactory;
+import com.silentgo.kit.logger.Logger;
+import com.silentgo.kit.logger.LoggerFactory;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
 

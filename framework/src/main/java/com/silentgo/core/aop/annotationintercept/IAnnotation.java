@@ -1,6 +1,8 @@
 package com.silentgo.core.aop.annotationintercept;
 
 import com.silentgo.core.aop.AOPPoint;
+import com.silentgo.servlet.http.Request;
+import com.silentgo.servlet.http.Response;
 
 import java.lang.annotation.Annotation;
 
@@ -17,6 +19,6 @@ public interface IAnnotation<T extends Annotation> {
         return Integer.MIN_VALUE;
     }
 
-    Object intercept(AOPPoint point, boolean[] isResolved, T annotation) throws Throwable;
+    Object intercept(AnnotationInterceptChain chain, Response response, Request request, boolean[] isResolved, T annotation) throws Throwable;
 
 }

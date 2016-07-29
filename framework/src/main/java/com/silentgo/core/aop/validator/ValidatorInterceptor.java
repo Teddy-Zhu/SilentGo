@@ -4,7 +4,14 @@ import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.AOPPoint;
 import com.silentgo.core.aop.Interceptor;
 import com.silentgo.core.aop.MethodParam;
+import com.silentgo.core.aop.annotationintercept.AnnotationInterceptor;
+import com.silentgo.core.aop.support.InterceptChain;
+import com.silentgo.core.aop.validator.annotation.Validator;
 import com.silentgo.core.aop.validator.exception.ValidateException;
+import com.silentgo.core.aop.validator.support.ValidatorFactory;
+import com.silentgo.kit.ClassKit;
+import com.silentgo.kit.logger.Logger;
+import com.silentgo.kit.logger.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
@@ -19,10 +26,27 @@ import java.util.Map;
  *         Created by  on 16/7/18.
  */
 public class ValidatorInterceptor implements Interceptor {
+    private static final Logger LOGGER = LoggerFactory.getLog(AnnotationInterceptor.class);
 
     @Override
     public boolean build(SilentGo me) {
-        return false;
+        me.getAnnotationManager().getClasses(Validator.class).forEach(aClass -> {
+            if (IValidator.class.isAssignableFrom(aClass)) {
+                Class<? extends Annotation> an = (Class<? extends Annotation>) ClassKit.getGenericClass(aClass, 0);
+                try {
+                    if (ValidatorFactory.addValidator(an, (IValidator) aClass.newInstance())) {
+                        if (me.getConfig().isDevMode()) {
+                            LOGGER.debug("Register Custom Validator [{}] successfully", aClass.getName());
+                        }
+                    } else {
+                        LOGGER.error("Register Custom Validator [{}] failed", aClass.getName());
+                    }
+                } catch (InstantiationException | IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        return true;
     }
 
     @Override
@@ -40,7 +64,7 @@ public class ValidatorInterceptor implements Interceptor {
             }
         }
 
-        return point.resolve();
+        return point.doChain();
 
     }
 }

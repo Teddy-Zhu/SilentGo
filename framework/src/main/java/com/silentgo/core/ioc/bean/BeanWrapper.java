@@ -15,5 +15,6 @@ public abstract class BeanWrapper {
     public abstract Object getBean();
     public abstract FastClass getBeanClass();
     public abstract String getBeanName();
+    public abstract Class<?> getInterfaceClass();
 
 }
