@@ -1,10 +1,24 @@
-# SilentGo Framework
+# SilentGo Framework (Do not Complete)
 a light web mvc framework.
 
 ####  IOC
 use with @Inject  
 ####  AOP 
 class implements Interceptor.
+```java
+public interface Interceptor {
+
+    default boolean build(SilentGo me) {
+        return true;
+    }
+
+    default int priority() {
+        return Integer.MIN_VALUE;
+    }
+
+    Object resolve(AOPPoint point, boolean[] isResolved) throws Throwable;
+}
+```
 ####  route
 match path , you can use :   
 		
