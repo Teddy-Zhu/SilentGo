@@ -29,8 +29,6 @@ public class MethodParam {
 
     private List<Annotation> annotations;
 
-    private Map<Annotation, IValidator> validatorMap = new HashMap<>();
-
     public Class<?> getType() {
         return type;
     }
@@ -43,24 +41,6 @@ public class MethodParam {
         this.type = type;
         this.name = name;
         this.annotations = annotations;
-    }
-
-    public boolean addValidator(IValidator iValidator) {
-        if (iValidator == null) return false;
-        Class<?> an = ((ParameterizedType) iValidator.getClass().getGenericSuperclass()).getActualTypeArguments()[0].getClass();
-
-        Annotation annotation = findAnnotation(an);
-        if (!validatorMap.containsKey(annotation))
-            validatorMap.put(annotation, iValidator);
-        return true;
-    }
-
-    private Annotation findAnnotation(Class<?> clz) {
-        return annotations.stream().filter(annotation -> annotation.annotationType().equals(clz)).findFirst().get();
-    }
-
-    public Map<Annotation, IValidator> getValidatorMap() {
-        return validatorMap;
     }
 
     public Object getValue(Request request) {

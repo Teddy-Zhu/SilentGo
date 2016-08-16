@@ -24,29 +24,8 @@ import java.lang.reflect.Method;
  */
 public class AspectInterceptor implements Interceptor {
 
-
-    @Override
-    public boolean build(SilentGo me) {
-        me.getAnnotationManager().getClasses(Aspect.class).forEach(aClass -> {
-
-            BeanWrapper beanDefinition = me.getConfig().getBeanFactory().getBean(aClass.getName());
-
-            Method[] methods = aClass.getDeclaredMethods();
-            for (Method method : methods) {
-                Around annotation = method.getAnnotation(Around.class);
-                if (annotation == null) continue;
-                AspectFactory.addAspectMethod(new AspectMethod(annotation.value()
-                        , annotation.regex()
-                        , beanDefinition.getBeanClass().getMethod(method)
-                        , beanDefinition.getBean()
-                ));
-            }
-        });
-        return true;
-    }
-
     @Override
     public Object resolve(AOPPoint point, boolean[] isResolved) throws Throwable {
-        return new AspectChain(point, isResolved, point.getAdviser().getAspectMethods());
+        return new AspectChain(point, isResolved, AspectFactory.getAspectMethod(point.getAdviser().getName()));
     }
 }

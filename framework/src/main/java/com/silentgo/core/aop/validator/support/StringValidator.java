@@ -1,7 +1,6 @@
 package com.silentgo.core.aop.validator.support;
 
 import com.silentgo.core.aop.validator.IValidator;
-import com.silentgo.core.aop.validator.ValidatorInterceptor;
 import com.silentgo.core.aop.validator.annotation.RequestString;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;

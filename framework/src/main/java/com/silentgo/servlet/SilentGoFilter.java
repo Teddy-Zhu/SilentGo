@@ -1,5 +1,6 @@
 package com.silentgo.servlet;
 
+import com.silentgo.build.annotation.Builder;
 import com.silentgo.config.Config;
 import com.silentgo.config.Const;
 import com.silentgo.config.SilentGoConfig;
@@ -23,6 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.Comparator;
 
 /**
  * Created by teddyzhu on 16/7/15.
@@ -44,11 +46,8 @@ public class SilentGoFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         if (!appContext.isLoaded()) {
             SilentGoConfig config = null;
-
-            LOGGER.info("Start SilentGoConfig Init ...");
-            LOGGER.info("file.encoding = {}", System.getProperty("file.encoding"));
-
             long startTime = System.currentTimeMillis();
+            LOGGER.info("Start SilentGoConfig Init ...");
 
             ServletContext context = filterConfig.getServletContext();
 
@@ -75,10 +74,8 @@ public class SilentGoFilter implements Filter {
             AnnotationManager manager = new AnnotationManager(config);
             appContext.setAnnotationManager(manager);
 
-            //Init Bean
-            BeanBuilder.Build(appContext);
+            build(manager, config);
 
-            //Init
             ActionChain actionChain = ActionDispatcher.getAction();
 
             config.setActionChain(actionChain);
@@ -89,7 +86,6 @@ public class SilentGoFilter implements Filter {
             globalConfig = appContext.getConfig();
 
             appContext.setLoaded(true);
-
 
             LOGGER.info("SilentGoConfig Loader initialize successfully, Time : {} ms.", System.currentTimeMillis() - startTime);
         }
@@ -123,22 +119,30 @@ public class SilentGoFilter implements Filter {
 
     }
 
-
-    private File getWebRoot(ServletContext sc) {
-        String dir = sc.getRealPath("/");
-        if (dir == null) {
+    private void build(AnnotationManager manager, SilentGoConfig config) {
+        //add builder
+        SilentGoConfig finalConfig = config;
+        manager.getClasses(Builder.class).forEach(builder -> {
             try {
-                URL url = sc.getResource("/");
-                if (url != null && "file".equals(url.getProtocol())) {
-                    dir = URLDecoder.decode(url.getFile(), "utf-8");
+                if (com.silentgo.build.Builder.class.isAssignableFrom(builder)) {
+                    finalConfig.getBuilders().add((com.silentgo.build.Builder) builder.newInstance());
                 } else {
-                    throw new IllegalStateException("Can't get webroot dir, url = " + url);
+                    LOGGER.debug("Builder Class {} is invalid, it should be extend {}", builder.getClass().getName(), com.silentgo.build.Builder.class.getName());
                 }
-            } catch (MalformedURLException | UnsupportedEncodingException e) {
+            } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
             }
-        }
-        return new File(dir);
+        });
+
+        config.getBuilders().sort((o1, o2) -> {
+            int x = o1.priority();
+            int y = o2.priority();
+            return (x < y) ? -1 : ((x == y) ? 0 : 1);
+        });
+
+        //Init
+        config.getBuilders().stream().allMatch(builder -> builder.build(appContext));
+
     }
 
     private Config getConfig(String className) throws ServletException {

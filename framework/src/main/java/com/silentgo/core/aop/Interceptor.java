@@ -13,10 +13,6 @@ import com.silentgo.core.aop.support.InterceptChain;
  */
 public interface Interceptor {
 
-    default boolean build(SilentGo me) {
-        return true;
-    }
-
     default int priority() {
         return Integer.MIN_VALUE;
     }

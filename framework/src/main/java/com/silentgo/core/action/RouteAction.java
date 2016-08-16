@@ -13,6 +13,11 @@ import java.io.IOException;
 public class RouteAction extends ActionChain {
 
     @Override
+    public int priority() {
+        return Integer.MAX_VALUE;
+    }
+
+    @Override
     public void doAction(ActionParam param) {
 
         try {

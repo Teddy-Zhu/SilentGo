@@ -26,23 +26,10 @@ public class ValidatorFactory {
      */
     private final static Map<Class<? extends Annotation>, IValidator> validatorHashMap = new HashMap<>();
 
+    private static Map<String, Map<String, Map<Annotation, IValidator>>> methodParamValidatorMap = new HashMap<>();
+
     static {
         validatorHashMap.put(RequestString.class, new StringValidator());
-
-    }
-
-    @SuppressWarnings("unchecked")
-    public static void addValidator(Class<? extends IValidator> clz) {
-        Class<? extends Annotation> an = (Class<? extends Annotation>) ClassKit.getGenericClass(clz, 0);
-
-        if (an != null) {
-            try {
-                addValidator(an, clz.newInstance());
-            } catch (InstantiationException | IllegalAccessException e) {
-                LOGGER.error("Add Validator Error,Class : [{}]", clz.getName());
-                e.printStackTrace();
-            }
-        }
     }
 
     public static boolean addValidator(Class<? extends Annotation> clz, IValidator validator) {
@@ -52,4 +39,14 @@ public class ValidatorFactory {
     public static IValidator getValidator(Class<? extends Annotation> an) {
         return validatorHashMap.get(an);
     }
+
+    public static boolean addMethodParamValidator(String methodName, Map<String, Map<Annotation, IValidator>> validatorsMap) {
+        return CollectionKit.MapAdd(methodParamValidatorMap, methodName, validatorsMap);
+    }
+
+
+    public static Map<String, Map<Annotation, IValidator>> getParamValidatorMap(String methodName) {
+        return methodParamValidatorMap.get(methodName);
+    }
+
 }

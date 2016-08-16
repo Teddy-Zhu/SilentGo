@@ -24,6 +24,8 @@ public class Const {
         Const.BasePackages.add(Const.BasePackageString);
     }
 
+    public static final Integer DefaultMax = Integer.MAX_VALUE - 1;
+
     public static final String BasePackageString = "com.silentgo";
 
     public static final String Encoding = "UTF-8";

@@ -1,19 +1,22 @@
-package com.silentgo.core.aop.validator;
+package com.silentgo.core.aop.validator.support;
 
+import com.silentgo.build.Builder;
 import com.silentgo.core.SilentGo;
-import com.silentgo.core.aop.AOPPoint;
-import com.silentgo.core.aop.Interceptor;
-import com.silentgo.core.aop.MethodParam;
+import com.silentgo.core.aop.MethodAdviser;
 import com.silentgo.core.aop.annotationintercept.AnnotationInterceptor;
-import com.silentgo.core.aop.support.InterceptChain;
+import com.silentgo.core.aop.support.MethodAOPBuilder;
+import com.silentgo.core.aop.support.MethodAOPFactory;
+import com.silentgo.core.aop.validator.IValidator;
 import com.silentgo.core.aop.validator.annotation.Validator;
-import com.silentgo.core.aop.validator.exception.ValidateException;
 import com.silentgo.core.aop.validator.support.ValidatorFactory;
 import com.silentgo.kit.ClassKit;
+import com.silentgo.kit.CollectionKit;
 import com.silentgo.kit.logger.Logger;
 import com.silentgo.kit.logger.LoggerFactory;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.ParameterizedType;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,9 +26,10 @@ import java.util.Map;
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>
- *         Created by  on 16/7/18.
+ *         Created by teddyzhu on 16/8/16.
  */
-public class ValidatorInterceptor implements Interceptor {
+public class ValidatorBuilder extends Builder {
+
     private static final Logger LOGGER = LoggerFactory.getLog(AnnotationInterceptor.class);
 
     @Override
@@ -46,25 +50,31 @@ public class ValidatorInterceptor implements Interceptor {
                 }
             }
         });
+
+        MethodAOPFactory.getMethodAdviserMap().forEach((k, v) -> ValidatorFactory.addMethodParamValidator(v.getName(), buildIValidator(v)));
         return true;
     }
 
-    @Override
-    public Object resolve(AOPPoint point, boolean[] isResolved) throws Throwable {
-        List<MethodParam> params = point.getAdviser().getParams();
 
-        for (MethodParam param : params) {
-            Map<Annotation, IValidator> map = param.getValidatorMap();
-            for (Map.Entry<Annotation, IValidator> entry : map.entrySet()) {
-                Annotation annotation = entry.getKey();
-                IValidator validator = entry.getValue();
-                if (!validator.validate(point.getResponse(), point.getRequest(), annotation, param.getValue(point.getRequest()))) {
-                    throw new ValidateException(String.format("Parameter [%s] validate error", param.getName()));
-                }
-            }
-        }
+    private static Map<String, Map<Annotation, IValidator>> buildIValidator(MethodAdviser adviser) {
 
-        return point.doChain();
+        Map<String, Map<Annotation, IValidator>> methodParamsMap = new HashMap<>();
 
+        //build IValidator
+        adviser.getParams().forEach(methodParam -> {
+
+            Map<Annotation, IValidator> validatorMap = new HashMap<>();
+
+            methodParam.getAnnotations().forEach(annotation -> {
+
+                IValidator iValidator = ValidatorFactory.getValidator(annotation.annotationType());
+
+                CollectionKit.MapAdd(validatorMap, annotation, iValidator);
+
+            });
+            CollectionKit.MapAdd(methodParamsMap, methodParam.getName(), validatorMap);
+        });
+        return methodParamsMap;
     }
+
 }

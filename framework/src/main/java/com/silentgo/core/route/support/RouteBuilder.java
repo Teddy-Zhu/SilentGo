@@ -13,7 +13,7 @@ import java.util.Set;
  *         <p>
  *         Created by teddyzhu on 16/7/25.
  */
-public class RouteBuilder {
+public class  RouteBuilder {
     public void Build(SilentGo me) {
         me.getAnnotationManager().getClasses(Controller.class).forEach(this::Build);
     }

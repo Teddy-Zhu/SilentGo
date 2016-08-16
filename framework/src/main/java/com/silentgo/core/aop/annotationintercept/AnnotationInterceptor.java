@@ -22,34 +22,10 @@ import java.lang.annotation.Annotation;
 public class AnnotationInterceptor implements Interceptor {
 
 
-    private static final Logger LOGGER = LoggerFactory.getLog(AnnotationInterceptor.class);
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public boolean build(SilentGo me) {
-        me.getAnnotationManager().getClasses(CustomInterceptor.class).forEach(aClass -> {
-            if (IAnnotation.class.isAssignableFrom(aClass)) {
-                Class<? extends Annotation> an = (Class<? extends Annotation>) ClassKit.getGenericClass(aClass, 0);
-                try {
-                    if (AnnotationInceptFactory.addAnnotationInterceptor(an, (IAnnotation) aClass.newInstance())) {
-                        if (me.getConfig().isDevMode()) {
-                            LOGGER.debug("Register Custom Interceptor [{}] successfully", aClass.getName());
-                        }
-                    } else {
-                        LOGGER.error("Register Custom Interceptor [{}] failed", aClass.getName());
-                    }
-                } catch (InstantiationException | IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        return true;
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public Object resolve(AOPPoint point, boolean[] isResolved) throws Throwable {
 
-        return new AnnotationInterceptChain(point, isResolved, point.getAdviser().getAnnotationMap()).intercept();
+        return new AnnotationInterceptChain(point, isResolved, AnnotationInceptFactory.getSortedAnnotationMap(point.getAdviser().getName())).intercept();
     }
 }

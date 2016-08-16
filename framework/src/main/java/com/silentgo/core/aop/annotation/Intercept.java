@@ -1,5 +1,7 @@
 package com.silentgo.core.aop.annotation;
 
+import com.silentgo.core.aop.Interceptor;
+
 import java.lang.annotation.*;
 
 /**
@@ -13,6 +15,7 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
+@Target({ElementType.TYPE, ElementType.METHOD})
 public @interface Intercept {
+    Class<? extends Interceptor>[] value() default {};
 }

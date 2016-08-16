@@ -1,5 +1,6 @@
 package com.silentgo.core.aop.support;
 
+import com.silentgo.build.Builder;
 import com.silentgo.config.Const;
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.MethodAdviser;
@@ -22,25 +23,9 @@ import java.util.*;
  *         <p>
  *         Created by teddyzhu on 16/7/27.
  */
-public class MethodAdviserBuilder {
+public class MethodAdviserBuilder extends Builder {
 
     private MethodAdviserBuilder() {
-    }
-
-    //should build after bean
-    // for default SilentGoBean
-    @SuppressWarnings("unchecked")
-    public static void Build(SilentGo me) {
-        Map<String, BeanDefinition> beansMap = (Map<String, BeanDefinition>) me.getConfig().getBeanFactory().getBeans();
-        beansMap.forEach((k, v) -> {
-            List<Annotation> annotations = Arrays.asList(v.getSourceClass().getAnnotations());
-            filterAnnotation(annotations);
-            Method[] methods = v.getSourceClass().getMethods();
-            FastClass clz = v.getBeanClass();
-            for (Method method : methods) {
-                MethodAOPFactory.addMethodAdviser(BuildAdviser(clz.getMethod(method), annotations));
-            }
-        });
     }
 
     private static MethodParam BuildParam(Parameter parameter) {
@@ -79,8 +64,26 @@ public class MethodAdviserBuilder {
     }
 
     private static void filterAnnotation(List<Annotation> annotations) {
-        annotations.stream().filter(annotation -> Const.KeyAnnotations.contains(annotation.annotationType()))
-                .forEach(annotations::remove);
+        for (int i = 0, len = annotations.size(); i < len; i++) {
+            if (Const.KeyAnnotations.contains(annotations.get(i).annotationType())) {
+                annotations.remove(i);
+                i--;
+            }
+        }
     }
 
+    @Override
+    public boolean build(SilentGo me) {
+        Map<String, BeanDefinition> beansMap = (Map<String, BeanDefinition>) me.getConfig().getBeanFactory().getBeans();
+        beansMap.forEach((k, v) -> {
+            List<Annotation> annotations = Arrays.asList(v.getSourceClass().getAnnotations());
+            filterAnnotation(annotations);
+            Method[] methods = v.getSourceClass().getMethods();
+            FastClass clz = v.getBeanClass();
+            for (Method method : methods) {
+                MethodAOPFactory.addMethodAdviser(BuildAdviser(clz.getMethod(method), annotations));
+            }
+        });
+        return true;
+    }
 }

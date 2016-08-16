@@ -1,19 +1,14 @@
 package com.silentgo.core.ioc.bean;
 
 import com.silentgo.config.Const;
-import com.silentgo.core.action.Controller;
 import com.silentgo.core.ioc.annotation.Component;
 import com.silentgo.core.ioc.annotation.Inject;
 import com.silentgo.core.ioc.annotation.Service;
-import com.silentgo.kit.CGLib;
+import com.silentgo.kit.CGLibKit;
 import net.sf.cglib.reflect.FastClass;
-import sun.dc.pr.PRError;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -75,7 +70,7 @@ public class BeanDefinition extends BeanWrapper {
             target = clz.newInstance();
             interfaceClass = clz.getInterfaces().length > 0 ? clz.getInterfaces()[0] : clz;
             if (needInject)
-                proxyTarget = CGLib.Proxy(target);
+                proxyTarget = CGLibKit.Proxy(target);
             else
                 proxyTarget = target;
         } catch (InstantiationException | IllegalAccessException e) {

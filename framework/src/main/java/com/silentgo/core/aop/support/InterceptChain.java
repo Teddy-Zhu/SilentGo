@@ -29,10 +29,10 @@ public class InterceptChain {
 
     private int size = 0;
 
-    public InterceptChain(AOPPoint point, boolean[] isResolved) {
+    public InterceptChain(AOPPoint point, List<Interceptor> interceptors, boolean[] isResolved) {
         this.point = point;
         this.isResolved = isResolved;
-        this.interceptors = point.getAdviser().getInterceptors();
+        this.interceptors = interceptors;
         this.index = 0;
         this.size = this.interceptors.size();
     }

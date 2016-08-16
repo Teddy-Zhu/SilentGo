@@ -1,5 +1,7 @@
 package com.silentgo.core.action;
 
+import com.silentgo.config.Const;
+
 /**
  * Project : silentgo
  * com.silentgo.core.IAction
@@ -11,7 +13,7 @@ package com.silentgo.core.action;
 public abstract class ActionChain {
 
     public int priority() {
-        return Integer.MAX_VALUE;
+        return Const.DefaultMax;
     }
 
     public ActionChain nextAction;

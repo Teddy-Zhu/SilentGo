@@ -15,9 +15,9 @@ import java.lang.reflect.Field;
  *         <p>
  *         Created by teddyzhu on 16/7/19.
  */
-public class CGLib {
+public class CGLibKit {
 
-    private static final Logger LOGGER = LoggerFactory.getLog(CGLib.class);
+    private static final Logger LOGGER = LoggerFactory.getLog(CGLibKit.class);
 
     @SuppressWarnings("unchecked")
     public static <T> T getTarget(T target) {
