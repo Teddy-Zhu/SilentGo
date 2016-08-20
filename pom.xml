@@ -6,9 +6,10 @@
 
     <groupId>com.silentgo</groupId>
     <artifactId>parent</artifactId>
-    <version>0.0.1</version>
+    <version>${project-version}</version>
     <modules>
-        <module>framework</module>
+        <module>silentgoframework</module>
+        <module>webtest</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -16,8 +17,9 @@
     <url>https://github.com/Teddy-Zhu</url>
 
     <properties>
-        <maven.compiler.source>1.6</maven.compiler.source>
-        <maven.compiler.target>1.6</maven.compiler.target>
+        <project-version>0.4.1</project-version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>4.12</junit.version>
         <slf4j-api.version>1.7.16</slf4j-api.version>
