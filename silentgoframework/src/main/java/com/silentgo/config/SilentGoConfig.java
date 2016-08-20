@@ -8,6 +8,9 @@ import com.silentgo.core.aop.validator.support.ValidatorInterceptor;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.kit.CollectionKit;
 import com.silentgo.kit.PropKit;
+import com.silentgo.kit.SilentGoContext;
+import com.silentgo.servlet.http.Request;
+import com.silentgo.servlet.http.Response;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +30,8 @@ public class SilentGoConfig {
     private ActionChain actionChain;
 
     private Map<String, BaseFactory> factoryMap = new HashMap<>();
+
+    private ThreadLocal<SilentGoContext> ctx = new ThreadLocal<>();
 
     private List<SilentGoBuilder> builders = new ArrayList<>();
 
@@ -146,5 +151,14 @@ public class SilentGoConfig {
 
     public boolean addStatic(String name) {
         return CollectionKit.ListAdd(staticFolder, name);
+    }
+
+    public boolean setCtx(Request request, Response response) {
+        ctx.set(new SilentGoContext(response, request));
+        return true;
+    }
+
+    public ThreadLocal<SilentGoContext> getCtx() {
+        return ctx;
     }
 }

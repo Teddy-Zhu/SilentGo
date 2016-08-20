@@ -1,9 +1,7 @@
 package com.silentgo.servlet.http;
 
-import javax.servlet.http.*;
-import java.util.ArrayList;
+import javax.servlet.http.HttpServletRequestWrapper;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**

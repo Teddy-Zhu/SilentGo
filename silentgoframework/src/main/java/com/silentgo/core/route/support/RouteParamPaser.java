@@ -18,6 +18,7 @@ import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
 
 import java.lang.annotation.Annotation;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,8 +39,8 @@ public class RouteParamPaser {
 
 
     public static boolean parsePathVariable(Request request, RegexRoute route, Matcher macher) {
-        String[] pathParameters = new String[macher.groupCount() - 1];
-        for (int i = 1, len = macher.groupCount(); i < len; i++) {
+        String[] pathParameters = new String[macher.groupCount()];
+        for (int i = 1, len = macher.groupCount(); i <= len; i++) {
             pathParameters[i - 1] = macher.group(i);
         }
         Map<String, String> path = new HashMap<>();
@@ -69,12 +70,13 @@ public class RouteParamPaser {
                 continue;
             }
 
-            PathVariable variable = getAnnotation(methodParam.getAnnotations(), PathVariable.class);
-
             Object object = hash.get(methodParam.getName());
-            String jsonString = variable == null ?
-                    (object == null ? jsonHash : (object instanceof String ? object.toString() : JSON.toJSONString(object))) :
-                    request.getPathNamedParameter(variable.value());
+            String jsonString = methodParam.getAnnotations().stream().anyMatch(annotation ->
+                    PathVariable.class.equals(annotation.annotationType())) ?
+                    request.getPathNamedParameter(methodParam.getName()) :
+                    (object == null ? jsonHash :
+                            (object instanceof String ?
+                                    object.toString() : JSON.toJSONString(object)));
             try {
                 if (methodParam.getType().isArray()) {
                     parameters[i] = JSON.parseArray(jsonString, methodParam.getType());

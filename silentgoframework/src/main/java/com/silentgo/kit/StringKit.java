@@ -19,7 +19,7 @@ public class StringKit {
     }
 
     public static String getRight(String source, String split) {
-        return source.substring(source.indexOf(split), source.length());
+        return source.substring(source.indexOf(split) + split.length(), source.length());
     }
 
     public static boolean equals(String source, String target, boolean caseSensitive) {

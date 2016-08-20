@@ -9,6 +9,7 @@ import com.silentgo.core.aop.MethodParam;
 import com.silentgo.core.ioc.bean.BeanDefinition;
 import com.silentgo.core.ioc.bean.BeanFactory;
 import com.silentgo.core.ioc.bean.BeanWrapper;
+import com.silentgo.core.route.annotation.PathVariable;
 import com.silentgo.core.route.annotation.RequestParam;
 import net.sf.cglib.reflect.FastClass;
 import net.sf.cglib.reflect.FastMethod;
@@ -40,8 +41,14 @@ public class MethodAdviserBuilder extends SilentGoBuilder {
 
         String name = parameter.getName();
         Optional<Annotation> requestParam = annotations.stream().filter(annotation -> annotation.annotationType().equals(RequestParam.class)).findFirst();
+        Optional<Annotation> pathVariable = annotations.stream().filter(annotation -> annotation.annotationType().equals(PathVariable.class)).findFirst();
+
         if (requestParam.isPresent()) {
             String tmpName = ((RequestParam) requestParam.get()).value();
+            name = Const.DEFAULT_NONE.equals(tmpName) ? name : tmpName;
+        }
+        if (pathVariable.isPresent()) {
+            String tmpName = ((PathVariable) pathVariable.get()).value();
             name = Const.DEFAULT_NONE.equals(tmpName) ? name : tmpName;
         }
         return new MethodParam(type, name, annotations);

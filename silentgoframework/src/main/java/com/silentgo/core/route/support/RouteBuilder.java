@@ -58,9 +58,9 @@ public class RouteBuilder extends SilentGoBuilder {
             String fullPath = path + filterPath(Const.DEFAULT_NONE.equals(an.value()) ?
                     method.getName() : an.value(), true);
 
-            Matcher matcher = routePattern.matcher(path);
+            Matcher matcher = routePattern.matcher(fullPath);
 
-            if (an.regex() || matcher.matches()) {
+            if (an.regex() || matcher.find()) {
                 routeFactory.addRoute(buildRegexRoute(fullPath, matcher, adviser));
             } else {
                 routeFactory.addRoute(buildBasicRoute(fullPath, adviser));
@@ -82,35 +82,43 @@ public class RouteBuilder extends SilentGoBuilder {
         BasicRoute basicRoute = buildBasicRoute(path, adviser);
         RegexRoute route = new RegexRoute(basicRoute);
         String resolvedMatch = path;
+        resolvedMatch = resolveRoute(matcher, route, resolvedMatch, path);
         while (matcher.find()) {
-            String rule = matcher.group();
-            String ruleSolved = rule.substring(1, rule.length() - 1);
-            if (ruleSolved.contains(Regex.RouteSplit)) {
-                if (ruleSolved.length() > Regex.RouteSplit.length()) {
-                    String name = StringKit.getLeft(ruleSolved, Regex.RouteSplit).trim();
-                    String regex = StringKit.getRight(ruleSolved, Regex.RouteSplit).trim();
-                    regex = StringKit.isNullOrEmpty(regex) ? Regex.RegexAll : regex;
-                    boolean needName = StringKit.isNullOrEmpty(regex);
-                    String replacement = needName ? Regex.RoutePathNameRegexMatch : Regex.RoutePathCustomMatch;
-                    if (needName) {
-                        route.addName(name);
-                        replacement = String.format(replacement, name, regex);
-                    } else {
-                        replacement = String.format(replacement, regex);
-                    }
-                    resolvedMatch = replaceRegex(resolvedMatch, rule, replacement);
-
-                } else {
-                    LOGGER.warn("can not match rule {} in path {}, ignored !", rule, path);
-                }
-            } else {
-                route.addName(ruleSolved);
-                resolvedMatch = replaceRegex(resolvedMatch, rule, String.format(Regex.RoutePathCustomMatch, Regex.RegexAll));
-
-            }
+            resolvedMatch = resolveRoute(matcher, route, resolvedMatch, path);
         }
         route.setPattern(Pattern.compile(resolvedMatch));
         return route;
+    }
+
+    private String resolveRoute(Matcher matcher, RegexRoute route, String resolvedMatch, String path) {
+        String rule = matcher.group();
+        String ruleSolved = rule.substring(1, rule.length() - 1);
+        if (ruleSolved.contains(Regex.RouteSplit)) {
+            if (ruleSolved.length() > Regex.RouteSplit.length()) {
+                String name = StringKit.getLeft(ruleSolved, Regex.RouteSplit).trim();
+                String regex = StringKit.getRight(ruleSolved, Regex.RouteSplit).trim();
+                regex = StringKit.isNullOrEmpty(regex) ? Regex.RegexAll : regex;
+                boolean needName = StringKit.isNullOrEmpty(regex);
+                String replacement = needName ? Regex.RoutePathNameRegexMatch : Regex.RoutePathCustomMatch;
+                if (needName) {
+                    route.addName(name);
+                    replacement = String.format(replacement, name, regex);
+                    resolvedMatch = replaceRegex(resolvedMatch, rule, String.format(Regex.RoutePathNameRegexMatch, name, replacement));
+                } else {
+                    replacement = String.format(replacement, regex);
+                    resolvedMatch = replaceRegex(resolvedMatch, rule, replacement);
+                }
+
+
+            } else {
+                LOGGER.warn("can not match rule {} in path {}, ignored !", rule, path);
+            }
+        } else {
+            route.addName(ruleSolved);
+            resolvedMatch = replaceRegex(resolvedMatch, rule, String.format(Regex.RoutePathNameRegexMatch, ruleSolved, Regex.RegexAll));
+
+        }
+        return resolvedMatch;
     }
 
     private String replaceRegex(String source, String target, String replacement) {

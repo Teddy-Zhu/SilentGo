@@ -11,6 +11,8 @@ import com.silentgo.core.route.support.RouteFactory;
 import com.silentgo.core.route.support.RouteParamPaser;
 import com.silentgo.kit.logger.Logger;
 import com.silentgo.kit.logger.LoggerFactory;
+import com.silentgo.servlet.http.Request;
+import com.silentgo.servlet.http.Response;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -57,6 +59,9 @@ public class RouteAction extends ActionChain {
         param.setHandled(true);
     }
 
+    private void InjectCTX(Request request, Response response) {
+        SilentGo.getInstance().getConfig().setCtx(request, response);
+    }
 
     private Object regexRoute(RegexRoute route, ActionParam param, BeanFactory beanFactory, Matcher matcher) throws InvocationTargetException {
         RouteParamPaser.parsePathVariable(param.getRequest(), route, matcher);
@@ -69,6 +74,8 @@ public class RouteAction extends ActionChain {
 
         Object[] args = RouteParamPaser.parseParams(adviser, param.getRequest(), param.getResponse());
         Object bean = beanFactory.getBean(adviser.getClassName()).getBean();
+
+        InjectCTX(param.getRequest(), param.getResponse());
         return adviser.getMethod().invoke(bean, args);
     }
 

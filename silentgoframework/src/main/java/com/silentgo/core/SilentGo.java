@@ -2,6 +2,7 @@ package com.silentgo.core;
 
 import com.silentgo.config.SilentGoConfig;
 import com.silentgo.core.support.AnnotationManager;
+import com.silentgo.servlet.http.Request;
 
 import javax.servlet.ServletContext;
 
@@ -62,5 +63,7 @@ public class SilentGo {
     public AnnotationManager getAnnotationManager() {
         return annotationManager;
     }
+
+
 
 }
