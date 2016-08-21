@@ -83,7 +83,6 @@ public class RouteParamPaser {
                     continue;
                 } else if (TypeConvert.isBaseType(methodParam.getType())) {
                     ITypeConvertor typeConvertor = new ConvertKit().getTypeConvert(String.class, methodParam.getType());
-                    typeConvertor = typeConvertor == null ? new CommonConvertor() : typeConvertor;
                     parameters[i] = typeConvertor.convert(jsonString);
                     continue;
                 }

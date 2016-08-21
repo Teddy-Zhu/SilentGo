@@ -24,8 +24,12 @@ public class ConvertKit {
     }
 
     public ITypeConvertor getTypeConvert(Class<?> source, Class<?> target) {
-        ITypeConvertor typeConvertor = convertMap.get(source).get(target);
-        return typeConvertor == null ? new CommonConvertor() : typeConvertor;
+        return getTypeConvert(source,target,new CommonConvertor());
+    }
+
+    public ITypeConvertor getTypeConvert(Class<?> source, Class<?> target, ITypeConvertor defaultVal) {
+        Map<Class<?>, ITypeConvertor> convertorMap = convertMap.get(source);
+        return convertorMap == null ? defaultVal : convertorMap.getOrDefault(target, defaultVal);
     }
 
     public boolean addConvert(ITypeConvertor convert) {
