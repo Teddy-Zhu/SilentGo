@@ -26,7 +26,7 @@ public class Request extends HttpServletRequestWrapper {
 
     private Map<String, String> pathNamedParameters = new HashMap<>();
 
-    Map<String, Object> hashMap = new HashMap<>();
+    private Map<String, Object> hashMap = new HashMap<>();
 
     public Request(javax.servlet.http.HttpServletRequest request) {
         super(request);
@@ -83,7 +83,11 @@ public class Request extends HttpServletRequestWrapper {
         this.pathNamedParameters = pathNamedParameters;
     }
 
-    public String getPathNamedParameter(String name) {
+    public String getPathParameter(int index) {
+        return pathParameters[index];
+    }
+
+    public String getPathParameter(String name) {
         return pathNamedParameters.get(name);
     }
 
@@ -97,7 +101,7 @@ public class Request extends HttpServletRequestWrapper {
         Map<String, Object> prasedParamMap = new HashMap<>();
 
         paramsMap.forEach((k, v) -> {
-            String[] ks = k.indexOf('.') > 0 ? k.split(".") : new String[]{k};
+            String[] ks = k.indexOf('.') > 0 ? k.split("\\.") : new String[]{k};
             if (ks.length == 0 || StringKit.isNullOrEmpty(ks[0])) return;
 
             if (ks.length == 1) {
@@ -117,7 +121,9 @@ public class Request extends HttpServletRequestWrapper {
     @SuppressWarnings("unchecked")
     private Map<String, Object> getMap(Map<String, Object> source, String key) {
         Object obj = source.get(key);
-        return (Map<String, Object>) (obj == null ? source.put(key, new HashMap<String, Object>()) : obj);
+        if (obj == null) obj = new HashMap<>();
+        source.put(key, obj);
+        return (Map<String, Object>) obj;
     }
 
     public Map<String, Object> getHashMap() {

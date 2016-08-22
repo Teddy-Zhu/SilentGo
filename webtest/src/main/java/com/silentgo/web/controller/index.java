@@ -7,6 +7,7 @@ import com.silentgo.kit.logger.Logger;
 import com.silentgo.kit.logger.LoggerFactory;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
+import com.silentgo.web.model.User;
 
 /**
  * Project : silentgo
@@ -39,12 +40,33 @@ public class index {
     @Route("route/{id}/{a}")
     public String testRegex(@PathVariable("id") String a, Request request) {
         LOGGER.debug(a);
-        LOGGER.debug(request.getPathNamedParameter("id"));
+        LOGGER.debug(request.getPathParameter("id"));
         return "index.html";
     }
 
-    @Route("route/regex/{id:d+}")
+    @Route("match/{:\\d+}/{a}")
+    public String testRegexxx(@PathVariable("a") String a, Request request) {
+        LOGGER.debug(a);
+        LOGGER.debug(request.getPathParameter("id"));
+        LOGGER.debug(request.getPathParameter(0));
+        return "index.html";
+    }
+
+    @Route("user/{username}/{password}")
+    public String getUser(User user, Request request) {
+        LOGGER.debug(user == null ? "" : user.toString());
+        return "index.html";
+    }
+
+
+    @Route("route/regex/{id:\\d+}")
     public void testRegex2(Request request) {
-        LOGGER.debug(request.getPathNamedParameter("id"));
+        LOGGER.debug(request.getPathParameter("id"));
+    }
+
+
+    @Route("/regex/{id:[a-z0-9]+}")
+    public void testRegex2x(Request request, Response response) {
+        LOGGER.debug(request.getPathParameter("id"));
     }
 }

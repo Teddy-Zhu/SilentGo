@@ -100,12 +100,12 @@ public class RouteBuilder extends SilentGoBuilder {
                 String name = StringKit.getLeft(ruleSolved, Regex.RouteSplit).trim();
                 String regex = StringKit.getRight(ruleSolved, Regex.RouteSplit).trim();
                 regex = StringKit.isNullOrEmpty(regex) ? Regex.RegexAll : regex;
-                boolean needName = StringKit.isNullOrEmpty(regex);
+                boolean needName = !StringKit.isNullOrEmpty(name);
                 String replacement = needName ? Regex.RoutePathNameRegexMatch : Regex.RoutePathCustomMatch;
                 if (needName) {
                     route.addName(name);
                     replacement = String.format(replacement, name, regex);
-                    resolvedMatch = replaceRegex(resolvedMatch, rule, String.format(Regex.RoutePathNameRegexMatch, name, replacement));
+                    resolvedMatch = replaceRegex(resolvedMatch, rule, replacement);
                 } else {
                     replacement = String.format(replacement, regex);
                     resolvedMatch = replaceRegex(resolvedMatch, rule, replacement);

@@ -6,15 +6,12 @@ import com.silentgo.core.aop.MethodParam;
 import com.silentgo.core.config.Const;
 import com.silentgo.core.route.ParameterValueResolver;
 import com.silentgo.core.route.annotation.PathVariable;
-import com.silentgo.kit.CollectionKit;
-import com.silentgo.kit.StringKit;
 import com.silentgo.kit.typeconvert.ConvertKit;
 import com.silentgo.kit.typeconvert.ITypeConvertor;
 import com.silentgo.kit.typeconvert.support.TypeConvert;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -40,7 +37,7 @@ public class CommomParamResolver implements ParameterValueResolver<Object> {
         Object object = hash.get(methodParam.getName());
         String jsonString = methodParam.getAnnotations().stream().anyMatch(annotation ->
                 PathVariable.class.equals(annotation.annotationType())) ?
-                request.getPathNamedParameter(methodParam.getName()) :
+                request.getPathParameter(methodParam.getName()) :
                 (object == null ? jsonHash :
                         (object instanceof String ?
                                 object.toString() : JSON.toJSONString(object)));

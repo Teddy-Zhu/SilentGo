@@ -36,6 +36,11 @@ public class RouteFactory implements BaseFactory {
         }
     }
 
+    /**
+     * simple match route
+     * @param url
+     * @return
+     */
     public Route matchRoute(String url) {
         if (hashRoute.containsKey(url)) {
             return new Route(hashRoute.get(url), null);
