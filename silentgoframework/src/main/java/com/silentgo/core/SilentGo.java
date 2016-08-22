@@ -1,8 +1,8 @@
 package com.silentgo.core;
 
-import com.silentgo.config.SilentGoConfig;
+import com.silentgo.core.config.SilentGoConfig;
 import com.silentgo.core.support.AnnotationManager;
-import com.silentgo.servlet.http.Request;
+import com.silentgo.core.support.BaseFactory;
 
 import javax.servlet.ServletContext;
 
@@ -64,6 +64,9 @@ public class SilentGo {
         return annotationManager;
     }
 
+    public <T extends BaseFactory> T getFactory(Class<T> t) {
+        return config.getFactory(t);
+    }
 
 
 }

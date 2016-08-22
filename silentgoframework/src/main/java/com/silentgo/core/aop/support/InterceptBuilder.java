@@ -1,8 +1,8 @@
 package com.silentgo.core.aop.support;
 
-import com.silentgo.build.SilentGoBuilder;
-import com.silentgo.build.annotation.Builder;
-import com.silentgo.config.Const;
+import com.silentgo.core.build.SilentGoBuilder;
+import com.silentgo.core.build.annotation.Builder;
+import com.silentgo.core.config.Const;
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.Interceptor;
 import com.silentgo.core.aop.annotation.Intercept;
@@ -58,12 +58,17 @@ public class InterceptBuilder extends SilentGoBuilder {
                 }
             }
         });
-        BeanFactory beanFactory = (BeanFactory) me.getConfig().getFactory(Const.BeanFactory);
+        BeanFactory beanFactory = SilentGo.getInstance().getFactory(BeanFactory.class);
 
 
         Map<String, BeanDefinition> beanDefinitionMap = (Map<String, BeanDefinition>) beanFactory.getBeans();
         beanDefinitionMap.forEach((k, v) -> {
-            interceptFactory.addClassInterceptor(v.getClassName(), me.getConfig().getInterceptors());
+            Intercept classIntercept = v.getSourceClass().getAnnotation(Intercept.class);
+            if (classIntercept != null && classIntercept.value().length != 0) {
+                for (Class<? extends Interceptor> aClass : classIntercept.value()) {
+                    interceptFactory.addClassInterceptor(v.getSourceClass().getName(), getInterceptor(interceptFactory, aClass));
+                }
+            }
             Method[] methods = v.getSourceClass().getDeclaredMethods();
             for (Method method : methods) {
                 Intercept intercept = method.getAnnotation(Intercept.class);

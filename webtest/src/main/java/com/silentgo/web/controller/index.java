@@ -32,13 +32,14 @@ public class index {
     }
 
     @Route("route/{id}/{a}")
-    public void testRegex(@PathVariable("id") String a, Request request) {
-        System.out.println(a);
-        System.out.println(request.getPathNamedParameter("id"));
+    public String testRegex(@PathVariable("id") String a, Request request) {
+        LOGGER.debug(a);
+        LOGGER.debug(request.getPathNamedParameter("id"));
+        return "index.html";
     }
 
     @Route("route/regex/{id:d+}")
     public void testRegex2(Request request) {
-        System.out.println(request.getPathNamedParameter("id"));
+        LOGGER.debug(request.getPathNamedParameter("id"));
     }
 }

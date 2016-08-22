@@ -1,6 +1,6 @@
 package com.silentgo.kit;
 
-import com.silentgo.config.Const;
+import com.silentgo.core.config.Const;
 import com.silentgo.kit.logger.Logger;
 import com.silentgo.kit.logger.LoggerFactory;
 

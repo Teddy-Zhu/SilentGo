@@ -1,6 +1,6 @@
 package com.silentgo.core.aop.aspect.support;
 
-import com.silentgo.config.Const;
+import com.silentgo.core.config.Const;
 import com.silentgo.core.aop.aspect.AspectMethod;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.kit.CollectionKit;
@@ -41,8 +41,4 @@ public class AspectFactory implements BaseFactory {
         return true;
     }
 
-    @Override
-    public String getName() {
-        return Const.AspectFactory;
-    }
 }

@@ -1,9 +1,12 @@
 package com.silentgo.core.aop.annotationintercept.support;
 
-import com.silentgo.config.Const;
+import com.silentgo.core.aop.annotation.Intercept;
+import com.silentgo.core.config.Const;
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.AOPPoint;
 import com.silentgo.core.aop.Interceptor;
+import com.silentgo.kit.logger.Logger;
+import com.silentgo.kit.logger.LoggerFactory;
 
 /**
  * Project : silentgo
@@ -13,13 +16,23 @@ import com.silentgo.core.aop.Interceptor;
  *         <p>
  *         Created by teddyzhu on 16/7/20.
  */
+@Intercept
 public class AnnotationInterceptor implements Interceptor {
 
+    private static final Logger LOGGER = LoggerFactory.getLog(AnnotationInterceptor.class);
+
+    @Override
+    public int priority() {
+        return 5;
+    }
 
     @SuppressWarnings("unchecked")
     @Override
     public Object resolve(AOPPoint point, boolean[] isResolved) throws Throwable {
-        AnnotationInceptFactory annotationInceptFactory = (AnnotationInceptFactory) SilentGo.getInstance().getConfig().getFactory(Const.AnnotationInceptFactory);
-        return new AnnotationInterceptChain(point, isResolved, annotationInceptFactory.getSortedAnnotationMap(point.getAdviser().getName())).intercept();
+        LOGGER.debug("start Annotaion Intercept");
+        AnnotationInceptFactory annotationInceptFactory = SilentGo.getInstance().getFactory(AnnotationInceptFactory.class);
+        Object ret = new AnnotationInterceptChain(point, isResolved, annotationInceptFactory.getSortedAnnotationMap(point.getAdviser().getName())).intercept();
+        LOGGER.debug("end Annotaion Intercept");
+        return ret;
     }
 }

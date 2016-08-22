@@ -1,5 +1,9 @@
 package com.silentgo.servlet.http;
 
+import com.silentgo.core.config.Const;
+import com.silentgo.kit.CollectionKit;
+import com.silentgo.kit.StringKit;
+
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,16 +26,12 @@ public class Request extends HttpServletRequestWrapper {
 
     private Map<String, String> pathNamedParameters = new HashMap<>();
 
+    Map<String, Object> hashMap = new HashMap<>();
 
     public Request(javax.servlet.http.HttpServletRequest request) {
         super(request);
         this.paramsMap.putAll(request.getParameterMap());
-    }
-
-
-    public Request(javax.servlet.http.HttpServletRequest request, Map<String, Object> extraParams) {
-        this(request);
-        addAllParameters(extraParams);
+        hashMap = getParamHash();
     }
 
     @Override
@@ -89,5 +89,38 @@ public class Request extends HttpServletRequestWrapper {
 
     public void setParsedParamMap(Map<String, Object> parsedParamMap) {
         this.parsedParamMap = parsedParamMap;
+    }
+
+
+    private Map<String, Object> getParamHash() {
+
+        Map<String, Object> prasedParamMap = new HashMap<>();
+
+        paramsMap.forEach((k, v) -> {
+            String[] ks = k.indexOf('.') > 0 ? k.split(".") : new String[]{k};
+            if (ks.length == 0 || StringKit.isNullOrEmpty(ks[0])) return;
+
+            if (ks.length == 1) {
+                CollectionKit.MapAdd(prasedParamMap, ks[0], v[0]);
+            }
+            if (ks.length > 1) {
+                Map<String, Object> map = getMap(prasedParamMap, ks[0]);
+                for (int i = 1, len = ks.length - 1; i < len; i++) {
+                    map = getMap(map, ks[i]);
+                }
+                CollectionKit.MapAdd(map, ks[ks.length - 1], v[0]);
+            }
+        });
+        return prasedParamMap;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> getMap(Map<String, Object> source, String key) {
+        Object obj = source.get(key);
+        return (Map<String, Object>) (obj == null ? source.put(key, new HashMap<String, Object>()) : obj);
+    }
+
+    public Map<String, Object> getHashMap() {
+        return hashMap;
     }
 }

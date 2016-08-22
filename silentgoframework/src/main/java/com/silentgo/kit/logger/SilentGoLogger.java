@@ -190,7 +190,6 @@ public class SilentGoLogger implements Logger {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format(formatter, Level.valueOf(level)));
         sb.append(String.format(formatter, now()));
-        sb.append(String.format(formatter, Thread.currentThread().getName()));
         sb.append(String.format(formatter, this.path));
         sb.append(filterMessage(message, args));
 

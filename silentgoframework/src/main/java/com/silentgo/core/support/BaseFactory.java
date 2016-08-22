@@ -10,6 +10,4 @@ package com.silentgo.core.support;
  */
 public interface BaseFactory  {
 
-    public String getName();
-
 }

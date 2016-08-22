@@ -1,5 +1,7 @@
 package com.silentgo.core.aop.validator.exception;
 
+import com.silentgo.core.exception.AppException;
+
 /**
  * Project : silentgo
  * com.silentgo.core.aop.validator.exception
@@ -8,7 +10,7 @@ package com.silentgo.core.aop.validator.exception;
  * <p>
  * Created by teddyzhu on 16/7/27.
  */
-public class ValidateException extends Exception {
+public class ValidateException extends AppException {
 
 
     public ValidateException(String message) {

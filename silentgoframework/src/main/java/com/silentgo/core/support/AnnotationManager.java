@@ -1,6 +1,6 @@
 package com.silentgo.core.support;
 
-import com.silentgo.config.SilentGoConfig;
+import com.silentgo.core.config.SilentGoConfig;
 import com.silentgo.kit.ClassKit;
 
 import java.lang.annotation.Annotation;

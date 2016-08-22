@@ -1,6 +1,6 @@
 package com.silentgo.core.ioc.annotation;
 
-import com.silentgo.config.Const;
+import com.silentgo.core.config.Const;
 
 import java.lang.annotation.*;
 

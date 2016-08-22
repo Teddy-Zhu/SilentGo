@@ -1,7 +1,6 @@
 package com.silentgo.kit.typeconvert.support;
 
-import com.silentgo.config.Const;
-import com.silentgo.kit.StringKit;
+import com.silentgo.core.config.Const;
 import com.silentgo.kit.typeconvert.ITypeConvertor;
 import com.silentgo.kit.typeconvert.annotation.Convertor;
 

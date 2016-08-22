@@ -1,5 +1,8 @@
 package com.silentgo.core.render;
 
+import com.silentgo.core.action.ActionParam;
+import com.silentgo.core.exception.AppRenderException;
+import com.silentgo.core.route.Route;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
 
@@ -11,7 +14,7 @@ import com.silentgo.servlet.http.Response;
  *         <p>
  *         Created by teddyzhu on 16/7/25.
  */
-public interface SilentGoRender {
+public interface Render {
 
-    public void render(Response response, Request request);
+    public void render(Route route, Response response, Request request, Object retVal) throws AppRenderException;
 }

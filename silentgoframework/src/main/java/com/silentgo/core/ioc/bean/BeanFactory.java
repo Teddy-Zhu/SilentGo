@@ -1,6 +1,6 @@
 package com.silentgo.core.ioc.bean;
 
-import com.silentgo.config.SilentGoConfig;
+import com.silentgo.core.config.SilentGoConfig;
 import com.silentgo.core.support.BaseFactory;
 
 import java.util.List;

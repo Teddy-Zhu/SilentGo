@@ -1,8 +1,8 @@
 package com.silentgo.core.aop.annotationintercept.support;
 
-import com.silentgo.build.SilentGoBuilder;
-import com.silentgo.build.annotation.Builder;
-import com.silentgo.config.Const;
+import com.silentgo.core.build.SilentGoBuilder;
+import com.silentgo.core.build.annotation.Builder;
+import com.silentgo.core.config.Const;
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.MethodAdviser;
 import com.silentgo.core.aop.annotationintercept.IAnnotation;
@@ -36,7 +36,7 @@ public class AnnotationInterceptorBuilder extends SilentGoBuilder {
 
     @Override
     public boolean build(SilentGo me) {
-        MethodAOPFactory methodAOPFactory = (MethodAOPFactory) me.getConfig().getFactory(Const.MethodAOPFactory);
+        MethodAOPFactory methodAOPFactory = me.getFactory(MethodAOPFactory.class);
         AnnotationInceptFactory annotationInceptFactory = new AnnotationInceptFactory();
         me.getConfig().addFactory(annotationInceptFactory);
 

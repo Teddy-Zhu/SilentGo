@@ -1,19 +1,12 @@
 package com.silentgo.core.aop.aspect.support;
 
-import com.silentgo.config.Const;
+import com.silentgo.core.aop.annotation.Intercept;
+import com.silentgo.core.config.Const;
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.AOPPoint;
 import com.silentgo.core.aop.Interceptor;
-import com.silentgo.core.aop.annotation.Around;
-import com.silentgo.core.aop.annotation.Aspect;
-import com.silentgo.core.aop.aspect.AspectMethod;
-import com.silentgo.core.aop.support.InterceptChain;
-import com.silentgo.core.ioc.bean.BeanDefinition;
-import com.silentgo.core.ioc.bean.BeanWrapper;
-import net.sf.cglib.reflect.FastClass;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
+import com.silentgo.kit.logger.Logger;
+import com.silentgo.kit.logger.LoggerFactory;
 
 /**
  * Project : silentgo
@@ -23,11 +16,22 @@ import java.lang.reflect.Method;
  *         <p>
  *         Created by teddyzhu on 16/7/29.
  */
+@Intercept
 public class AspectInterceptor implements Interceptor {
+
+    public static final Logger LOGGER = LoggerFactory.getLog(AspectInterceptor.class);
+
+    @Override
+    public int priority() {
+        return 10;
+    }
 
     @Override
     public Object resolve(AOPPoint point, boolean[] isResolved) throws Throwable {
-        AspectFactory aspectFactory = (AspectFactory) SilentGo.getInstance().getConfig().getFactory(Const.AspectFactory);
-        return new AspectChain(point, isResolved, aspectFactory.getAspectMethod(point.getAdviser().getName()));
+        LOGGER.debug("start Aspect intercept");
+        AspectFactory aspectFactory = SilentGo.getInstance().getFactory(AspectFactory.class);
+        Object ret = new AspectChain(point, isResolved, aspectFactory.getAspectMethod(point.getAdviser().getName())).invoke();
+        LOGGER.debug("end Aspect intercept");
+        return ret;
     }
 }

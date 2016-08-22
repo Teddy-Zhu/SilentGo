@@ -1,11 +1,9 @@
 package com.silentgo.core.aop.support;
 
-import com.silentgo.config.Const;
+import com.silentgo.core.config.Const;
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.AOPPoint;
 import com.silentgo.kit.SilentGoContext;
-import com.silentgo.servlet.http.Request;
-import com.silentgo.servlet.http.Response;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
@@ -32,7 +30,7 @@ public class AOPInterceptor implements MethodInterceptor {
     @Override
     public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
         SilentGoContext ctx = SilentGo.getInstance().getConfig().getCtx().get();
-        MethodAOPFactory methodAOPFactory = (MethodAOPFactory) SilentGo.getInstance().getConfig().getFactory(Const.MethodAOPFactory);
+        MethodAOPFactory methodAOPFactory = SilentGo.getInstance().getFactory(MethodAOPFactory.class);
         boolean[] isResolved = new boolean[]{false};
 
         AOPPoint point = new AOPPoint(o, method, objects, methodProxy,

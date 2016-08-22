@@ -17,9 +17,20 @@ public class SilentGoContext {
 
     Request request;
 
+    String hashString;
+
     public SilentGoContext(Response response, Request request) {
         this.response = response;
         this.request = request;
+    }
+
+
+    public String getHashString() {
+        return hashString;
+    }
+
+    public void setHashString(String hashString) {
+        this.hashString = hashString;
     }
 
     public Response getResponse() {

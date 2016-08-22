@@ -1,6 +1,6 @@
 package com.silentgo.core.aop.annotationintercept.support;
 
-import com.silentgo.config.Const;
+import com.silentgo.core.config.Const;
 import com.silentgo.core.aop.annotationintercept.IAnnotation;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.kit.CollectionKit;
@@ -54,10 +54,5 @@ public class AnnotationInceptFactory implements BaseFactory {
 
     public boolean addSortedIAnnotation(String methodName, List<Map.Entry<Annotation, IAnnotation>> iAnnotationMap) {
         return CollectionKit.MapAdd(sortedIAnnotationMap, methodName, iAnnotationMap);
-    }
-
-    @Override
-    public String getName() {
-        return Const.AnnotationInceptFactory;
     }
 }

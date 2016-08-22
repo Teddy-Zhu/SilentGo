@@ -1,10 +1,14 @@
-package com.silentgo.config;
+package com.silentgo.core.config;
 
-import com.silentgo.build.SilentGoBuilder;
 import com.silentgo.core.action.ActionChain;
 import com.silentgo.core.aop.Interceptor;
 import com.silentgo.core.aop.annotationintercept.support.AnnotationInterceptor;
 import com.silentgo.core.aop.validator.support.ValidatorInterceptor;
+import com.silentgo.core.build.SilentGoBuilder;
+import com.silentgo.core.render.Render;
+import com.silentgo.core.render.support.JspRender;
+import com.silentgo.core.route.RoutePaser;
+import com.silentgo.core.route.support.routeparse.DefaultRouteParser;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.kit.CollectionKit;
 import com.silentgo.kit.PropKit;
@@ -19,7 +23,7 @@ import java.util.Map;
 
 /**
  * Project : silentgo
- * com.silentgo.config
+ * com.silentgo.core.config
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>
@@ -29,7 +33,11 @@ public class SilentGoConfig {
 
     private ActionChain actionChain;
 
-    private Map<String, BaseFactory> factoryMap = new HashMap<>();
+    private RoutePaser routePaser = new DefaultRouteParser();
+
+    private Render render = new JspRender(Const.BaseView);
+
+    private Map<Class<? extends BaseFactory>, BaseFactory> factoryMap = new HashMap<>();
 
     private ThreadLocal<SilentGoContext> ctx = new ThreadLocal<>();
 
@@ -54,6 +62,14 @@ public class SilentGoConfig {
         add(new AnnotationInterceptor());
         add(new ValidatorInterceptor());
     }};
+
+    public RoutePaser getRoutePaser() {
+        return routePaser;
+    }
+
+    public void setRoutePaser(RoutePaser routePaser) {
+        this.routePaser = routePaser;
+    }
 
     public List<SilentGoBuilder> getBuilders() {
         return builders;
@@ -127,9 +143,12 @@ public class SilentGoConfig {
         return interceptors;
     }
 
+    public boolean addFactory(Class<? extends BaseFactory> name, BaseFactory baseFactory) {
+        return CollectionKit.MapAdd(factoryMap, name, baseFactory);
+    }
 
     public boolean addFactory(BaseFactory baseFactory) {
-        return CollectionKit.MapAdd(factoryMap, baseFactory.getName(), baseFactory);
+        return CollectionKit.MapAdd(factoryMap, baseFactory.getClass(), baseFactory);
     }
 
     public boolean addFactory(Class<? extends BaseFactory> factoryClz) {
@@ -141,8 +160,8 @@ public class SilentGoConfig {
         return false;
     }
 
-    public BaseFactory getFactory(String name) {
-        return factoryMap.get(name);
+    public <T extends BaseFactory> T getFactory(Class<T> name) {
+        return (T) factoryMap.get(name);
     }
 
     public List<String> getStaticFolder() {
@@ -160,5 +179,13 @@ public class SilentGoConfig {
 
     public ThreadLocal<SilentGoContext> getCtx() {
         return ctx;
+    }
+
+    public Render getRender() {
+        return render;
+    }
+
+    public void setRender(Render render) {
+        this.render = render;
     }
 }

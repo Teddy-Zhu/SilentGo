@@ -1,10 +1,9 @@
 package com.silentgo.core.aop.validator.support;
 
-import com.silentgo.config.Const;
+import com.silentgo.core.config.Const;
 import com.silentgo.core.aop.validator.IValidator;
 import com.silentgo.core.aop.validator.annotation.RequestString;
 import com.silentgo.core.support.BaseFactory;
-import com.silentgo.kit.ClassKit;
 import com.silentgo.kit.CollectionKit;
 import com.silentgo.kit.logger.Logger;
 import com.silentgo.kit.logger.LoggerFactory;
@@ -51,8 +50,4 @@ public class ValidatorFactory  implements BaseFactory{
         return methodParamValidatorMap.get(methodName);
     }
 
-    @Override
-    public String getName() {
-        return Const.ValidatorFactory;
-    }
 }

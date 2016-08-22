@@ -1,17 +1,19 @@
 package com.silentgo.core.route.support;
 
-import com.silentgo.build.SilentGoBuilder;
-import com.silentgo.build.annotation.Builder;
-import com.silentgo.config.Const;
-import com.silentgo.config.Regex;
+import com.silentgo.core.build.SilentGoBuilder;
+import com.silentgo.core.build.annotation.Builder;
+import com.silentgo.core.config.Const;
+import com.silentgo.core.config.Regex;
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.MethodAdviser;
 import com.silentgo.core.aop.support.MethodAOPFactory;
 import com.silentgo.core.ioc.bean.BeanFactory;
 import com.silentgo.core.ioc.bean.BeanWrapper;
 import com.silentgo.core.route.BasicRoute;
+import com.silentgo.core.route.ParameterDispatcher;
 import com.silentgo.core.route.RegexRoute;
 import com.silentgo.core.route.annotation.Controller;
+import com.silentgo.core.route.annotation.ParamDispatcher;
 import com.silentgo.core.route.annotation.Route;
 import com.silentgo.kit.StringKit;
 import com.silentgo.kit.logger.Logger;
@@ -43,8 +45,8 @@ public class RouteBuilder extends SilentGoBuilder {
     private void buildClass(Class<?> aClass, SilentGo me, RouteFactory routeFactory) {
         Controller controller = aClass.getAnnotation(Controller.class);
         String path = filterPath(controller.value().equals(Const.DEFAULT_NONE) ? aClass.getSimpleName() : controller.value(), true);
-        BeanFactory beanFactory = (BeanFactory) me.getConfig().getFactory(Const.BeanFactory);
-        MethodAOPFactory methodAOPFactory = (MethodAOPFactory) me.getConfig().getFactory(Const.MethodAOPFactory);
+        BeanFactory beanFactory = me.getFactory(BeanFactory.class);
+        MethodAOPFactory methodAOPFactory = me.getFactory(MethodAOPFactory.class);
         BeanWrapper bean = beanFactory.getBean(aClass.getName());
 
         Pattern routePattern = Pattern.compile(Regex.RoutePath);
@@ -134,9 +136,25 @@ public class RouteBuilder extends SilentGoBuilder {
     @Override
     public boolean build(SilentGo me) {
 
+
+        //build route
         RouteFactory routeFactory = new RouteFactory();
         me.getConfig().addFactory(routeFactory);
         me.getAnnotationManager().getClasses(Controller.class).forEach(aClass -> buildClass(aClass, me, routeFactory));
+
+
+        //build parameter dispatcher
+        ParamDispatchFactory dispatchFactory = new ParamDispatchFactory();
+        me.getConfig().addFactory(dispatchFactory);
+        me.getAnnotationManager().getClasses(ParamDispatcher.class).forEach(aClass -> {
+            if (!ParameterDispatcher.class.isAssignableFrom(aClass)) return;
+            try {
+                dispatchFactory.addDispatcher((ParameterDispatcher) aClass.newInstance());
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        });
+        dispatchFactory.resort();
         return true;
     }
 }

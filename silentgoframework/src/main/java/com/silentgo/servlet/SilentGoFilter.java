@@ -1,18 +1,19 @@
 package com.silentgo.servlet;
 
-import com.silentgo.build.SilentGoBuilder;
-import com.silentgo.build.annotation.Builder;
-import com.silentgo.config.Config;
-import com.silentgo.config.Const;
-import com.silentgo.config.SilentGoConfig;
+import com.silentgo.core.build.SilentGoBuilder;
+import com.silentgo.core.build.annotation.Builder;
+import com.silentgo.core.config.Config;
+import com.silentgo.core.config.Const;
+import com.silentgo.core.config.SilentGoConfig;
+import com.silentgo.core.SilentGo;
 import com.silentgo.core.action.ActionParam;
 import com.silentgo.core.support.AnnotationManager;
+import com.silentgo.kit.SilentGoContext;
 import com.silentgo.kit.StringKit;
 import com.silentgo.kit.logger.Logger;
 import com.silentgo.kit.logger.LoggerFactory;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
-import com.sun.org.apache.regexp.internal.RE;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -95,17 +96,20 @@ public class SilentGoFilter implements Filter {
         requestPath = requestPath.length() == 0 ? Const.Slash : requestPath;
 
         ActionParam param = new ActionParam(false, request, response, requestPath);
-
+        SilentGo.getInstance().getConfig().getCtx().set(new SilentGoContext(response, request));
         try {
             globalConfig.getActionChain().doAction(param);
         } catch (Exception e) {
             e.printStackTrace();
             LOGGER.error(e.getMessage());
+        } finally {
+            SilentGo.getInstance().getConfig().getCtx().remove();
         }
 
         if (!param.isHandled())
             filterChain.doFilter(request, response);
     }
+
 
     @Override
     public void destroy() {

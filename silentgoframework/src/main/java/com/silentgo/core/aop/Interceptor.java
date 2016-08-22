@@ -14,7 +14,7 @@ import com.silentgo.core.aop.support.InterceptChain;
 public interface Interceptor {
 
     default int priority() {
-        return Integer.MIN_VALUE;
+        return 1000;
     }
 
     Object resolve(AOPPoint point, boolean[] isResolved) throws Throwable;

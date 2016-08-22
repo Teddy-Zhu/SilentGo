@@ -11,7 +11,11 @@ package com.silentgo.kit;
 public class StringKit {
 
     public static boolean isNullOrEmpty(String str) {
-        return str == null || "".equals(str.trim());
+        return isNull(str) || str.length() == 0 || "".equals(str.trim());
+    }
+
+    public static boolean isNull(String str) {
+        return str == null;
     }
 
     public static String getLeft(String source, String split) {

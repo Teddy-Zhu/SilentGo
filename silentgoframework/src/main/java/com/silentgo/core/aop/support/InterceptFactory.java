@@ -1,14 +1,10 @@
 package com.silentgo.core.aop.support;
 
-import com.silentgo.config.Const;
-import com.silentgo.core.SilentGo;
+import com.silentgo.core.config.Const;
 import com.silentgo.core.aop.Interceptor;
-import com.silentgo.core.aop.annotation.Intercept;
-import com.silentgo.core.ioc.bean.BeanDefinition;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.kit.CollectionKit;
 
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,8 +63,4 @@ public class InterceptFactory implements BaseFactory {
         return true;
     }
 
-    @Override
-    public String getName() {
-        return Const.InterceptFactory;
-    }
 }

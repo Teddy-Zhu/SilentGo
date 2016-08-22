@@ -1,9 +1,8 @@
 package com.silentgo.core.aop.support;
 
-import com.silentgo.config.Const;
+import com.silentgo.core.config.Const;
 import com.silentgo.core.aop.Interceptor;
 import com.silentgo.core.aop.MethodAdviser;
-import com.silentgo.core.aop.annotation.Intercept;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.kit.CollectionKit;
 
@@ -44,8 +43,4 @@ public class MethodAOPFactory implements BaseFactory {
         return methodAdviserMap.get(methodName);
     }
 
-    @Override
-    public String getName() {
-        return Const.MethodAOPFactory;
-    }
 }

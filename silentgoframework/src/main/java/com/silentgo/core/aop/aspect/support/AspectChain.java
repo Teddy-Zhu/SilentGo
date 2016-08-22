@@ -27,7 +27,8 @@ public class AspectChain {
     public AspectChain(AOPPoint point, boolean[] isResolved, List<AspectMethod> aspectMethods) {
         this.point = point;
         this.isResolved = isResolved;
-        this.size = aspectMethods.size();
+        this.aspectMethods = aspectMethods;
+        this.size = aspectMethods == null ? 0 : aspectMethods.size();
         this.index = 0;
     }
 

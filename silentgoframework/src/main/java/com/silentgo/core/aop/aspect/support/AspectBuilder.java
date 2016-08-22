@@ -1,8 +1,8 @@
 package com.silentgo.core.aop.aspect.support;
 
-import com.silentgo.build.SilentGoBuilder;
-import com.silentgo.build.annotation.Builder;
-import com.silentgo.config.Const;
+import com.silentgo.core.build.SilentGoBuilder;
+import com.silentgo.core.build.annotation.Builder;
+import com.silentgo.core.config.Const;
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.annotation.Around;
 import com.silentgo.core.aop.annotation.Aspect;
@@ -10,6 +10,8 @@ import com.silentgo.core.aop.aspect.AspectMethod;
 import com.silentgo.core.aop.support.MethodAOPFactory;
 import com.silentgo.core.ioc.bean.BeanFactory;
 import com.silentgo.core.ioc.bean.BeanWrapper;
+import com.silentgo.kit.logger.Logger;
+import com.silentgo.kit.logger.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -26,6 +28,9 @@ import java.util.List;
 @Builder
 public class AspectBuilder extends SilentGoBuilder {
 
+    public static final Logger LOGGER = LoggerFactory.getLog(AspectBuilder.class);
+
+
     @Override
     public Integer priority() {
         return 35;
@@ -33,7 +38,7 @@ public class AspectBuilder extends SilentGoBuilder {
 
     @Override
     public boolean build(SilentGo me) {
-        BeanFactory beanFactory = (BeanFactory) me.getConfig().getFactory(Const.BeanFactory);
+        BeanFactory beanFactory = me.getFactory(BeanFactory.class);
         AspectFactory aspectFactory = new AspectFactory();
 
         me.getConfig().addFactory(aspectFactory);
@@ -53,10 +58,15 @@ public class AspectBuilder extends SilentGoBuilder {
                 ));
             }
         });
-        MethodAOPFactory methodAOPFactory = (MethodAOPFactory) me.getConfig().getFactory(Const.MethodAOPFactory);
+        MethodAOPFactory methodAOPFactory = me.getFactory(MethodAOPFactory.class);
         List<String> methodNames = new ArrayList<>(methodAOPFactory.getMethodAdviserMap().keySet());
         //build aspect
         aspectFactory.getAspectMethods().forEach(aspectMethod -> {
+            if (aspectMethod.getMethod().getJavaMethod().getParameterCount() != 3) {
+                LOGGER.warn("The Method [{}] ignored .", aspectMethod.getMethod().getJavaMethod().getName());
+                return;
+            }
+
             if (aspectMethod.isRegex()) {
                 methodNames.forEach(name -> {
                     if (name.matches(aspectMethod.getRule()))

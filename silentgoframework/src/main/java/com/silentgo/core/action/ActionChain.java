@@ -1,6 +1,7 @@
 package com.silentgo.core.action;
 
-import com.silentgo.config.Const;
+import com.silentgo.core.base.Priority;
+import com.silentgo.core.config.Const;
 
 /**
  * Project : silentgo
@@ -10,9 +11,9 @@ import com.silentgo.config.Const;
  *         <p>
  *         Created by  on 16/7/18.
  */
-public abstract class ActionChain {
+public abstract class ActionChain implements Priority {
 
-    public int priority() {
+    public Integer priority() {
         return Const.DefaultMax;
     }
 

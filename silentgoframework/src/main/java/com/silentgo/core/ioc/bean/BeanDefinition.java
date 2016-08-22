@@ -1,6 +1,6 @@
 package com.silentgo.core.ioc.bean;
 
-import com.silentgo.config.Const;
+import com.silentgo.core.config.Const;
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.ioc.annotation.Component;
 import com.silentgo.core.ioc.annotation.Inject;
@@ -125,7 +125,7 @@ public class BeanDefinition extends BeanWrapper {
             else
                 proxyTarget = target;
 
-            SilentGoBean beanFactory = (SilentGoBean) SilentGo.getInstance().getConfig().getFactory(Const.BeanFactory);
+            SilentGoBean beanFactory = SilentGo.getInstance().getFactory(SilentGoBean.class);
             fieldBeans.forEach((k, v) -> {
                 v.setValue(target, beanFactory.getBean(v.getBeanName()));
             });

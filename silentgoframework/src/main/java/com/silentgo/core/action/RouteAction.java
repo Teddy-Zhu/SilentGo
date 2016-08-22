@@ -1,20 +1,20 @@
 package com.silentgo.core.action;
 
-import com.silentgo.config.Const;
+import com.silentgo.core.config.Const;
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.action.annotation.Action;
 import com.silentgo.core.aop.MethodAdviser;
+import com.silentgo.core.exception.AppRenderException;
 import com.silentgo.core.ioc.bean.BeanFactory;
 import com.silentgo.core.route.BasicRoute;
 import com.silentgo.core.route.RegexRoute;
+import com.silentgo.core.route.Route;
+import com.silentgo.core.route.support.ParamDispatchFactory;
 import com.silentgo.core.route.support.RouteFactory;
-import com.silentgo.core.route.support.RouteParamPaser;
+import com.silentgo.core.route.support.paramresolve.ParameterResolveFactory;
 import com.silentgo.kit.logger.Logger;
 import com.silentgo.kit.logger.LoggerFactory;
-import com.silentgo.servlet.http.Request;
-import com.silentgo.servlet.http.Response;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.regex.Matcher;
 
@@ -32,51 +32,51 @@ public class RouteAction extends ActionChain {
     public static final Logger LOGGER = LoggerFactory.getLog(RouteAction.class);
 
     @Override
-    public int priority() {
+    public Integer priority() {
         return Integer.MAX_VALUE;
     }
 
     @Override
     public void doAction(ActionParam param) {
+        SilentGo me = SilentGo.getInstance();
+        RouteFactory routeFactory = me.getFactory(RouteFactory.class);
 
-        RouteFactory routeFactory = (RouteFactory) SilentGo.getInstance().getConfig().getFactory(Const.RouteFactory);
-
-        BeanFactory beanFactory = (BeanFactory) SilentGo.getInstance().getConfig().getFactory(Const.BeanFactory);
-        Object[] ret = routeFactory.matchRoute(param.getRequestURL());
+        Route ret = me.getConfig().getRoutePaser().praseRoute(routeFactory, param);
 
         if (ret == null) {
             LOGGER.debug("can not match url {}", param.getRequestURL());
         } else {
-            BasicRoute basicRoute = (BasicRoute) ret[0];
+
+            BeanFactory beanFactory = me.getFactory(BeanFactory.class);
+
+            ParamDispatchFactory paramDispatchFactory = me.getFactory(ParamDispatchFactory.class);
+
+            ParameterResolveFactory parameterResolveFactory = me.getFactory(ParameterResolveFactory.class);
+
+            MethodAdviser adviser = ret.getRoute().getAdviser();
+            Object[] args = new Object[adviser.getParams().length];
+            Object bean = beanFactory.getBean(adviser.getClassName()).getBean();
+
+            // parameter dispatch
+            paramDispatchFactory.getDispatchers().forEach(parameterDispatcher -> parameterDispatcher.dispatch(parameterResolveFactory, param, ret, args));
+
             Object returnVal = null;
             try {
-                returnVal = basicRoute instanceof RegexRoute ?
-                        regexRoute((RegexRoute) basicRoute, param, beanFactory, (Matcher) ret[1]) : baseRoute(basicRoute, param, beanFactory);
+                //controller method with interceptors
+                returnVal = adviser.getMethod().invoke(bean, args);
             } catch (InvocationTargetException e) {
                 e.printStackTrace();
             }
+
+            //render
+            try {
+                me.getConfig().getRender().render(ret, param.getResponse(), param.getRequest(), returnVal);
+            } catch (AppRenderException e) {
+                LOGGER.error("Render [{}] error : {}", me.getConfig().getRender().getClass(), e.getMessage());
+            }
+
         }
         param.setHandled(true);
-    }
-
-    private void InjectCTX(Request request, Response response) {
-        SilentGo.getInstance().getConfig().setCtx(request, response);
-    }
-
-    private Object regexRoute(RegexRoute route, ActionParam param, BeanFactory beanFactory, Matcher matcher) throws InvocationTargetException {
-        RouteParamPaser.parsePathVariable(param.getRequest(), route, matcher);
-        return baseRoute(route, param, beanFactory);
-    }
-
-    private Object baseRoute(BasicRoute route, ActionParam param, BeanFactory beanFactory) throws InvocationTargetException {
-
-        MethodAdviser adviser = route.getAdviser();
-
-        Object[] args = RouteParamPaser.parseParams(adviser, param.getRequest(), param.getResponse());
-        Object bean = beanFactory.getBean(adviser.getClassName()).getBean();
-
-        InjectCTX(param.getRequest(), param.getResponse());
-        return adviser.getMethod().invoke(bean, args);
     }
 
 }

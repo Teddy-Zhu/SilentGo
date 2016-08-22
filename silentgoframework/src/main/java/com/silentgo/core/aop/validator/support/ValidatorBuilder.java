@@ -1,8 +1,8 @@
 package com.silentgo.core.aop.validator.support;
 
-import com.silentgo.build.SilentGoBuilder;
-import com.silentgo.build.annotation.Builder;
-import com.silentgo.config.Const;
+import com.silentgo.core.build.SilentGoBuilder;
+import com.silentgo.core.build.annotation.Builder;
+import com.silentgo.core.config.Const;
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.MethodAdviser;
 import com.silentgo.core.aop.MethodParam;
@@ -58,7 +58,7 @@ public class ValidatorBuilder extends SilentGoBuilder {
                 }
             }
         });
-        MethodAOPFactory methodAOPFactory = (MethodAOPFactory) me.getConfig().getFactory(Const.MethodAOPFactory);
+        MethodAOPFactory methodAOPFactory = me.getFactory(MethodAOPFactory.class);
         methodAOPFactory.getMethodAdviserMap().forEach((k, v) ->
                 validatorFactory.addMethodParamValidator(v.getName(), buildIValidator(v, validatorFactory)));
 

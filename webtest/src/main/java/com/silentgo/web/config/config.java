@@ -1,6 +1,7 @@
 package com.silentgo.web.config;
 
-import com.silentgo.config.Config;
+import com.silentgo.core.config.Config;
+import com.silentgo.core.config.SilentGoConfig;
 
 /**
  * Project : silentgo
@@ -11,4 +12,9 @@ import com.silentgo.config.Config;
  * Created by teddyzhu on 16/8/19.
  */
 public class config implements Config {
+
+    @Override
+    public void init(SilentGoConfig config) {
+        config.addStatic("/favicon.ico");
+    }
 }

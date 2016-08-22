@@ -15,7 +15,7 @@ import com.silentgo.core.action.annotation.Action;
 public class StaticFileAction extends ActionChain {
 
     @Override
-    public int priority() {
+    public Integer priority() {
         return Integer.MIN_VALUE + 1;
     }
 

@@ -1,9 +1,10 @@
 package com.silentgo.core.route.support;
 
-import com.silentgo.config.Const;
-import com.silentgo.config.Regex;
+import com.silentgo.core.config.Const;
+import com.silentgo.core.config.Regex;
 import com.silentgo.core.route.BasicRoute;
 import com.silentgo.core.route.RegexRoute;
+import com.silentgo.core.route.Route;
 import com.silentgo.core.support.BaseFactory;
 
 import java.util.ArrayList;
@@ -35,26 +36,18 @@ public class RouteFactory implements BaseFactory {
         }
     }
 
-    public Object[] matchRoute(String url) {
-        Object[] ret = new Object[2];
+    public Route matchRoute(String url) {
         if (hashRoute.containsKey(url)) {
-            ret[0] = hashRoute.get(url);
-            return ret;
+            return new Route(hashRoute.get(url), null);
         }
 
         for (RegexRoute route : regexRoute) {
             Matcher matcher = route.getPattern().matcher(url);
             if (matcher.matches()) {
-                ret[0] = route;
-                ret[1] = matcher;
-                return ret;
+                return new Route(route, matcher);
             }
         }
         return null;
     }
 
-    @Override
-    public String getName() {
-        return Const.RouteFactory;
-    }
 }

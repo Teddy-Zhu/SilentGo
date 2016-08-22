@@ -1,7 +1,7 @@
 package com.silentgo.core.ioc.bean;
 
-import com.silentgo.config.Const;
-import com.silentgo.config.SilentGoConfig;
+import com.silentgo.core.config.Const;
+import com.silentgo.core.config.SilentGoConfig;
 import com.silentgo.kit.CollectionKit;
 import com.silentgo.kit.logger.Logger;
 import com.silentgo.kit.logger.LoggerFactory;
@@ -106,10 +106,5 @@ public class SilentGoBean extends BeanFactory<BeanDefinition> {
             }
         });
         beanDefinition.setInjectComplete(true);
-    }
-
-    @Override
-    public String getName() {
-        return Const.BeanFactory;
     }
 }

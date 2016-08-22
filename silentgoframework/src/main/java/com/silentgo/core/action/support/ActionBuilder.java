@@ -1,7 +1,7 @@
 package com.silentgo.core.action.support;
 
-import com.silentgo.build.SilentGoBuilder;
-import com.silentgo.build.annotation.Builder;
+import com.silentgo.core.build.SilentGoBuilder;
+import com.silentgo.core.build.annotation.Builder;
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.action.ActionChain;
 import com.silentgo.core.action.RouteAction;

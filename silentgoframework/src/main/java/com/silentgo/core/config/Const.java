@@ -1,6 +1,5 @@
-package com.silentgo.config;
+package com.silentgo.core.config;
 
-import com.silentgo.core.aop.annotation.Around;
 import com.silentgo.core.aop.annotation.Intercept;
 import com.silentgo.core.aop.annotationintercept.annotation.CustomInterceptor;
 import com.silentgo.core.ioc.annotation.Component;
@@ -11,7 +10,7 @@ import java.util.ArrayList;
 
 /**
  * Project : silentgo
- * com.silentgo.config
+ * com.silentgo.core.config
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>
@@ -47,21 +46,13 @@ public final class Const {
         add(Intercept.class);
     }};
 
-    public static final String RouteFactory = "Route";
-
-    public static final String RenderFactory = "Render";
-
-    public static final String BeanFactory = "Bean";
-    public static final String ValidatorFactory = "Validator";
-
-    public static final String MethodAOPFactory = "MethodAOP";
-    public static final String InterceptFactory = "Intercept";
-    public static final String AspectFactory = "Aspect";
-    public static final String AnnotationInceptFactory = "AnnotationIncept";
 
     public static final String Version = "version";
 
     public static final String configName = "application.properties";
 
     public static final String ApplicationName = "silentgoframework";
+
+    public static final String BaseView = "/WEB-INF/";
+
 }

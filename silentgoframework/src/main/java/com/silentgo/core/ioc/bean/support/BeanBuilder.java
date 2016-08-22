@@ -1,13 +1,14 @@
 package com.silentgo.core.ioc.bean.support;
 
-import com.silentgo.build.SilentGoBuilder;
-import com.silentgo.build.annotation.Builder;
-import com.silentgo.config.Const;
+import com.silentgo.core.build.SilentGoBuilder;
+import com.silentgo.core.build.annotation.Builder;
+import com.silentgo.core.config.Const;
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.annotation.Aspect;
 import com.silentgo.core.ioc.annotation.Component;
 import com.silentgo.core.ioc.annotation.Service;
 import com.silentgo.core.ioc.bean.BeanDefinition;
+import com.silentgo.core.ioc.bean.BeanFactory;
 import com.silentgo.core.ioc.bean.SilentGoBean;
 import com.silentgo.core.route.annotation.Controller;
 import com.silentgo.core.route.annotation.Qualifier;
@@ -62,7 +63,7 @@ public class BeanBuilder extends SilentGoBuilder {
         });
 
         SilentGoBean beanFactory = new SilentGoBean();
-        me.getConfig().addFactory(beanFactory);
+        me.getConfig().addFactory(BeanFactory.class, beanFactory);
         beanFactory.build(beanDefinitions, me.getConfig());
 
         return true;

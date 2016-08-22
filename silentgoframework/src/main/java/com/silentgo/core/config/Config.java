@@ -1,8 +1,8 @@
-package com.silentgo.config;
+package com.silentgo.core.config;
 
 /**
  * Project : silentgo
- * com.silentgo.config
+ * com.silentgo.core.config
  *
  * @author    <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  * <p>
