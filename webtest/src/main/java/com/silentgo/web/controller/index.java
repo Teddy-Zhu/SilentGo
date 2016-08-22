@@ -22,6 +22,11 @@ public class index {
     private Logger LOGGER = LoggerFactory.getLog(index.class);
 
     @Route
+    public void index2(Response response, Request request, int size) {
+        System.out.println(size);
+    }
+
+    @Route
     public void index(Response response, Request request, Integer size) {
         System.out.println(size);
     }

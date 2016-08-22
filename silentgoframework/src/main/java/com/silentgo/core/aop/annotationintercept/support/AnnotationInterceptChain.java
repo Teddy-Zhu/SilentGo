@@ -24,15 +24,12 @@ public class AnnotationInterceptChain {
 
     private AOPPoint point;
 
-    private boolean[] isResolved;
-
     private List<Map.Entry<Annotation, IAnnotation>> interceptors;
 
     private int size = 0;
 
-    public AnnotationInterceptChain(AOPPoint point, boolean[] isResolved, List<Map.Entry<Annotation, IAnnotation>> interceptors) {
+    public AnnotationInterceptChain(AOPPoint point, List<Map.Entry<Annotation, IAnnotation>> interceptors) {
         this.point = point;
-        this.isResolved = isResolved;
         this.interceptors = interceptors;
         this.size = interceptors.size();
         this.index = 0;
@@ -44,11 +41,8 @@ public class AnnotationInterceptChain {
             Map.Entry<Annotation, IAnnotation> entry = interceptors.get(index++);
 
             //noinspection unchecked
-            returnValue = entry.getValue().intercept(this, point.getResponse(), point.getRequest(), isResolved, entry.getKey());
+            returnValue = entry.getValue().intercept(this, point.getResponse(), point.getRequest(), entry.getKey());
 
-            if (isResolved[0]) {
-                return returnValue;
-            }
         } else if (index++ == size) {
             return point.doChain();
         }

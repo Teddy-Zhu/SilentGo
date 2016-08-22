@@ -62,7 +62,7 @@ public class AspectBuilder extends SilentGoBuilder {
         List<String> methodNames = new ArrayList<>(methodAOPFactory.getMethodAdviserMap().keySet());
         //build aspect
         aspectFactory.getAspectMethods().forEach(aspectMethod -> {
-            if (aspectMethod.getMethod().getJavaMethod().getParameterCount() != 3) {
+            if (aspectMethod.getMethod().getJavaMethod().getParameterCount() != 1) {
                 LOGGER.warn("The Method [{}] ignored .", aspectMethod.getMethod().getJavaMethod().getName());
                 return;
             }

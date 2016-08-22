@@ -18,15 +18,12 @@ public class AspectChain {
 
     private AOPPoint point;
 
-    private boolean[] isResolved;
-
     private List<AspectMethod> aspectMethods;
 
     private int size = 0;
 
-    public AspectChain(AOPPoint point, boolean[] isResolved, List<AspectMethod> aspectMethods) {
+    public AspectChain(AOPPoint point, List<AspectMethod> aspectMethods) {
         this.point = point;
-        this.isResolved = isResolved;
         this.aspectMethods = aspectMethods;
         this.size = aspectMethods == null ? 0 : aspectMethods.size();
         this.index = 0;
@@ -37,10 +34,7 @@ public class AspectChain {
         if (index < size) {
             AspectMethod method = aspectMethods.get(index++);
             //noinspection unchecked
-            returnValue = method.invoke(this, point, isResolved);
-            if (isResolved[0]) {
-                return returnValue;
-            }
+            returnValue = method.invoke(this, point);
         } else if (index++ == size) {
             return point.doChain();
         }
@@ -49,4 +43,7 @@ public class AspectChain {
 
     }
 
+    public AOPPoint getPoint() {
+        return point;
+    }
 }

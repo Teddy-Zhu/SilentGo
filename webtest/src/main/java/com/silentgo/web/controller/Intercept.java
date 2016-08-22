@@ -23,14 +23,14 @@ public class Intercept {
 
 
     @Around("com.silentgo.web.controller.index.testRegex")
-    public void intercept(AspectChain aspectChain, AOPPoint point, boolean[] isHandled) throws Throwable {
+    public void intercept(AspectChain aspectChain) throws Throwable {
         LOGGER.debug("testRegex all start");
         aspectChain.invoke();
         LOGGER.debug("testRegex all end");
     }
 
     @Around(value = "com.silentgo.web.controller.index.*", regex = true)
-    public void intercept2(AspectChain aspectChain, AOPPoint point, boolean[] isHandled) throws Throwable {
+    public void intercept2(AspectChain aspectChain) throws Throwable {
         LOGGER.debug("testRegex regex start");
         aspectChain.invoke();
         LOGGER.debug("testRegex regex end");

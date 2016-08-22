@@ -19,15 +19,12 @@ public class InterceptChain {
 
     private AOPPoint point;
 
-    private boolean[] isResolved;
-
     private List<Interceptor> interceptors;
 
     private int size = 0;
 
-    public InterceptChain(AOPPoint point, List<Interceptor> interceptors, boolean[] isResolved) {
+    public InterceptChain(AOPPoint point, List<Interceptor> interceptors) {
         this.point = point;
-        this.isResolved = isResolved;
         this.interceptors = interceptors == null ? new ArrayList<>() : interceptors;
         this.index = 0;
         this.size = this.interceptors.size();
@@ -36,11 +33,8 @@ public class InterceptChain {
     public Object resolve() throws Throwable {
         Object returnValue = null;
         if (index < size) {
-            returnValue = interceptors.get(index++).resolve(point, isResolved);
+            returnValue = interceptors.get(index++).resolve(point);
 
-            if (isResolved[0]) {
-                return returnValue;
-            }
         } else if (index++ == size) {
             return point.resolve();
         }

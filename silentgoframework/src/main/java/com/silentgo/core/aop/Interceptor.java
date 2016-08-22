@@ -17,5 +17,5 @@ public interface Interceptor {
         return 1000;
     }
 
-    Object resolve(AOPPoint point, boolean[] isResolved) throws Throwable;
+    Object resolve(AOPPoint point) throws Throwable;
 }

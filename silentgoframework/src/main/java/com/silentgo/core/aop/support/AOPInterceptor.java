@@ -31,14 +31,11 @@ public class AOPInterceptor implements MethodInterceptor {
     public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
         SilentGoContext ctx = SilentGo.getInstance().getConfig().getCtx().get();
         MethodAOPFactory methodAOPFactory = SilentGo.getInstance().getFactory(MethodAOPFactory.class);
-        boolean[] isResolved = new boolean[]{false};
-
         AOPPoint point = new AOPPoint(o, method, objects, methodProxy,
                 methodAOPFactory.getMethodAdviser(classPrefix + method.getName()), ctx.getResponse(), ctx.getRequest());
-
-        InterceptChain chain = new InterceptChain(point, methodAOPFactory.getBuildedMethodInterceptors(point.getAdviser().getName()), isResolved);
+        InterceptChain chain = new InterceptChain(point, methodAOPFactory.getBuildedMethodInterceptors(point.getAdviser().getName()));
         point.setChain(chain);
         return point.doChain();
-    }
+}
 
 }
