@@ -10,8 +10,21 @@ package com.silentgo.core.exception;
  */
 public class AppException extends Exception {
 
+    public int code;
+
+    public AppException(String message, int code) {
+        super(message);
+    }
+
     public AppException(String message) {
         super(message);
     }
 
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
 }

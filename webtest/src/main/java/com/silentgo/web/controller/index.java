@@ -69,4 +69,11 @@ public class index {
     public void testRegex2x(Request request, Response response) {
         LOGGER.debug(request.getPathParameter("id"));
     }
+
+
+    @Route("/exception/{id:[a-z0-9]+}")
+    public void exceptiontest(Request request, Response response) {
+        String a = null;
+        LOGGER.debug(a.toString());
+    }
 }

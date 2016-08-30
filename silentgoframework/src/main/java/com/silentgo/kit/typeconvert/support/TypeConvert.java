@@ -46,5 +46,4 @@ public class TypeConvert {
     public static boolean isBaseType(Class<?> clz) {
         return type.contains(clz) || primitiveType.contains(clz);
     }
-
 }

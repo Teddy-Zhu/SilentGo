@@ -1,5 +1,7 @@
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +17,7 @@ import java.util.Map;
  */
 public class JsonTest {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IllegalAccessException, InstantiationException {
         Map<String, Object> map = new HashMap<>();
         map.put("name", "xxx");
         map.put("size", "22");
@@ -32,9 +34,12 @@ public class JsonTest {
         System.out.println(ca.getClass().isArray());
 
 
-        String test = "1";
+        String a = "";
+        System.out.println(aa.getClass().getComponentType().equals(a.getClass()));
 
-        System.out.println(JSON.parseObject(test, Integer.class));
-
+        PoJo[] pa = new PoJo[2];
+        String js = "{\"user\":[{\"name\":\"asda\"},{\"name\":\"xxxx\"}]}";
+        JSONObject poJos = JSON.parseObject(js);
+        PoJo[] poJos1 = poJos.getObject("user", pa.getClass());
     }
 }

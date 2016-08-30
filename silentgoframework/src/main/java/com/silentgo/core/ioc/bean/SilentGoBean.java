@@ -41,7 +41,7 @@ public class SilentGoBean extends BeanFactory<BeanDefinition> {
                 LOGGER.debug("Bean [{}] has been registered.", beanDefinition.getBeanName());
             }
         });
-        beans.forEach(beanDefinition -> depend(beanDefinition));
+        beans.forEach(this::depend);
     }
 
     public boolean contain(String name) {

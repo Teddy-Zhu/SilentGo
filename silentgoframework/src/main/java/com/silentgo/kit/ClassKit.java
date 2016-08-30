@@ -247,4 +247,5 @@ public class ClassKit {
     public static Class<?> getGenericClass(Class<?> clz, int index) {
         return (Class<?>) getGenericClass(clz)[index];
     }
+
 }

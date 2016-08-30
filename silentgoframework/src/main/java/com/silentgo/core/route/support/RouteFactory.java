@@ -21,7 +21,7 @@ import java.util.regex.Matcher;
  *         <p>
  *         Created by  on 16/7/18.
  */
-public class RouteFactory implements BaseFactory {
+public class RouteFactory extends BaseFactory {
 
     private Map<String, BasicRoute> hashRoute = new HashMap<>();
 

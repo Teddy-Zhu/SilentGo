@@ -18,7 +18,7 @@ import java.util.Map;
  *         <p>
  *         Created by teddyzhu on 16/7/27.
  */
-public class AnnotationInceptFactory implements BaseFactory {
+public class AnnotationInceptFactory extends BaseFactory {
 
 
     /**

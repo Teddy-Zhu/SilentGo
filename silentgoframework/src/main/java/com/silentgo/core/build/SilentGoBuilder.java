@@ -2,6 +2,7 @@ package com.silentgo.core.build;
 
 import com.silentgo.core.base.Priority;
 import com.silentgo.core.SilentGo;
+import com.silentgo.core.exception.AppBuildException;
 
 /**
  * Project : silentgo
@@ -17,6 +18,6 @@ public abstract class SilentGoBuilder implements Priority {
         return 100;
     }
 
-    public abstract boolean build(SilentGo me);
+    public abstract boolean build(SilentGo me) throws AppBuildException;
 
 }

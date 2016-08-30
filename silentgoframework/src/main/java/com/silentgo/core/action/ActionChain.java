@@ -19,5 +19,5 @@ public abstract class ActionChain implements Priority {
 
     public ActionChain nextAction;
 
-    public abstract void doAction(ActionParam param);
+    public abstract void doAction(ActionParam param) throws Throwable;
 }

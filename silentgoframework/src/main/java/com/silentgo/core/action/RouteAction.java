@@ -1,22 +1,35 @@
 package com.silentgo.core.action;
 
-import com.silentgo.core.config.Const;
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.action.annotation.Action;
 import com.silentgo.core.aop.MethodAdviser;
+import com.silentgo.core.exception.AppException;
+import com.silentgo.core.exception.AppParameterResolverException;
 import com.silentgo.core.exception.AppRenderException;
+import com.silentgo.core.exception.support.ExceptionFactory;
+import com.silentgo.core.exception.support.ExceptionKit;
 import com.silentgo.core.ioc.bean.BeanFactory;
-import com.silentgo.core.route.BasicRoute;
-import com.silentgo.core.route.RegexRoute;
+import com.silentgo.core.render.RenderModel;
+import com.silentgo.core.render.renderresolver.RenderResolver;
+import com.silentgo.core.render.renderresolver.RenderResolverFactory;
+import com.silentgo.core.render.support.ErrorRener;
+import com.silentgo.core.render.support.RenderFactory;
+import com.silentgo.core.route.ParameterDispatcher;
 import com.silentgo.core.route.Route;
-import com.silentgo.core.route.support.ParamDispatchFactory;
+import com.silentgo.core.route.support.annotationResolver.ParamAnFactory;
+import com.silentgo.core.route.support.annotationResolver.ParamAnnotationResolver;
+import com.silentgo.core.route.support.paramdispatcher.ParamDispatchFactory;
 import com.silentgo.core.route.support.RouteFactory;
-import com.silentgo.core.route.support.paramresolve.ParameterResolveFactory;
+import com.silentgo.core.route.support.paramvalueresolve.ParameterResolveFactory;
 import com.silentgo.kit.logger.Logger;
 import com.silentgo.kit.logger.LoggerFactory;
+import com.silentgo.servlet.http.HttpStatus;
+import com.silentgo.servlet.http.Request;
+import com.silentgo.servlet.http.Response;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
-import java.util.regex.Matcher;
+import java.util.List;
 
 /**
  * Project : silentgo
@@ -37,14 +50,22 @@ public class RouteAction extends ActionChain {
     }
 
     @Override
-    public void doAction(ActionParam param) {
+    public void doAction(ActionParam param) throws Exception {
+
+        Response response = param.getResponse();
+
+        Request request = param.getRequest();
         SilentGo me = SilentGo.getInstance();
+
+        boolean isDev = me.isDevMode();
+
         RouteFactory routeFactory = me.getFactory(RouteFactory.class);
 
         Route ret = me.getConfig().getRoutePaser().praseRoute(routeFactory, param);
-
+        param.setHandled(true);
         if (ret == null) {
             LOGGER.debug("can not match url {}", param.getRequestURL());
+            new ErrorRener().render(request, response, HttpStatus.Code.NOT_FOUND, null, isDev);
         } else {
 
             BeanFactory beanFactory = me.getFactory(BeanFactory.class);
@@ -53,30 +74,83 @@ public class RouteAction extends ActionChain {
 
             ParameterResolveFactory parameterResolveFactory = me.getFactory(ParameterResolveFactory.class);
 
+            ParamAnFactory paramAnFactory = me.getFactory(ParamAnFactory.class);
+            RenderResolverFactory renderResolverFactory = me.getFactory(RenderResolverFactory.class);
+            RenderFactory renderFactory = me.getFactory(RenderFactory.class);
+
             MethodAdviser adviser = ret.getRoute().getAdviser();
             Object[] args = new Object[adviser.getParams().length];
             Object bean = beanFactory.getBean(adviser.getClassName()).getBean();
 
-            // parameter dispatch
-            paramDispatchFactory.getDispatchers().forEach(parameterDispatcher -> parameterDispatcher.dispatch(parameterResolveFactory, param, ret, args));
-
-            Object returnVal = null;
             try {
+                for (Annotation annotation : adviser.getAnnotations()) {
+                    ParamAnnotationResolver resolver = paramAnFactory.getResolver(annotation.annotationType());
+                    if (resolver != null) {
+                        if (!resolver.validate(adviser, response, request, annotation)) {
+                            new ErrorRener().render(request, response, HttpStatus.Code.METHOD_NOT_ALLOWED, null, isDev);
+                            return;
+                        }
+                    }
+                }
+
+                // parameter dispatch
+                for (ParameterDispatcher parameterDispatcher : paramDispatchFactory.getDispatchers()) {
+                    parameterDispatcher.dispatch(parameterResolveFactory, param, ret, args);
+                }
+
+                Object returnVal = null;
+
                 //controller method with interceptors
                 returnVal = adviser.getMethod().invoke(bean, args);
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
+
+
+                //render
+                render(renderFactory, renderResolverFactory, adviser, response, request, returnVal);
+
+            } catch (AppException e) {
+                new ErrorRener().render(request, response, e, isDev);
+            } catch (Exception ex) {
+                Exception e = null;
+                if (ex instanceof InvocationTargetException) {
+                    e = (Exception) ((InvocationTargetException) ex).getTargetException();
+                }
+                ExceptionFactory exceptionFactory = me.getFactory(ExceptionFactory.class);
+
+                List<MethodAdviser> advisers = exceptionFactory.getEexceptionHandler(adviser.getName(),
+                        e.getClass());
+
+
+                if (advisers == null || advisers.size() == 0) {
+                    throw e;
+                } else {
+                    for (MethodAdviser exceptionMethodAdviser : advisers) {
+                        Object expRet = exceptionMethodAdviser.getMethod().invoke(
+                                beanFactory.getBean(exceptionMethodAdviser.getClassName()).getBean(),
+                                ExceptionKit.getArgs(exceptionMethodAdviser, e, response, request));
+                        if (render(renderFactory, renderResolverFactory, exceptionMethodAdviser, response, request, expRet)) {
+                            //allow only one render enables
+                            break;
+                        }
+                    }
+                }
+
             }
 
-            //render
-            try {
-                me.getConfig().getRender().render(ret, param.getResponse(), param.getRequest(), returnVal);
-            } catch (AppRenderException e) {
-                LOGGER.error("Render [{}] error : {}", me.getConfig().getRender().getClass(), e.getMessage());
-            }
 
         }
-        param.setHandled(true);
     }
 
+    private boolean render(RenderFactory renderFactory, RenderResolverFactory renderResolverFactory, MethodAdviser adviser, Response response, Request request, Object returnVal) throws AppRenderException {
+        RenderResolver renderResolver = renderResolverFactory.getRenderResolver(adviser.getName());
+
+        if (renderResolver != null) {
+            RenderModel renderModel = renderResolver.getRenderModel(renderFactory, adviser, response, request, returnVal);
+
+            if (renderModel != null) {
+                renderModel.render();
+                return true;
+            }
+        }
+        return false;
+    }
 }

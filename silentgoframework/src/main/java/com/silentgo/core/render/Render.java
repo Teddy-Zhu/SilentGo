@@ -16,5 +16,5 @@ import com.silentgo.servlet.http.Response;
  */
 public interface Render {
 
-    public void render(Route route, Response response, Request request, Object retVal) throws AppRenderException;
+    public void render(Response response, Request request, Object retVal) throws AppRenderException;
 }

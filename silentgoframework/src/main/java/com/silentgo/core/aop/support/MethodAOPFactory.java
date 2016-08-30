@@ -18,7 +18,7 @@ import java.util.Map;
  *         <p>
  *         Created by teddyzhu on 16/8/16.
  */
-public class MethodAOPFactory implements BaseFactory {
+public class MethodAOPFactory extends BaseFactory {
     private Map<String, MethodAdviser> methodAdviserMap = new HashMap<>();
 
     private Map<String, List<Interceptor>> buildedMethodInterceptors = new HashMap<>();

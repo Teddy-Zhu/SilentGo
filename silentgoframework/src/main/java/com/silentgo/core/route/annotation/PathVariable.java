@@ -8,9 +8,9 @@ import java.lang.annotation.*;
  * Project : silentgo
  * com.silentgo.core.route.annotation
  *
- * @author    <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
- * <p>
- * Created by teddyzhu on 16/8/18.
+ * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
+ *         <p>
+ *         Created by teddyzhu on 16/8/18.
  */
 @Documented
 @Inherited
@@ -18,4 +18,6 @@ import java.lang.annotation.*;
 @Target({ElementType.PARAMETER})
 public @interface PathVariable {
     String value() default Const.DEFAULT_NONE;
+
+    int index() default -1;
 }

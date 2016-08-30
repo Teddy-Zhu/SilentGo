@@ -26,6 +26,8 @@ public class MethodAdviser {
 
     private MethodParam[] params;
 
+    private List<Class<? extends Annotation>> anTypes;
+
     private List<Annotation> annotations = new ArrayList<>();
 
     public String getName() {
@@ -42,6 +44,8 @@ public class MethodAdviser {
         this.method = method;
         this.params = params;
         this.annotations = annotations;
+        anTypes = new ArrayList<>();
+        annotations.forEach(annotation -> anTypes.add(annotation.annotationType()));
     }
 
     public String getClassName() {
@@ -50,6 +54,10 @@ public class MethodAdviser {
 
     public List<Annotation> getAnnotations() {
         return annotations;
+    }
+
+    public boolean existAnnotation(Class<? extends Annotation> clz) {
+        return anTypes.contains(clz);
     }
 
     @SuppressWarnings("unchecked")

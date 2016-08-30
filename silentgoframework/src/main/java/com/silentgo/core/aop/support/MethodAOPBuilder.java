@@ -109,10 +109,7 @@ public class MethodAOPBuilder extends SilentGoBuilder {
             String tmpName = ((RequestParam) requestParam.get()).value();
             name = Const.DEFAULT_NONE.equals(tmpName) ? name : tmpName;
         }
-        if (pathVariable.isPresent()) {
-            String tmpName = ((PathVariable) pathVariable.get()).value();
-            name = Const.DEFAULT_NONE.equals(tmpName) ? name : tmpName;
-        }
+
         return new MethodParam(type, name, annotations);
     }
 
@@ -129,12 +126,12 @@ public class MethodAOPBuilder extends SilentGoBuilder {
         String className = method.getDeclaringClass().getName();
         String name = className + "." + method.getName();
 
-        List<Annotation> annotations = new ArrayList() {{
-            addAll(Arrays.asList(method.getJavaMethod().getAnnotations()));
-            addAll(parentAnnotations);
-        }};
+//        List<Annotation> annotations = new ArrayList() {{
+//            addAll(Arrays.asList(method.getJavaMethod().getAnnotations()));
+//            addAll(parentAnnotations);
+//        }};
 
-
+        List<Annotation> annotations = Arrays.asList(method.getJavaMethod().getAnnotations());
         return new MethodAdviser(className, name, method, BuildParam(method.getJavaMethod().getParameters()), annotations);
     }
 

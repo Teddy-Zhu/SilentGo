@@ -6,6 +6,7 @@ import com.silentgo.core.SilentGo;
 import com.silentgo.core.action.ActionChain;
 import com.silentgo.core.action.RouteAction;
 import com.silentgo.core.action.annotation.Action;
+import com.silentgo.core.exception.AppBuildException;
 import com.silentgo.kit.CollectionKit;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class ActionBuilder extends SilentGoBuilder {
     }
 
     @Override
-    public boolean build(SilentGo me) {
+    public boolean build(SilentGo me) throws AppBuildException {
 
         List<ActionChain> actionChains = new ArrayList<>();
         me.getAnnotationManager().getClasses(Action.class).forEach(action -> {
@@ -58,7 +59,7 @@ public class ActionBuilder extends SilentGoBuilder {
                 result = temp;
             }
         } else {
-            throw new RuntimeException("the last action must be RouteAction");
+            throw new AppBuildException("the last action must be RouteAction");
         }
 
         me.getConfig().setActionChain(result);

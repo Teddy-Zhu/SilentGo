@@ -1,5 +1,7 @@
 package com.silentgo.core.aop.annotation;
 
+import com.silentgo.core.config.Const;
+
 import java.lang.annotation.*;
 
 /**
@@ -15,4 +17,5 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface Aspect {
+    String value() default Const.DEFAULT_NONE;
 }

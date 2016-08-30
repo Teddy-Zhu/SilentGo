@@ -35,7 +35,7 @@ public class SilentGoConfig {
 
     private RoutePaser routePaser = new DefaultRouteParser();
 
-    private Render render = new JspRender(Const.BaseView);
+    private String BaseView = Const.BaseView;
 
     private Map<Class<? extends BaseFactory>, BaseFactory> factoryMap = new HashMap<>();
 
@@ -181,11 +181,11 @@ public class SilentGoConfig {
         return ctx;
     }
 
-    public Render getRender() {
-        return render;
+    public String getBaseView() {
+        return BaseView;
     }
 
-    public void setRender(Render render) {
-        this.render = render;
+    public void setBaseView(String baseView) {
+        BaseView = baseView;
     }
 }

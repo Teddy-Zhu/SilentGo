@@ -1,4 +1,4 @@
-package com.silentgo.core.route.support;
+package com.silentgo.core.route.support.paramdispatcher;
 
 import com.silentgo.core.route.ParameterDispatcher;
 import com.silentgo.core.support.BaseFactory;
@@ -15,7 +15,7 @@ import java.util.List;
  *         <p>
  *         Created by teddyzhu on 16/8/22.
  */
-public class ParamDispatchFactory implements BaseFactory {
+public class ParamDispatchFactory extends BaseFactory {
 
     private List<ParameterDispatcher> dispatcher = new ArrayList<>();
 

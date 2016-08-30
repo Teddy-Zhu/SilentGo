@@ -1,12 +1,10 @@
-package com.silentgo.core.route.support;
+package com.silentgo.core.route.support.paramdispatcher;
 
 import com.silentgo.core.action.ActionParam;
-import com.silentgo.core.route.BasicRoute;
 import com.silentgo.core.route.ParameterDispatcher;
-import com.silentgo.core.route.RegexRoute;
 import com.silentgo.core.route.Route;
 import com.silentgo.core.route.annotation.ParamDispatcher;
-import com.silentgo.core.route.support.paramresolve.ParameterResolveFactory;
+import com.silentgo.core.route.support.paramvalueresolve.ParameterResolveFactory;
 import com.silentgo.kit.CollectionKit;
 
 import java.util.HashMap;
@@ -29,6 +27,13 @@ public class PathParamDispatch implements ParameterDispatcher {
     }
 
 
+    /**
+     * prepare to resolve path parameters
+     * @param parameterResolveFactory
+     * @param param
+     * @param route
+     * @param args
+     */
     @Override
     public void dispatch(ParameterResolveFactory parameterResolveFactory, ActionParam param, Route route, Object[] args) {
         if (!route.isRegex()) return;

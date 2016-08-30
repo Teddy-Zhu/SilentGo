@@ -7,6 +7,7 @@ import com.silentgo.servlet.http.Request;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,8 @@ public class MethodParam {
 
     private String name;
 
+    private List<Class<? extends Annotation>> anTypes;
+
     private List<Annotation> annotations;
 
     public Class<?> getType() {
@@ -37,10 +40,12 @@ public class MethodParam {
         return name;
     }
 
-    public MethodParam(Class<?> type,  String name, List<Annotation> annotations) {
+    public MethodParam(Class<?> type, String name, List<Annotation> annotations) {
         this.type = type;
         this.name = name;
         this.annotations = annotations;
+        anTypes = new ArrayList<>();
+        annotations.forEach(annotation -> anTypes.add(annotation.annotationType()));
     }
 
 
@@ -48,6 +53,18 @@ public class MethodParam {
         return request.getParsedParameter(name);
     }
 
+    public boolean existAnnotation(Class<? extends Annotation> clz) {
+        return anTypes.contains(clz);
+    }
+
+    public <T extends Annotation> T getAnnotation(Class<T> tClass) {
+        for (Annotation annotation : annotations) {
+            if (annotation.annotationType().equals(tClass)) {
+                return (T) annotation;
+            }
+        }
+        return null;
+    }
 
     public List<Annotation> getAnnotations() {
         return annotations;

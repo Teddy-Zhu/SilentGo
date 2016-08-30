@@ -18,6 +18,4 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 public @interface Controller {
     String value() default Const.DEFAULT_NONE;
-
-    boolean regex() default false;
 }

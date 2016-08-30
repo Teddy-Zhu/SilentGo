@@ -20,7 +20,7 @@ public class StaticFileAction extends ActionChain {
     }
 
     @Override
-    public void doAction(ActionParam param) {
+    public void doAction(ActionParam param) throws Throwable {
         if (SilentGo.getInstance().getConfig().getStaticFolder()
                 .stream().anyMatch(url -> param.getRequestURL().startsWith(url))) {
             return;

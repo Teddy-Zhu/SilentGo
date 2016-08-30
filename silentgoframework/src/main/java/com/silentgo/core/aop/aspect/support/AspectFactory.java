@@ -18,7 +18,7 @@ import java.util.Map;
  *         <p>
  *         Created by teddyzhu on 16/7/29.
  */
-public class AspectFactory implements BaseFactory {
+public class AspectFactory extends BaseFactory {
 
     private List<AspectMethod> aspectMethods = new ArrayList<>();
 

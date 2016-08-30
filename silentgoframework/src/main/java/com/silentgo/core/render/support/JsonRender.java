@@ -27,16 +27,17 @@ import java.util.Map;
 public class JsonRender implements Render {
 
     private String encoding;
-    private String contentType = "application/json; charset=" + encoding;
+    private String contentType = encoding;
 
     public JsonRender(String encoding) {
         this.encoding = encoding;
+        this.contentType = "application/json; charset=" + encoding;
     }
 
     @Override
-    public void render(Route route, Response response, Request request, Object retVal) throws AppRenderException {
+    public void render(Response response, Request request, Object retVal) throws AppRenderException {
         response.setHeader("Pragma", "no-cache");
-        response.setHeader("Cache-Control", "no-cache");
+        response.setHeader("Cache-Control", "no-cache , no-store , mag-age=0");
         response.setDateHeader("Expires", 0);
         response.setContentType(contentType);
 
@@ -44,7 +45,7 @@ public class JsonRender implements Render {
         try {
             writer = response.getWriter();
 
-            writer.write(JSON.toJSONString(getAttrs(request)));
+            writer.write(retVal instanceof String ? retVal.toString() : JSON.toJSONString(retVal));
             writer.flush();
 
         } catch (IOException e) {
@@ -56,16 +57,4 @@ public class JsonRender implements Render {
         }
     }
 
-
-    private Map<String, Object> getAttrs(Request request) {
-        Map<String, Object> obj = new HashMap<>();
-
-        Enumeration<String> stringEnumeration = request.getAttributeNames();
-
-        while (stringEnumeration.hasMoreElements()) {
-            String name = stringEnumeration.nextElement();
-            obj.put(name, request.getAttribute(name));
-        }
-        return obj;
-    }
 }

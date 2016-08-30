@@ -8,6 +8,6 @@ package com.silentgo.core.support;
  *         <p>
  *         Created by teddyzhu on 16/8/19.
  */
-public interface BaseFactory  {
+public class BaseFactory  {
 
 }

@@ -1,24 +1,16 @@
-package com.silentgo.core.route.support;
+package com.silentgo.core.route.support.paramdispatcher;
 
-import com.alibaba.fastjson.JSON;
 import com.silentgo.core.action.ActionParam;
 import com.silentgo.core.aop.MethodParam;
-import com.silentgo.core.config.Const;
+import com.silentgo.core.exception.AppParameterPaserException;
 import com.silentgo.core.route.ParameterDispatcher;
 import com.silentgo.core.route.ParameterValueResolver;
 import com.silentgo.core.route.Route;
 import com.silentgo.core.route.annotation.ParamDispatcher;
-import com.silentgo.core.route.annotation.PathVariable;
-import com.silentgo.core.route.support.paramresolve.ParameterResolveFactory;
+import com.silentgo.core.route.support.paramvalueresolve.ParameterResolveFactory;
 import com.silentgo.kit.CollectionKit;
-import com.silentgo.kit.StringKit;
 import com.silentgo.kit.logger.Logger;
 import com.silentgo.kit.logger.LoggerFactory;
-import com.silentgo.kit.typeconvert.ConvertKit;
-import com.silentgo.kit.typeconvert.ITypeConvertor;
-import com.silentgo.kit.typeconvert.support.TypeConvert;
-import com.silentgo.servlet.http.Request;
-import com.silentgo.servlet.http.Response;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,12 +31,12 @@ public class CommonParamDispatch implements ParameterDispatcher {
 
     @Override
     public Integer priority() {
-        return 5;
+        return 100;
     }
 
 
     @Override
-    public void dispatch(ParameterResolveFactory parameterResolveFactory, ActionParam param, Route route, Object[] args) {
+    public void dispatch(ParameterResolveFactory parameterResolveFactory, ActionParam param, Route route, Object[] args) throws AppParameterPaserException {
 
         MethodParam[] methodParams = route.getRoute().getAdviser().getParams();
         Map<String, Object> parsedParameters = new HashMap<>();
@@ -53,13 +45,8 @@ public class CommonParamDispatch implements ParameterDispatcher {
         for (int i = 0, len = methodParams.length; i < len; i++) {
             MethodParam methodParam = methodParams[i];
 
-            ParameterValueResolver resolver = parameterResolveFactory.getParameterValueResolver(methodParam.getType());
-            try {
-                args[i] = resolver.getValue(param.getResponse(), param.getRequest(), methodParam);
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage());
-                args[i] = null;
-            }
+            args[i] = parameterResolveFactory.getParameter(param.getRequest(), param.getResponse(), methodParam);
+
             CollectionKit.MapAdd(parsedParameters, methodParam.getName(), args[i], true);
 
         }

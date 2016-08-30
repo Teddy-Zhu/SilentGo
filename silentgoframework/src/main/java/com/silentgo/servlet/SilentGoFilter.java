@@ -7,11 +7,15 @@ import com.silentgo.core.config.Const;
 import com.silentgo.core.config.SilentGoConfig;
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.action.ActionParam;
+import com.silentgo.core.exception.AppBuildException;
+import com.silentgo.core.exception.support.ExceptionFactory;
+import com.silentgo.core.render.support.ErrorRener;
 import com.silentgo.core.support.AnnotationManager;
 import com.silentgo.kit.SilentGoContext;
 import com.silentgo.kit.StringKit;
 import com.silentgo.kit.logger.Logger;
 import com.silentgo.kit.logger.LoggerFactory;
+import com.silentgo.servlet.http.HttpStatus;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
 
@@ -99,9 +103,8 @@ public class SilentGoFilter implements Filter {
         SilentGo.getInstance().getConfig().getCtx().set(new SilentGoContext(response, request));
         try {
             globalConfig.getActionChain().doAction(param);
-        } catch (Exception e) {
-            e.printStackTrace();
-            LOGGER.error(e.getMessage());
+        } catch (Throwable throwable) {
+            new ErrorRener().render(request, response, HttpStatus.Code.INTERNAL_SERVER_ERROR, throwable, appContext.isDevMode());
         } finally {
             SilentGo.getInstance().getConfig().getCtx().remove();
         }
@@ -138,7 +141,16 @@ public class SilentGoFilter implements Filter {
         });
 
         //Init
-        config.getBuilders().stream().allMatch(builder -> builder.build(appContext));
+        try {
+            for (SilentGoBuilder silentGoBuilder : config.getBuilders()) {
+                if (!silentGoBuilder.build(appContext)) {
+                    LOGGER.warn("Builder {} build progress failed", silentGoBuilder.getClass().getName());
+                }
+            }
+        } catch (AppBuildException e) {
+
+        }
+
 
     }
 

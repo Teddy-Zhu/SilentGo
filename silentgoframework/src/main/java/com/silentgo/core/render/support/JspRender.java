@@ -22,11 +22,11 @@ public class JspRender implements Render {
     private static String baseView;
 
     public JspRender(String view) {
-        this.baseView = view;
+        baseView = view;
     }
 
     @Override
-    public void render(Route route, Response response, Request request, Object retVal) throws AppRenderException {
+    public void render(Response response, Request request, Object retVal) throws AppRenderException {
         try {
             String view = baseView + retVal;
             request.getRequestDispatcher(view).forward(request, response);

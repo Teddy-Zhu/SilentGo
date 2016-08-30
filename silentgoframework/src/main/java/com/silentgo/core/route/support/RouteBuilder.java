@@ -15,6 +15,7 @@ import com.silentgo.core.route.RegexRoute;
 import com.silentgo.core.route.annotation.Controller;
 import com.silentgo.core.route.annotation.ParamDispatcher;
 import com.silentgo.core.route.annotation.Route;
+import com.silentgo.core.route.support.paramdispatcher.ParamDispatchFactory;
 import com.silentgo.kit.StringKit;
 import com.silentgo.kit.logger.Logger;
 import com.silentgo.kit.logger.LoggerFactory;
@@ -44,7 +45,9 @@ public class RouteBuilder extends SilentGoBuilder {
 
     private void buildClass(Class<?> aClass, SilentGo me, RouteFactory routeFactory) {
         Controller controller = aClass.getAnnotation(Controller.class);
-        String path = filterPath(controller.value().equals(Const.DEFAULT_NONE) ? aClass.getSimpleName() : controller.value(), true);
+        Route route = aClass.getAnnotation(Route.class);
+        boolean parentRegex = route != null && route.regex();
+        String path = filterPath((route != null && !Const.DEFAULT_NONE.equals(route.value())) ? route.value() : aClass.getSimpleName(), true);
         BeanFactory beanFactory = me.getFactory(BeanFactory.class);
         MethodAOPFactory methodAOPFactory = me.getFactory(MethodAOPFactory.class);
         BeanWrapper bean = beanFactory.getBean(aClass.getName());
@@ -57,12 +60,11 @@ public class RouteBuilder extends SilentGoBuilder {
             Route an = adviser.getAnnotation(Route.class);
             if (an == null) continue;
 
-            String fullPath = path + filterPath(Const.DEFAULT_NONE.equals(an.value()) ?
-                    method.getName() : an.value(), true);
-
+            String fullPath = mergePath(path, filterPath(Const.DEFAULT_NONE.equals(an.value()) ?
+                    method.getName() : an.value(), true));
             Matcher matcher = routePattern.matcher(fullPath);
 
-            if (an.regex() || matcher.find()) {
+            if (an.regex() || parentRegex || matcher.find()) {
                 routeFactory.addRoute(buildRegexRoute(fullPath, matcher, adviser));
             } else {
                 routeFactory.addRoute(buildBasicRoute(fullPath, adviser));
@@ -127,10 +129,17 @@ public class RouteBuilder extends SilentGoBuilder {
         return source.replace(target, replacement);
     }
 
+    private String mergePath(String suffix, String prefix) {
+        suffix = filterPath(suffix, true);
+        suffix = suffix.equals(Const.Slash) ? suffix : (suffix + Const.Slash);
+        return suffix + (prefix.startsWith(Const.Slash) ? prefix.substring(1) : prefix);
+    }
+
     private String filterPath(String path, boolean end) {
-        if (path.endsWith("/") && end) path = path.substring(0, path.length() - 1);
-        if (path.startsWith("/")) return path;
-        return "/" + path;
+        if (path.equals(Const.Slash)) return path;
+        if (path.endsWith(Const.Slash) && end) path = path.substring(0, path.length() - 1);
+        if (path.startsWith(Const.Slash)) return path;
+        return Const.Slash + path;
     }
 
     @Override

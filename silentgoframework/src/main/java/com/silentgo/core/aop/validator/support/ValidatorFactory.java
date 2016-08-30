@@ -19,7 +19,7 @@ import java.util.*;
  *         <p>
  *         Created by  on 16/7/18.
  */
-public class ValidatorFactory  implements BaseFactory{
+public class ValidatorFactory extends BaseFactory {
 
     private static Logger LOGGER = LoggerFactory.getLog(ValidatorFactory.class);
     /**

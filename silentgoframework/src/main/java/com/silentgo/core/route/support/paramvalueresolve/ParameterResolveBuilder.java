@@ -1,14 +1,14 @@
-package com.silentgo.core.route.support.paramresolve;
+package com.silentgo.core.route.support.paramvalueresolve;
 
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.build.SilentGoBuilder;
 import com.silentgo.core.build.annotation.Builder;
 import com.silentgo.core.route.ParameterValueResolver;
-import com.silentgo.core.route.support.paramresolve.annotation.ParameterResolver;
+import com.silentgo.core.route.support.paramvalueresolve.annotation.ParameterResolver;
 
 /**
  * Project : silentgo
- * com.silentgo.core.route.support.paramresolve
+ * com.silentgo.core.route.support.paramvalueresolve
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>

@@ -1,5 +1,6 @@
 package com.silentgo.servlet.http;
 
+import com.alibaba.fastjson.JSONObject;
 import com.silentgo.core.config.Const;
 import com.silentgo.kit.CollectionKit;
 import com.silentgo.kit.StringKit;
@@ -22,7 +23,12 @@ public class Request extends HttpServletRequestWrapper {
 
     private Map<String, Object> parsedParamMap = new HashMap<>();
 
+    private int pathSize = 0;
     private String[] pathParameters = new String[0];
+
+    private JSONObject parameterJson;
+
+    private String jsonString;
 
     private Map<String, String> pathNamedParameters = new HashMap<>();
 
@@ -76,6 +82,7 @@ public class Request extends HttpServletRequestWrapper {
     }
 
     public void setPathParameters(String[] pathParameters) {
+        pathSize = pathParameters.length;
         this.pathParameters = pathParameters;
     }
 
@@ -84,7 +91,7 @@ public class Request extends HttpServletRequestWrapper {
     }
 
     public String getPathParameter(int index) {
-        return pathParameters[index];
+        return index > pathSize ? null : pathParameters[index];
     }
 
     public String getPathParameter(String name) {
@@ -128,5 +135,21 @@ public class Request extends HttpServletRequestWrapper {
 
     public Map<String, Object> getHashMap() {
         return hashMap;
+    }
+
+    public JSONObject getParameterJson() {
+        return parameterJson;
+    }
+
+    public void setParameterJson(JSONObject parameterJson) {
+        this.parameterJson = parameterJson;
+    }
+
+    public String getJsonString() {
+        return jsonString;
+    }
+
+    public void setJsonString(String jsonString) {
+        this.jsonString = jsonString;
     }
 }

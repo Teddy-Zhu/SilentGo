@@ -1,5 +1,7 @@
 package com.silentgo.core.route.annotation;
 
+import com.silentgo.core.config.Const;
+
 import java.lang.annotation.*;
 
 /**
@@ -8,12 +10,12 @@ import java.lang.annotation.*;
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>
- *         Created by teddyzhu on 16/7/29.
+ *         Created by teddyzhu on 16/8/30.
  */
 @Documented
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
-public @interface Qualifier {
-    String value();
+@Target({ElementType.PARAMETER})
+public @interface RequestBody {
+    String value() default Const.DEFAULT_NONE;
 }

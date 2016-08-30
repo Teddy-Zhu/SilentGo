@@ -17,7 +17,7 @@ import java.util.Map;
  *         <p>
  *         Created by teddyzhu on 16/8/3.
  */
-public class InterceptFactory implements BaseFactory {
+public class InterceptFactory extends BaseFactory {
 
     private Map<Class<? extends Interceptor>, Interceptor> allInterceptors = new HashMap<>();
 
