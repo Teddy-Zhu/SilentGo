@@ -6,6 +6,7 @@ import com.silentgo.kit.CollectionKit;
 import net.sf.cglib.reflect.FastMethod;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -18,7 +19,7 @@ import java.util.*;
  */
 public class MethodAdviser {
 
-    private String name;
+    private String methodName;
 
     private String className;
 
@@ -30,8 +31,12 @@ public class MethodAdviser {
 
     private List<Annotation> annotations = new ArrayList<>();
 
-    public String getName() {
-        return name;
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public Method getName() {
+        return method.getJavaMethod();
     }
 
     public MethodParam[] getParams() {
@@ -39,7 +44,7 @@ public class MethodAdviser {
     }
 
     public MethodAdviser(String className, String name, FastMethod method, MethodParam[] params, List<Annotation> annotations) {
-        this.name = name;
+        this.methodName = name;
         this.className = className;
         this.method = method;
         this.params = params;

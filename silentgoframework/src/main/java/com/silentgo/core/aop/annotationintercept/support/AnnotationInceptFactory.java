@@ -6,6 +6,7 @@ import com.silentgo.core.support.BaseFactory;
 import com.silentgo.kit.CollectionKit;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,9 +27,9 @@ public class AnnotationInceptFactory extends BaseFactory {
      */
     private Map<Class<? extends Annotation>, IAnnotation> annotationInterceptorMap = new HashMap<>();
 
-    private Map<String, Map<Annotation, IAnnotation>> iAnnotationMap = new HashMap<>();
+    private Map<Method, Map<Annotation, IAnnotation>> iAnnotationMap = new HashMap<>();
 
-    private Map<String, List<Map.Entry<Annotation, IAnnotation>>> sortedIAnnotationMap = new HashMap<>();
+    private Map<Method, List<Map.Entry<Annotation, IAnnotation>>> sortedIAnnotationMap = new HashMap<>();
 
 
     public boolean addAnnotationInterceptor(Class<? extends Annotation> clz, IAnnotation interceptor) {
@@ -39,20 +40,20 @@ public class AnnotationInceptFactory extends BaseFactory {
         return annotationInterceptorMap.get(clz);
     }
 
-    public boolean addIAnnotation(String methodName, Map<Annotation, IAnnotation> anMap) {
-        CollectionKit.MapAdd(iAnnotationMap, methodName, anMap);
+    public boolean addIAnnotation(Method name, Map<Annotation, IAnnotation> anMap) {
+        CollectionKit.MapAdd(iAnnotationMap, name, anMap);
         return true;
     }
 
-    public List<Map.Entry<Annotation, IAnnotation>> getSortedAnnotationMap(String methodName) {
-        return sortedIAnnotationMap.get(methodName);
+    public List<Map.Entry<Annotation, IAnnotation>> getSortedAnnotationMap(Method name) {
+        return sortedIAnnotationMap.get(name);
     }
 
-    public Map<Annotation, IAnnotation> getAnnotationMap(String methodName) {
-        return iAnnotationMap.get(methodName);
+    public Map<Annotation, IAnnotation> getAnnotationMap(Method name) {
+        return iAnnotationMap.get(name);
     }
 
-    public boolean addSortedIAnnotation(String methodName, List<Map.Entry<Annotation, IAnnotation>> iAnnotationMap) {
-        return CollectionKit.MapAdd(sortedIAnnotationMap, methodName, iAnnotationMap);
+    public boolean addSortedIAnnotation(Method name, List<Map.Entry<Annotation, IAnnotation>> iAnnotationMap) {
+        return CollectionKit.MapAdd(sortedIAnnotationMap, name, iAnnotationMap);
     }
 }

@@ -21,7 +21,7 @@ import java.io.Writer;
 @ParameterResolver
 public class WriterParamResolver implements ParameterValueResolver {
     @Override
-    public boolean isValid(Response response, Request request, MethodParam methodParam) {
+    public boolean isValid(MethodParam methodParam) {
         return methodParam.getType().equals(Writer.class);
     }
 
@@ -32,5 +32,10 @@ public class WriterParamResolver implements ParameterValueResolver {
         } catch (IOException e) {
             throw new AppParameterPaserException(e.getMessage());
         }
+    }
+
+    @Override
+    public Integer priority() {
+        return 85;
     }
 }

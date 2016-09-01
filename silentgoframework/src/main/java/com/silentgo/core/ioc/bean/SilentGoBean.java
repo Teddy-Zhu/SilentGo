@@ -3,10 +3,12 @@ package com.silentgo.core.ioc.bean;
 import com.silentgo.core.config.Const;
 import com.silentgo.core.config.SilentGoConfig;
 import com.silentgo.kit.CollectionKit;
+import com.silentgo.kit.StringKit;
 import com.silentgo.kit.logger.Logger;
 import com.silentgo.kit.logger.LoggerFactory;
 
 import java.beans.IntrospectionException;
+import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -89,7 +91,11 @@ public class SilentGoBean extends BeanFactory<BeanDefinition> {
             }
             v.setBeanName(bean.getBeanName());
             try {
-                PropertyDescriptor pd = new PropertyDescriptor(field.getName(), beanDefinition.getSourceClass());
+                PropertyDescriptor pd = new PropertyDescriptor(field.getName(),
+                        beanDefinition.getSourceClass(),
+                        "get" + StringKit.FirstToUpper(field.getName()),
+                        "set" + StringKit.FirstToUpper(field.getName())
+                );
 
                 Method method = pd.getWriteMethod();
                 if (method != null) {
@@ -97,12 +103,15 @@ public class SilentGoBean extends BeanFactory<BeanDefinition> {
                     v.setSetMethod(method);
                     method.setAccessible(true);
                     method.invoke(beanDefinition.getTarget(), bean);
-                } else {
-                    field.setAccessible(true);
-                    field.set(beanDefinition.getTarget(), bean);
                 }
             } catch (IllegalAccessException | IntrospectionException | InvocationTargetException e) {
-                e.printStackTrace();
+                field.setAccessible(true);
+                try {
+                    field.set(beanDefinition.getTarget(), bean.getBean());
+                } catch (IllegalAccessException e1) {
+                    e1.printStackTrace();
+                }
+                LOGGER.debug("Field {} Can not find getter and setter in Class {}", field.getName(), bean.getSourceClass());
             }
         });
         beanDefinition.setInjectComplete(true);

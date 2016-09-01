@@ -6,7 +6,7 @@
     <title>Title</title>
 </head>
 <body>
-test page<br/>
+${method}<br/>
 ${data}
 </body>
 </html>

@@ -1,7 +1,6 @@
 package com.silentgo.core.aop.validator.support;
 
 import com.silentgo.core.aop.annotation.Intercept;
-import com.silentgo.core.config.Const;
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.AOPPoint;
 import com.silentgo.core.aop.Interceptor;
@@ -40,18 +39,19 @@ public class ValidatorInterceptor implements Interceptor {
         MethodParam[] params = point.getAdviser().getParams();
         ValidatorFactory validatorFactory = SilentGo.getInstance().getFactory(ValidatorFactory.class);
         Map<String, Map<Annotation, IValidator>> validateMap = validatorFactory.getParamValidatorMap(point.getAdviser().getName());
-        for (MethodParam param : params) {
+        for (int i = 0, len = params.length; i < len; i++) {
+            MethodParam param = params[i];
             Map<Annotation, IValidator> map = validateMap.get(param.getName());
             for (Map.Entry<Annotation, IValidator> entry : map.entrySet()) {
                 Annotation annotation = entry.getKey();
                 IValidator validator = entry.getValue();
-                if (!validator.validate(point.getResponse(), point.getRequest(), annotation, param.getValue(point.getRequest()))) {
+                if (!validator.validate(point.getResponse(), point.getRequest(), annotation, point.getObjects()[i])) {
                     throw new ValidateException(String.format("Parameter [%s] validate error", param.getName()));
                 }
             }
         }
 
-        Object ret = point.doChain();
+        Object ret = point.proceed();
         LOGGER.debug("end validator Intercept");
         return ret;
 

@@ -1,7 +1,14 @@
 package com.silentgo.kit;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
+import org.apache.commons.io.FileCleaningTracker;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Project : silentgo
@@ -17,13 +24,31 @@ public class SilentGoContext {
 
     Request request;
 
+
+    //origin
     String hashString;
+
+    JSONObject jsonObject;
+
+
+    //JSON
+    private JSONObject parameterJson;
+    private JSONArray parameterJsonArray;
+
+    private String jsonString;
 
     public SilentGoContext(Response response, Request request) {
         this.response = response;
         this.request = request;
     }
 
+    public JSONObject getJsonObject() {
+        return jsonObject;
+    }
+
+    public void setJsonObject(JSONObject jsonObject) {
+        this.jsonObject = jsonObject;
+    }
 
     public String getHashString() {
         return hashString;
@@ -47,5 +72,29 @@ public class SilentGoContext {
 
     public void setRequest(Request request) {
         this.request = request;
+    }
+
+    public JSONObject getParameterJson() {
+        return parameterJson;
+    }
+
+    public void setParameterJson(JSONObject parameterJson) {
+        this.parameterJson = parameterJson;
+    }
+
+    public JSONArray getParameterJsonArray() {
+        return parameterJsonArray;
+    }
+
+    public void setParameterJsonArray(JSONArray parameterJsonArray) {
+        this.parameterJsonArray = parameterJsonArray;
+    }
+
+    public String getJsonString() {
+        return jsonString;
+    }
+
+    public void setJsonString(String jsonString) {
+        this.jsonString = jsonString;
     }
 }

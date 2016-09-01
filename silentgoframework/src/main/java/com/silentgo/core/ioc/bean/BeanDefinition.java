@@ -88,9 +88,9 @@ public class BeanDefinition extends BeanWrapper {
         for (Field field : fields) {
             Inject inject = field.getAnnotation(Inject.class);
             //filter no annotation class
-            if (inject != null && containAnnotation(field)) {
+            if (inject != null) {
                 if (Const.DEFAULT_NONE.equals(inject.value()))
-                    fieldBeans.put(field.getDeclaringClass().getName(), new FieldBean(field));
+                    fieldBeans.put(field.getType().getName(), new FieldBean(field));
                 else
                     fieldBeans.put(inject.value(), new FieldBean(field));
             }
@@ -120,14 +120,17 @@ public class BeanDefinition extends BeanWrapper {
             } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
             }
+            BeanFactory beanFactory = SilentGo.getInstance().getFactory(BeanFactory.class);
+
             if (needInject)
                 proxyTarget = CGLibKit.Proxy(target);
             else
                 proxyTarget = target;
 
-            SilentGoBean beanFactory = SilentGo.getInstance().getFactory(SilentGoBean.class);
             fieldBeans.forEach((k, v) -> {
-                v.setValue(target, beanFactory.getBean(v.getBeanName()));
+                v.setValue(target, beanFactory.getBean(v.getBeanName()).getBean());
+                v.setValue(proxyTarget, beanFactory.getBean(v.getBeanName()).getBean());
+
             });
         }
         return proxyTarget;

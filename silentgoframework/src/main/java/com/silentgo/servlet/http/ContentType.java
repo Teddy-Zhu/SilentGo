@@ -11,7 +11,7 @@ import com.silentgo.kit.StringKit;
  *         Created by teddyzhu on 16/8/30.
  */
 public enum ContentType {
-    JSON("application/json"), XML("application/xml");
+    JSON("application/json"), XML("application/xml"), MULTIPART("multipart");
 
     private String contentType;
 

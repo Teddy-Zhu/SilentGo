@@ -9,6 +9,7 @@ import com.silentgo.kit.logger.Logger;
 import com.silentgo.kit.logger.LoggerFactory;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -27,7 +28,7 @@ public class ValidatorFactory extends BaseFactory {
      */
     private Map<Class<? extends Annotation>, IValidator> validatorHashMap = new HashMap<>();
 
-    private Map<String, Map<String, Map<Annotation, IValidator>>> methodParamValidatorMap = new HashMap<>();
+    private Map<Method, Map<String, Map<Annotation, IValidator>>> methodParamValidatorMap = new HashMap<>();
 
     public ValidatorFactory() {
         validatorHashMap.put(RequestString.class, new StringValidator());
@@ -41,13 +42,13 @@ public class ValidatorFactory extends BaseFactory {
         return validatorHashMap.get(an);
     }
 
-    public boolean addMethodParamValidator(String methodName, Map<String, Map<Annotation, IValidator>> validatorsMap) {
-        return CollectionKit.MapAdd(methodParamValidatorMap, methodName, validatorsMap);
+    public boolean addMethodParamValidator(Method name, Map<String, Map<Annotation, IValidator>> validatorsMap) {
+        return CollectionKit.MapAdd(methodParamValidatorMap, name, validatorsMap);
     }
 
 
-    public Map<String, Map<Annotation, IValidator>> getParamValidatorMap(String methodName) {
-        return methodParamValidatorMap.get(methodName);
+    public Map<String, Map<Annotation, IValidator>> getParamValidatorMap(Method name) {
+        return methodParamValidatorMap.get(name);
     }
 
 }

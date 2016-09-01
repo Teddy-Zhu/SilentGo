@@ -1,5 +1,6 @@
 package com.silentgo.core.config;
 
+import com.silentgo.core.SilentGo;
 import com.silentgo.core.action.ActionChain;
 import com.silentgo.core.aop.Interceptor;
 import com.silentgo.core.aop.annotationintercept.support.AnnotationInterceptor;
@@ -10,9 +11,12 @@ import com.silentgo.core.render.support.JspRender;
 import com.silentgo.core.route.RoutePaser;
 import com.silentgo.core.route.support.routeparse.DefaultRouteParser;
 import com.silentgo.core.support.BaseFactory;
+import com.silentgo.kit.ClassKit;
 import com.silentgo.kit.CollectionKit;
 import com.silentgo.kit.PropKit;
 import com.silentgo.kit.SilentGoContext;
+import com.silentgo.kit.json.FastJsonPaser;
+import com.silentgo.kit.json.JsonPaser;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
 
@@ -31,6 +35,8 @@ import java.util.Map;
  */
 public class SilentGoConfig {
 
+    private JsonPaser jsonPaser = new FastJsonPaser();
+
     private ActionChain actionChain;
 
     private RoutePaser routePaser = new DefaultRouteParser();
@@ -48,6 +54,8 @@ public class SilentGoConfig {
     private List<String> scanPackages;
 
     private List<String> scanJars;
+
+    private FileUploadConfig fileUploadConfig = new FileUploadConfig(ClassKit.getWebRootPath() + "/UploadFile", -1, 10240, true);
 
     private PropKit propKit;
 
@@ -187,5 +195,21 @@ public class SilentGoConfig {
 
     public void setBaseView(String baseView) {
         BaseView = baseView;
+    }
+
+    public JsonPaser getJsonPaser() {
+        return jsonPaser;
+    }
+
+    public void setJsonPaser(JsonPaser jsonPaser) {
+        this.jsonPaser = jsonPaser;
+    }
+
+    public FileUploadConfig getFileUploadConfig() {
+        return fileUploadConfig;
+    }
+
+    public void setFileUploadConfig(FileUploadConfig fileUploadConfig) {
+        this.fileUploadConfig = fileUploadConfig;
     }
 }

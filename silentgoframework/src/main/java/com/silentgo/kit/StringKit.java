@@ -10,6 +10,11 @@ package com.silentgo.kit;
  */
 public class StringKit {
 
+    public static String FirstToUpper(String field) {
+        if (isNullOrEmpty(field)) return field;
+        return field.substring(0, 1).toUpperCase() + field.toLowerCase().substring(1);
+    }
+
     public static boolean isNullOrEmpty(String str) {
         return isNull(str) || str.length() == 0 || "".equals(str.trim());
     }

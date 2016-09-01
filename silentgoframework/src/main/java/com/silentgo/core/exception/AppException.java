@@ -10,7 +10,7 @@ package com.silentgo.core.exception;
  */
 public class AppException extends Exception {
 
-    public int code;
+    public int code = 500;
 
     public AppException(String message, int code) {
         super(message);

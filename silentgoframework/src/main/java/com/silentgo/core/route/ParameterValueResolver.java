@@ -1,6 +1,7 @@
 package com.silentgo.core.route;
 
 import com.silentgo.core.aop.MethodParam;
+import com.silentgo.core.base.Priority;
 import com.silentgo.core.exception.AppParameterPaserException;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
@@ -13,9 +14,9 @@ import com.silentgo.servlet.http.Response;
  *         <p>
  *         Created by teddyzhu on 16/8/22.
  */
-public interface ParameterValueResolver {
+public interface ParameterValueResolver extends Priority{
 
-    public boolean isValid(Response response, Request request, MethodParam methodParam);
+    public boolean isValid(MethodParam methodParam);
 
     public Object getValue(Response response, Request request, MethodParam methodParam) throws AppParameterPaserException;
 }

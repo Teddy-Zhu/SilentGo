@@ -2,6 +2,7 @@ package com.silentgo.kit.typeconvert;
 
 import com.silentgo.kit.ClassKit;
 import com.silentgo.kit.typeconvert.support.CommonConvertor;
+import com.silentgo.kit.typeconvert.support.TypeConvert;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -24,10 +25,14 @@ public class ConvertKit {
     }
 
     public ITypeConvertor getTypeConvert(Class<?> source, Class<?> target) {
-        return getTypeConvert(source,target,new CommonConvertor());
+        return getTypeConvert(source, target, new CommonConvertor());
     }
 
     public ITypeConvertor getTypeConvert(Class<?> source, Class<?> target, ITypeConvertor defaultVal) {
+        if (target.isPrimitive()) {
+            target = TypeConvert.getConvertType(target);
+        }
+
         Map<Class<?>, ITypeConvertor> convertorMap = convertMap.get(source);
         return convertorMap == null ? defaultVal : convertorMap.getOrDefault(target, defaultVal);
     }

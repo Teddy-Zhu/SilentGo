@@ -1,6 +1,7 @@
 package com.silentgo.core.route.support.paramdispatcher;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.action.ActionParam;
@@ -11,6 +12,9 @@ import com.silentgo.core.route.ParameterDispatcher;
 import com.silentgo.core.route.Route;
 import com.silentgo.core.route.annotation.ParamDispatcher;
 import com.silentgo.core.route.support.paramvalueresolve.ParameterResolveFactory;
+import com.silentgo.core.route.support.paramvalueresolve.support.ParameterResolveKit;
+import com.silentgo.kit.SilentGoContext;
+import com.silentgo.kit.json.JsonPaser;
 import com.silentgo.servlet.http.ContentType;
 import com.silentgo.servlet.http.Request;
 
@@ -37,10 +41,11 @@ public class JsonParamDispatch implements ParameterDispatcher {
     public void dispatch(ParameterResolveFactory parameterResolveFactory, ActionParam param, Route route, Object[] args) throws AppParameterResolverException, AppParameterPaserException {
         Request request = param.getRequest();
 
-        Map<String, Object> hash = request.getHashMap();
-        String jsonHash = JSON.toJSONString(hash);
-        jsonHash = jsonHash.equals("{}") ? Const.EmptyString : jsonHash;
-        SilentGo.getInstance().getConfig().getCtx().get().setHashString(jsonHash);
+        String jsonHash =  JSON.toJSONString(request.getResolvedMap());
+        JSONObject jsonObjectParam = JSON.parseObject(jsonHash);
+        SilentGoContext context = SilentGo.getInstance().getConfig().getCtx().get();
+        context.setJsonObject(jsonObjectParam);
+        context.setHashString(jsonHash);
 
         ContentType type = ContentType.fromString(request.getContentType());
         if (type == null || !type.equals(ContentType.JSON)) {
@@ -66,9 +71,14 @@ public class JsonParamDispatch implements ParameterDispatcher {
         }
         try {
             String jsonString = new String(buffer, request.getCharacterEncoding());
-            JSONObject jsonObject = JSON.parseObject(jsonString);
-            request.setParameterJson(jsonObject);
-            request.setJsonString(jsonString);
+            if (jsonString.startsWith("[")) {
+                JSONArray jsonArray = JSON.parseArray(jsonString);
+                context.setParameterJsonArray(jsonArray);
+            } else {
+                JSONObject jsonObject = JSON.parseObject(jsonString);
+                context.setParameterJson(jsonObject);
+            }
+            context.setJsonString(jsonString);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             throw new AppParameterPaserException(e.getMessage());

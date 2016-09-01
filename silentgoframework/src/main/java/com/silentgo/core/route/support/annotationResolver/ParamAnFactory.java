@@ -1,11 +1,18 @@
 package com.silentgo.core.route.support.annotationResolver;
 
+import com.silentgo.core.aop.MethodAdviser;
+import com.silentgo.core.exception.AppException;
+import com.silentgo.core.render.support.ErrorRener;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.kit.ClassKit;
 import com.silentgo.kit.CollectionKit;
+import com.silentgo.servlet.http.HttpStatus;
+import com.silentgo.servlet.http.Request;
+import com.silentgo.servlet.http.Response;
 
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Project : silentgo
@@ -25,7 +32,19 @@ public class ParamAnFactory extends BaseFactory {
         return true;
     }
 
-    public ParamAnnotationResolver getResolver(Class<? extends Annotation> clz) {
+    private ParamAnnotationResolver getResolver(Class<? extends Annotation> clz) {
         return resolvers.get(clz);
+    }
+
+    public boolean resolve(MethodAdviser adviser, Request request, Response response) throws AppException {
+        for (Annotation annotation : adviser.getAnnotations()) {
+            ParamAnnotationResolver resolver = getResolver(annotation.annotationType());
+            if (resolver != null) {
+                if (!resolver.validate(adviser, response, request, annotation)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

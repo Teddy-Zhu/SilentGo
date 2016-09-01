@@ -47,11 +47,9 @@ public class RenderResolverBuilder extends SilentGoBuilder {
         renderResolverFactory.resortRenderResolver();
         me.getAnnotationManager().getClasses(Controller.class).forEach(aClass -> {
 
-            String classSuffix = aClass.getName() + ".";
             for (Method method : aClass.getDeclaredMethods()) {
                 if (method.getAnnotation(Route.class) != null || method.getAnnotation(ExceptionHandler.class) != null) {
-                    String methodName = classSuffix + method.getName();
-                    renderResolverFactory.addRenderResolver(methodAOPFactory.getMethodAdviser(methodName));
+                    renderResolverFactory.addRenderResolver(methodAOPFactory.getMethodAdviser(method));
                 }
             }
         });

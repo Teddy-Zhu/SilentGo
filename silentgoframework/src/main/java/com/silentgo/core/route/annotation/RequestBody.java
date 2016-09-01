@@ -17,5 +17,4 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER})
 public @interface RequestBody {
-    String value() default Const.DEFAULT_NONE;
 }

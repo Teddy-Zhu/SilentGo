@@ -74,7 +74,7 @@ public class AOPPoint {
         this.chain = chain;
     }
 
-    public Object doChain() throws Throwable {
+    public Object proceed() throws Throwable {
         return chain.resolve();
     }
 }

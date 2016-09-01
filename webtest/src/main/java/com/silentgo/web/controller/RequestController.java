@@ -9,6 +9,8 @@ import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
 import com.silentgo.web.model.User;
 
+import java.util.List;
+
 /**
  * Project : silentgo
  * com.silentgo.web.controller
@@ -21,7 +23,6 @@ import com.silentgo.web.model.User;
 @Route("/")
 public class RequestController {
     @Route("/")
-    @ResponseBody
     public String testindex(Request request) {
         return "index.jsp";
     }
@@ -32,8 +33,21 @@ public class RequestController {
         return "index.jsp";
     }
 
+    @Route("/test/listuser")
+    public String test(Request request, @RequestBody List<User> user) {
+        request.setAttribute("data", user.toString());
+        return "index.jsp";
+    }
+
+
     @ExceptionHandler
     public void testExceptionHandle(Exception e, Response response) {
         System.out.println(e.getMessage());
+    }
+
+    @Route("/test/array")
+    @ResponseBody
+    public Object test(Request request, String[] name) {
+        return name;
     }
 }

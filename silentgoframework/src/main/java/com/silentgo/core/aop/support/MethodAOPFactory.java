@@ -6,6 +6,7 @@ import com.silentgo.core.aop.MethodAdviser;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.kit.CollectionKit;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,28 +20,28 @@ import java.util.Map;
  *         Created by teddyzhu on 16/8/16.
  */
 public class MethodAOPFactory extends BaseFactory {
-    private Map<String, MethodAdviser> methodAdviserMap = new HashMap<>();
+    private Map<Method, MethodAdviser> methodAdviserMap = new HashMap<>();
 
-    private Map<String, List<Interceptor>> buildedMethodInterceptors = new HashMap<>();
+    private Map<Method, List<Interceptor>> buildedMethodInterceptors = new HashMap<>();
 
     public boolean addMethodAdviser(MethodAdviser methodAdviser) {
         return CollectionKit.MapAdd(methodAdviserMap, methodAdviser.getName(), methodAdviser);
     }
 
-    public Map<String, MethodAdviser> getMethodAdviserMap() {
+    public Map<Method, MethodAdviser> getMethodAdviserMap() {
         return methodAdviserMap;
     }
 
-    public List<Interceptor> getBuildedMethodInterceptors(String methodName) {
-        return buildedMethodInterceptors.get(methodName);
+    public List<Interceptor> getBuildedMethodInterceptors(Method method) {
+        return buildedMethodInterceptors.get(method);
     }
 
-    public boolean addBuildedInterceptor(String name, List<Interceptor> interceptors) {
+    public boolean addBuildedInterceptor(Method name, List<Interceptor> interceptors) {
         return CollectionKit.MapAdd(buildedMethodInterceptors, name, interceptors);
     }
 
-    public MethodAdviser getMethodAdviser(String methodName) {
-        return methodAdviserMap.get(methodName);
+    public MethodAdviser getMethodAdviser(Method method) {
+        return methodAdviserMap.get(method);
     }
 
 }

@@ -1,15 +1,11 @@
 package com.silentgo.core.aop.annotationintercept.support;
 
 import com.silentgo.core.aop.AOPPoint;
-import com.silentgo.core.aop.Interceptor;
 import com.silentgo.core.aop.annotationintercept.IAnnotation;
-import com.silentgo.core.aop.support.InterceptChain;
 
 import java.lang.annotation.Annotation;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Project : silentgo
@@ -44,7 +40,7 @@ public class AnnotationInterceptChain {
             returnValue = entry.getValue().intercept(this, point.getResponse(), point.getRequest(), entry.getKey());
 
         } else if (index++ == size) {
-            return point.doChain();
+            return point.proceed();
         }
 
         return returnValue;

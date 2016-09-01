@@ -6,6 +6,9 @@ import com.silentgo.core.exception.AppParameterPaserException;
 import com.silentgo.core.route.ParameterValueResolver;
 import com.silentgo.core.route.annotation.PathVariable;
 import com.silentgo.core.route.support.paramvalueresolve.annotation.ParameterResolver;
+import com.silentgo.kit.typeconvert.ConvertKit;
+import com.silentgo.kit.typeconvert.ITypeConvertor;
+import com.silentgo.kit.typeconvert.support.TypeConvert;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
 
@@ -20,16 +23,30 @@ import com.silentgo.servlet.http.Response;
 @ParameterResolver
 public class PathValueParamResolver implements ParameterValueResolver {
     @Override
-    public boolean isValid(Response response, Request request, MethodParam methodParam) {
+    public boolean isValid(MethodParam methodParam) {
         return methodParam.existAnnotation(PathVariable.class);
     }
 
     @Override
     public Object getValue(Response response, Request request, MethodParam methodParam) throws AppParameterPaserException {
+        if (!TypeConvert.isBaseType(methodParam.getType())) return null;
         PathVariable pathVariable = methodParam.getAnnotation(PathVariable.class);
-
-        return pathVariable.index() > -1 ? request.getPathParameter(pathVariable.index()) :
+        String jsonString = pathVariable.index() > -1 ? request.getPathParameter(pathVariable.index()) :
                 Const.EmptyString.equals(pathVariable.value()) ? request.getPathParameter(methodParam.getName()) :
                         request.getPathParameter(pathVariable.value());
+
+        ITypeConvertor typeConvertor = new ConvertKit().getTypeConvert(String.class, methodParam.getType());
+
+        Object ret = typeConvertor.convert(jsonString);
+        if (methodParam.getType().isPrimitive() && ret == null) {
+            throw new AppParameterPaserException("Type %s parameter '%s' is not present   \n" +
+                    "but cannot be translated into a null value due to being declared as a primitive type.", methodParam.getType().getName(), methodParam.getName());
+        }
+        return ret;
+    }
+
+    @Override
+    public Integer priority() {
+        return 5;
     }
 }

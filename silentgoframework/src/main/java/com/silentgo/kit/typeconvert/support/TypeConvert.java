@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public class TypeConvert {
 
-    private static final ArrayList type = new ArrayList() {{
+    private static final ArrayList<Class<?>> type = new ArrayList<Class<?>>() {{
         add(Boolean.class);
         add(Byte.class);
         add(Character.class);
@@ -42,6 +42,9 @@ public class TypeConvert {
         add(short.class);
     }};
 
+    public static Class<?> getConvertType(Class<?> clz) {
+        return type.get(primitiveType.indexOf(clz));
+    }
 
     public static boolean isBaseType(Class<?> clz) {
         return type.contains(clz) || primitiveType.contains(clz);

@@ -48,11 +48,6 @@ public class MethodParam {
         annotations.forEach(annotation -> anTypes.add(annotation.annotationType()));
     }
 
-
-    public Object getValue(Request request) {
-        return request.getParsedParameter(name);
-    }
-
     public boolean existAnnotation(Class<? extends Annotation> clz) {
         return anTypes.contains(clz);
     }

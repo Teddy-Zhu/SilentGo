@@ -1,10 +1,16 @@
 package com.silentgo.core.render.renderresolver;
 
 import com.silentgo.core.aop.MethodAdviser;
+import com.silentgo.core.exception.AppRenderException;
 import com.silentgo.core.render.Render;
+import com.silentgo.core.render.RenderModel;
+import com.silentgo.core.render.support.RenderFactory;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.kit.CollectionKit;
+import com.silentgo.servlet.http.Request;
+import com.silentgo.servlet.http.Response;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +27,7 @@ public class RenderResolverFactory extends BaseFactory {
 
     private List<RenderResolver> renderResolvers = new ArrayList<>();
 
-    private HashMap<String, RenderResolver> renderResolverHashMap = new HashMap<>();
+    private HashMap<Method, RenderResolver> renderResolverHashMap = new HashMap<>();
 
 
     public void addRenderResolver(MethodAdviser adviser) {
@@ -37,7 +43,7 @@ public class RenderResolverFactory extends BaseFactory {
         return CollectionKit.ListAdd(renderResolvers, renderResolver);
     }
 
-    public RenderResolver getRenderResolver(String name) {
+    public RenderResolver getRenderResolver(Method name) {
         return renderResolverHashMap.get(name);
     }
 
@@ -48,5 +54,19 @@ public class RenderResolverFactory extends BaseFactory {
             int y = o2.priority();
             return (x < y) ? -1 : ((x == y) ? 0 : 1);
         }));
+    }
+
+    public boolean render(RenderFactory renderFactory, MethodAdviser adviser, Request request, Response response, Object returnVal) throws AppRenderException {
+        RenderResolver renderResolver = getRenderResolver(adviser.getName());
+
+        if (renderResolver != null) {
+            RenderModel renderModel = renderResolver.getRenderModel(renderFactory, adviser, response, request, returnVal);
+
+            if (renderModel != null) {
+                renderModel.render();
+                return true;
+            }
+        }
+        return false;
     }
 }

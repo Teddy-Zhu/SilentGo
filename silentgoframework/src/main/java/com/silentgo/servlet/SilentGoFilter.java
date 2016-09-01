@@ -105,6 +105,7 @@ public class SilentGoFilter implements Filter {
             globalConfig.getActionChain().doAction(param);
         } catch (Throwable throwable) {
             new ErrorRener().render(request, response, HttpStatus.Code.INTERNAL_SERVER_ERROR, throwable, appContext.isDevMode());
+            return;
         } finally {
             SilentGo.getInstance().getConfig().getCtx().remove();
         }

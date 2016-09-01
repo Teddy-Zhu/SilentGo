@@ -1,10 +1,12 @@
 package com.silentgo.web.controller;
 
+import com.silentgo.core.ioc.annotation.Inject;
 import com.silentgo.core.route.annotation.Controller;
 import com.silentgo.core.route.annotation.PathVariable;
 import com.silentgo.core.route.annotation.Route;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
+import com.silentgo.web.testInject.bInter;
 
 /**
  * Project : silentgo
@@ -17,9 +19,16 @@ import com.silentgo.servlet.http.Response;
 @Controller
 public class noRouteController {
 
-    @Route("/t/111.html")
-    public String test(Request request, Response response) {
+    @Inject
+    bInter bInter;
 
+    @Inject("am")
+    bInter bInter2;
+
+    @Route("/t/{id}.html")
+    public String test(@PathVariable String id, Request request, Response response) {
+        bInter.say(id);
+        bInter2.say(id);
         request.setAttribute("data", "aaaa");
         return "index.jsp";
     }

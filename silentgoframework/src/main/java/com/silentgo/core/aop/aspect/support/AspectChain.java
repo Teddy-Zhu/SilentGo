@@ -36,7 +36,7 @@ public class AspectChain {
             //noinspection unchecked
             returnValue = method.invoke(this, point);
         } else if (index++ == size) {
-            return point.doChain();
+            return point.proceed();
         }
 
         return returnValue;

@@ -10,6 +10,7 @@ import com.silentgo.core.aop.aspect.AspectMethod;
 import com.silentgo.core.aop.support.MethodAOPFactory;
 import com.silentgo.core.ioc.bean.BeanFactory;
 import com.silentgo.core.ioc.bean.BeanWrapper;
+import com.silentgo.kit.CollectionKit;
 import com.silentgo.kit.logger.Logger;
 import com.silentgo.kit.logger.LoggerFactory;
 
@@ -59,7 +60,11 @@ public class AspectBuilder extends SilentGoBuilder {
             }
         });
         MethodAOPFactory methodAOPFactory = me.getFactory(MethodAOPFactory.class);
-        List<String> methodNames = new ArrayList<>(methodAOPFactory.getMethodAdviserMap().keySet());
+        List<String> methodNames = new ArrayList<>();
+        methodAOPFactory.getMethodAdviserMap().forEach((k, v) -> {
+            CollectionKit.ListAdd(methodNames, v.getMethodName());
+        });
+
         //build aspect
         aspectFactory.getAspectMethods().forEach(aspectMethod -> {
             if (aspectMethod.getMethod().getJavaMethod().getParameterCount() != 1) {
@@ -69,15 +74,24 @@ public class AspectBuilder extends SilentGoBuilder {
 
             if (aspectMethod.isRegex()) {
                 methodNames.forEach(name -> {
-                    if (name.matches(aspectMethod.getRule()))
-                        aspectFactory.addAspectMethodInMap(name, aspectMethod);
+                    if (name.matches(aspectMethod.getRule())) {
+                        addAspectMethod(aspectFactory, methodAOPFactory, aspectMethod, name);
+                    }
                 });
             } else {
                 if (methodNames.contains(aspectMethod.getRule())) {
-                    aspectFactory.addAspectMethodInMap(aspectMethod.getRule(), aspectMethod);
+                    addAspectMethod(aspectFactory, methodAOPFactory, aspectMethod, aspectMethod.getRule());
                 }
             }
         });
         return true;
+    }
+
+    private void addAspectMethod(AspectFactory aspectFactory, MethodAOPFactory methodAOPFactory, AspectMethod aspectMethod, String methodName) {
+        methodAOPFactory.getMethodAdviserMap().forEach((k, v) -> {
+            if (v.getMethodName().equals(methodName)) {
+                aspectFactory.addAspectMethodInMap(v.getName(), aspectMethod);
+            }
+        });
     }
 }

@@ -56,6 +56,10 @@ public class SilentGo {
         Context = context;
     }
 
+    public ServletContext getContext() {
+        return Context;
+    }
+
     public void setAnnotationManager(AnnotationManager annotationManager) {
         this.annotationManager = annotationManager;
     }

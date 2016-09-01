@@ -1,12 +1,15 @@
 package com.silentgo.servlet.http;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.silentgo.core.config.Const;
 import com.silentgo.kit.CollectionKit;
 import com.silentgo.kit.StringKit;
 
 import javax.servlet.http.HttpServletRequestWrapper;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,23 +24,18 @@ public class Request extends HttpServletRequestWrapper {
 
     private Map<String, String[]> paramsMap = new HashMap<>();
 
-    private Map<String, Object> parsedParamMap = new HashMap<>();
+    private Map<String, Object> resolvedMap;
 
     private int pathSize = 0;
     private String[] pathParameters = new String[0];
 
-    private JSONObject parameterJson;
-
-    private String jsonString;
 
     private Map<String, String> pathNamedParameters = new HashMap<>();
-
-    private Map<String, Object> hashMap = new HashMap<>();
 
     public Request(javax.servlet.http.HttpServletRequest request) {
         super(request);
         this.paramsMap.putAll(request.getParameterMap());
-        hashMap = getParamHash();
+        resolvedMap = RequestKit.parse(paramsMap);
     }
 
     @Override
@@ -72,10 +70,6 @@ public class Request extends HttpServletRequestWrapper {
         }
     }
 
-    public Object getParsedParameter(String name) {
-        return parsedParamMap.get(name);
-    }
-
 
     public Map<String, String[]> getParameterMap() {
         return paramsMap;
@@ -98,58 +92,7 @@ public class Request extends HttpServletRequestWrapper {
         return pathNamedParameters.get(name);
     }
 
-    public void setParsedParamMap(Map<String, Object> parsedParamMap) {
-        this.parsedParamMap = parsedParamMap;
-    }
-
-
-    private Map<String, Object> getParamHash() {
-
-        Map<String, Object> prasedParamMap = new HashMap<>();
-
-        paramsMap.forEach((k, v) -> {
-            String[] ks = k.indexOf('.') > 0 ? k.split("\\.") : new String[]{k};
-            if (ks.length == 0 || StringKit.isNullOrEmpty(ks[0])) return;
-
-            if (ks.length == 1) {
-                CollectionKit.MapAdd(prasedParamMap, ks[0], v[0]);
-            }
-            if (ks.length > 1) {
-                Map<String, Object> map = getMap(prasedParamMap, ks[0]);
-                for (int i = 1, len = ks.length - 1; i < len; i++) {
-                    map = getMap(map, ks[i]);
-                }
-                CollectionKit.MapAdd(map, ks[ks.length - 1], v[0]);
-            }
-        });
-        return prasedParamMap;
-    }
-
-    @SuppressWarnings("unchecked")
-    private Map<String, Object> getMap(Map<String, Object> source, String key) {
-        Object obj = source.get(key);
-        if (obj == null) obj = new HashMap<>();
-        source.put(key, obj);
-        return (Map<String, Object>) obj;
-    }
-
-    public Map<String, Object> getHashMap() {
-        return hashMap;
-    }
-
-    public JSONObject getParameterJson() {
-        return parameterJson;
-    }
-
-    public void setParameterJson(JSONObject parameterJson) {
-        this.parameterJson = parameterJson;
-    }
-
-    public String getJsonString() {
-        return jsonString;
-    }
-
-    public void setJsonString(String jsonString) {
-        this.jsonString = jsonString;
+    public Map<String, Object> getResolvedMap() {
+        return resolvedMap;
     }
 }

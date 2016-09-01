@@ -1,6 +1,5 @@
 package com.silentgo.core.aop.support;
 
-import com.silentgo.core.config.Const;
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.AOPPoint;
 import com.silentgo.kit.SilentGoContext;
@@ -20,11 +19,8 @@ import java.lang.reflect.Method;
 public class AOPInterceptor implements MethodInterceptor {
     private Object target;
 
-    private String classPrefix;
-
     public AOPInterceptor(Object target) {
         this.target = target;
-        classPrefix = target.getClass().getName() + ".";
     }
 
     @Override
@@ -32,10 +28,10 @@ public class AOPInterceptor implements MethodInterceptor {
         SilentGoContext ctx = SilentGo.getInstance().getConfig().getCtx().get();
         MethodAOPFactory methodAOPFactory = SilentGo.getInstance().getFactory(MethodAOPFactory.class);
         AOPPoint point = new AOPPoint(o, method, objects, methodProxy,
-                methodAOPFactory.getMethodAdviser(classPrefix + method.getName()), ctx.getResponse(), ctx.getRequest());
-        InterceptChain chain = new InterceptChain(point, methodAOPFactory.getBuildedMethodInterceptors(point.getAdviser().getName()));
+                methodAOPFactory.getMethodAdviser(method), ctx.getResponse(), ctx.getRequest());
+        InterceptChain chain = new InterceptChain(point, methodAOPFactory.getBuildedMethodInterceptors(point.getAdviser().getMethod().getJavaMethod()));
         point.setChain(chain);
-        return point.doChain();
-}
+        return point.proceed();
+    }
 
 }

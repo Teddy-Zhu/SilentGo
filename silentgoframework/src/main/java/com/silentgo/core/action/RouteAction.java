@@ -83,56 +83,30 @@ public class RouteAction extends ActionChain {
             Object bean = beanFactory.getBean(adviser.getClassName()).getBean();
 
             try {
-                for (Annotation annotation : adviser.getAnnotations()) {
-                    ParamAnnotationResolver resolver = paramAnFactory.getResolver(annotation.annotationType());
-                    if (resolver != null) {
-                        if (!resolver.validate(adviser, response, request, annotation)) {
-                            new ErrorRener().render(request, response, HttpStatus.Code.METHOD_NOT_ALLOWED, null, isDev);
-                            return;
-                        }
-                    }
+                if (!paramAnFactory.resolve(adviser, request, response)) {
+                    new ErrorRener().render(request, response, HttpStatus.Code.METHOD_NOT_ALLOWED, null, isDev);
+                    return;
                 }
 
                 // parameter dispatch
-                for (ParameterDispatcher parameterDispatcher : paramDispatchFactory.getDispatchers()) {
-                    parameterDispatcher.dispatch(parameterResolveFactory, param, ret, args);
-                }
+                paramDispatchFactory.dispatch(parameterResolveFactory, param, ret, args);
+
 
                 Object returnVal = null;
 
                 //controller method with interceptors
                 returnVal = adviser.getMethod().invoke(bean, args);
 
-
                 //render
-                render(renderFactory, renderResolverFactory, adviser, response, request, returnVal);
+                renderResolverFactory.render(renderFactory, adviser, request, response, returnVal);
 
             } catch (AppException e) {
                 new ErrorRener().render(request, response, e, isDev);
             } catch (Exception ex) {
-                Exception e = null;
-                if (ex instanceof InvocationTargetException) {
-                    e = (Exception) ((InvocationTargetException) ex).getTargetException();
-                }
+                //exception handle
                 ExceptionFactory exceptionFactory = me.getFactory(ExceptionFactory.class);
 
-                List<MethodAdviser> advisers = exceptionFactory.getEexceptionHandler(adviser.getName(),
-                        e.getClass());
-
-
-                if (advisers == null || advisers.size() == 0) {
-                    throw e;
-                } else {
-                    for (MethodAdviser exceptionMethodAdviser : advisers) {
-                        Object expRet = exceptionMethodAdviser.getMethod().invoke(
-                                beanFactory.getBean(exceptionMethodAdviser.getClassName()).getBean(),
-                                ExceptionKit.getArgs(exceptionMethodAdviser, e, response, request));
-                        if (render(renderFactory, renderResolverFactory, exceptionMethodAdviser, response, request, expRet)) {
-                            //allow only one render enables
-                            break;
-                        }
-                    }
-                }
+                exceptionFactory.handle(renderResolverFactory, renderFactory, beanFactory, adviser, request, response, ex);
 
             }
 
@@ -140,17 +114,4 @@ public class RouteAction extends ActionChain {
         }
     }
 
-    private boolean render(RenderFactory renderFactory, RenderResolverFactory renderResolverFactory, MethodAdviser adviser, Response response, Request request, Object returnVal) throws AppRenderException {
-        RenderResolver renderResolver = renderResolverFactory.getRenderResolver(adviser.getName());
-
-        if (renderResolver != null) {
-            RenderModel renderModel = renderResolver.getRenderModel(renderFactory, adviser, response, request, returnVal);
-
-            if (renderModel != null) {
-                renderModel.render();
-                return true;
-            }
-        }
-        return false;
-    }
 }

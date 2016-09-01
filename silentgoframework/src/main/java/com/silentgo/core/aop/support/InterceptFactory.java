@@ -5,6 +5,8 @@ import com.silentgo.core.aop.Interceptor;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.kit.CollectionKit;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,11 +23,10 @@ public class InterceptFactory extends BaseFactory {
 
     private Map<Class<? extends Interceptor>, Interceptor> allInterceptors = new HashMap<>();
 
-
     private Map<String, List<Interceptor>> classInterceptors = new HashMap<>();
 
 
-    private Map<String, List<Interceptor>> methodInterceptors = new HashMap<>();
+    private Map<Method, List<Interceptor>> methodInterceptors = new HashMap<>();
 
 
     public Map<Class<? extends Interceptor>, Interceptor> getAllInterceptors() {
@@ -36,7 +37,7 @@ public class InterceptFactory extends BaseFactory {
         return classInterceptors;
     }
 
-    public Map<String, List<Interceptor>> getMethodInterceptors() {
+    public Map<Method, List<Interceptor>> getMethodInterceptors() {
         return methodInterceptors;
     }
 
@@ -44,11 +45,18 @@ public class InterceptFactory extends BaseFactory {
         return CollectionKit.MapAdd(allInterceptors, name, name.newInstance());
     }
 
+    public boolean addAllInterceltor(List<Interceptor> interceptors) {
+        interceptors.forEach(interceptor -> {
+            CollectionKit.MapAdd(allInterceptors, interceptor.getClass(), interceptor);
+        });
+        return true;
+    }
+
     public boolean addAllInterceltor(Class<? extends Interceptor> name, Interceptor interceptor) {
         return CollectionKit.MapAdd(allInterceptors, name, interceptor);
     }
 
-    public boolean addMethodInterceptor(String name, Interceptor interceptor) {
+    public boolean addMethodInterceptor(Method name, Interceptor interceptor) {
         CollectionKit.ListMapAdd(methodInterceptors, name, interceptor);
         return true;
     }

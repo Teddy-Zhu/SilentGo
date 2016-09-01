@@ -17,12 +17,17 @@ import com.silentgo.servlet.http.Response;
 @ParameterResolver
 public class ResponseParamResolver implements ParameterValueResolver {
     @Override
-    public boolean isValid(Response response, Request request, MethodParam methodParam) {
+    public boolean isValid(MethodParam methodParam) {
         return methodParam.getType().equals(Response.class);
     }
 
     @Override
     public Object getValue(Response response, Request request, MethodParam methodParam) {
         return response;
+    }
+
+    @Override
+    public Integer priority() {
+        return 90;
     }
 }

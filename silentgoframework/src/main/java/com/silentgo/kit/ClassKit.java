@@ -83,7 +83,7 @@ public class ClassKit {
         }
     }
 
-    private static String getWebRootPath() {
+    public static String getWebRootPath() {
         if (webRootPath == null)
             webRootPath = detectWebRootPath();
         return webRootPath;

@@ -45,14 +45,14 @@ public class BeanBuilder extends SilentGoBuilder {
             Service service = (Service) aClass.getAnnotation(Service.class);
             if (!Const.DEFAULT_NONE.equals(service.value()))
                 beanDefinitions.add(new BeanDefinition(service.value(), aClass));
-            beanDefinitions.add(new BeanDefinition(aClass, false));
+            beanDefinitions.add(new BeanDefinition(aClass, true));
         });
         me.getAnnotationManager().getClasses(Component.class).forEach(aClass -> {
             if (aClass.isInterface()) return;
             Component component = (Component) aClass.getAnnotation(Component.class);
             if (!Const.DEFAULT_NONE.equals(component.value()))
                 beanDefinitions.add(new BeanDefinition(component.value(), aClass));
-            beanDefinitions.add(new BeanDefinition(aClass, false));
+            beanDefinitions.add(new BeanDefinition(aClass, true));
         });
 
         me.getAnnotationManager().getClasses(Controller.class).forEach(aClass -> {
@@ -60,7 +60,7 @@ public class BeanBuilder extends SilentGoBuilder {
             Controller controller = (Controller) aClass.getAnnotation(Controller.class);
             if (!Const.DEFAULT_NONE.equals(controller.value()))
                 beanDefinitions.add(new BeanDefinition(controller.value(), aClass));
-            beanDefinitions.add(new BeanDefinition(aClass, false));
+            beanDefinitions.add(new BeanDefinition(aClass, true));
         });
 
         me.getAnnotationManager().getClasses(Aspect.class).forEach(aClass -> {

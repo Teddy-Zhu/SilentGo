@@ -58,6 +58,7 @@ public class InterceptBuilder extends SilentGoBuilder {
                 }
             }
         });
+        interceptFactory.addAllInterceltor(globalInterceptors);
         BeanFactory beanFactory = SilentGo.getInstance().getFactory(BeanFactory.class);
 
 
@@ -73,9 +74,8 @@ public class InterceptBuilder extends SilentGoBuilder {
             for (Method method : methods) {
                 Intercept intercept = method.getAnnotation(Intercept.class);
                 if (intercept != null && intercept.value().length != 0) {
-                    String methodName = v.getSourceClass().getName() + "." + method.getName();
                     for (Class<? extends Interceptor> aClass : intercept.value()) {
-                        interceptFactory.addMethodInterceptor(methodName, getInterceptor(interceptFactory, aClass));
+                        interceptFactory.addMethodInterceptor(method, getInterceptor(interceptFactory, aClass));
                     }
                 }
             }

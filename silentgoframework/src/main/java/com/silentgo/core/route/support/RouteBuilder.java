@@ -55,8 +55,7 @@ public class RouteBuilder extends SilentGoBuilder {
         Pattern routePattern = Pattern.compile(Regex.RoutePath);
 
         for (Method method : bean.getBeanClass().getJavaClass().getDeclaredMethods()) {
-            String methodName = aClass.getName() + "." + method.getName();
-            MethodAdviser adviser = methodAOPFactory.getMethodAdviser(methodName);
+            MethodAdviser adviser = methodAOPFactory.getMethodAdviser(method);
             Route an = adviser.getAnnotation(Route.class);
             if (an == null) continue;
 

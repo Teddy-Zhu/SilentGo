@@ -49,10 +49,8 @@ public class ExceptionBuilder extends SilentGoBuilder {
                 }
             } else {
                 Method[] methods = aClass.getDeclaredMethods();
-                String classsuffix = aClass.getName() + ".";
                 for (Method method : methods) {
-                    String name = classsuffix + method.getName();
-                    MethodAdviser adviser = methodAOPFactory.getMethodAdviser(name);
+                    MethodAdviser adviser = methodAOPFactory.getMethodAdviser(method);
                     if (adviser.getParams().length > 3) {
                     } else {
                         boolean bc = false;
@@ -75,18 +73,15 @@ public class ExceptionBuilder extends SilentGoBuilder {
         //build controller exception in controller class
         me.getAnnotationManager().getClasses(Controller.class).forEach(aClass -> {
             String classsuffix = aClass.getName() + ".";
-            List<String> names = new ArrayList<String>();
+            List<Method> names = new ArrayList<>();
             Map<Class<? extends Exception>, List<MethodAdviser>> map = new HashMap<>();
             for (Method method : aClass.getDeclaredMethods()) {
                 if (method.getAnnotation(Route.class) != null) {
-                    String name = classsuffix + method.getName();
-
-                    names.add(name);
+                    names.add(method);
                 }
                 ExceptionHandler handler = method.getAnnotation(ExceptionHandler.class);
                 if (handler != null) {
-                    String name = classsuffix + method.getName();
-                    MethodAdviser adviser = methodAOPFactory.getMethodAdviser(name);
+                    MethodAdviser adviser = methodAOPFactory.getMethodAdviser(method);
                     if (adviser.getParams().length > 3) {
                     } else {
                         boolean bc = false;

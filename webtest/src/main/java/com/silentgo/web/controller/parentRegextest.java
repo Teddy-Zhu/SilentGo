@@ -24,4 +24,11 @@ public class parentRegextest {
         request.setAttribute("data", id + ":" + token);
         return "index.jsp";
     }
+
+    @Route("/t/{token:[0-9]+}")
+    public String test(Request request, Response response, @PathVariable int token, @PathVariable Integer id) {
+
+        request.setAttribute("data", id + ":" + token);
+        return "index.jsp";
+    }
 }

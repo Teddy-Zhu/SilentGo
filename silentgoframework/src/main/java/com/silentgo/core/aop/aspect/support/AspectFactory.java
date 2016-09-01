@@ -5,6 +5,7 @@ import com.silentgo.core.aop.aspect.AspectMethod;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.kit.CollectionKit;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +23,7 @@ public class AspectFactory extends BaseFactory {
 
     private List<AspectMethod> aspectMethods = new ArrayList<>();
 
-    private Map<String, List<AspectMethod>> methodAspectMap = new HashMap<>();
+    private Map<Method, List<AspectMethod>> methodAspectMap = new HashMap<>();
 
     public List<AspectMethod> getAspectMethods() {
         return aspectMethods;
@@ -32,12 +33,12 @@ public class AspectFactory extends BaseFactory {
         return CollectionKit.ListAdd(aspectMethods, aspectMethod);
     }
 
-    public List<AspectMethod> getAspectMethod(String methodName) {
-        return methodAspectMap.get(methodName);
+    public List<AspectMethod> getAspectMethod(Method name) {
+        return methodAspectMap.get(name);
     }
 
-    public boolean addAspectMethodInMap(String methodName, AspectMethod method) {
-        CollectionKit.ListMapAdd(methodAspectMap, methodName, method);
+    public boolean addAspectMethodInMap(Method name, AspectMethod method) {
+        CollectionKit.ListMapAdd(methodAspectMap, name, method);
         return true;
     }
 
