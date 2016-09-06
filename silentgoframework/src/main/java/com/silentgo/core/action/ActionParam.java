@@ -47,4 +47,8 @@ public class ActionParam {
     public String getRequestURL() {
         return requestURL;
     }
+
+    public void setRequest(Request request) {
+        this.request = request;
+    }
 }

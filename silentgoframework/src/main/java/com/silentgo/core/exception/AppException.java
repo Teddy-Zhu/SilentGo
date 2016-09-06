@@ -1,5 +1,7 @@
 package com.silentgo.core.exception;
 
+import com.silentgo.servlet.http.HttpStatus;
+
 /**
  * Project : silentgo
  * com.silentgo.core.exception
@@ -15,6 +17,11 @@ public class AppException extends Exception {
     public AppException(String message, int code) {
         super(message);
     }
+
+    public AppException(int code) {
+        super(HttpStatus.getMessage(code));
+    }
+
 
     public AppException(String message) {
         super(message);

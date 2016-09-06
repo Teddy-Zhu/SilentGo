@@ -11,7 +11,10 @@ import com.silentgo.kit.StringKit;
  *         Created by teddyzhu on 16/8/30.
  */
 public enum ContentType {
-    JSON("application/json"), XML("application/xml"), MULTIPART("multipart");
+    TEXT("text/html"),
+    JSON("application/json"),
+    XML("application/xml"),
+    MULTIPART("multipart");
 
     private String contentType;
 
@@ -23,7 +26,7 @@ public enum ContentType {
         return this.contentType;
     }
 
-    public static ContentType fromString(String contentType) {
+    public static ContentType parse(String contentType) {
         if (StringKit.isNullOrEmpty(contentType)) return null;
         for (ContentType t : ContentType.values()) {
             if (contentType.equalsIgnoreCase(t.contentType)) {
@@ -33,7 +36,7 @@ public enum ContentType {
         return null;
     }
 
-    public static ContentType fromString(String contentType, ContentType defaultType) {
+    public static ContentType parse(String contentType, ContentType defaultType) {
         if (contentType != null) {
             for (ContentType t : ContentType.values()) {
                 if (contentType.equalsIgnoreCase(t.contentType)) {

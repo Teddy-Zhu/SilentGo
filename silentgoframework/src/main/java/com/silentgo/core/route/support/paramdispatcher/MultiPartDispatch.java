@@ -11,10 +11,7 @@ import com.silentgo.core.route.Route;
 import com.silentgo.core.route.annotation.ParamDispatcher;
 import com.silentgo.core.route.support.paramvalueresolve.ParameterResolveFactory;
 import com.silentgo.kit.StringKit;
-import com.silentgo.servlet.http.ContentType;
-import com.silentgo.servlet.http.MultiFile;
-import com.silentgo.servlet.http.Request;
-import com.silentgo.servlet.http.RequestMethod;
+import com.silentgo.servlet.http.*;
 import org.apache.commons.fileupload.*;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.FileCleanerCleanup;
@@ -41,11 +38,18 @@ import java.util.Map;
 @ParamDispatcher
 public class MultiPartDispatch implements ParameterDispatcher {
 
-    private static FileCleaningTracker tracker = new FileCleaningTracker();
+    private static final String FILE_CLEANING_TRACKER_ATTRIBUTE
+            = MultiPartDispatch.class.getName() + ".FileCleaningTracker";
 
     @Override
-    public void release() {
-        tracker.exitWhenFinished();
+    public void release(ActionParam param) {
+        if (param.getRequest() instanceof MultiPartRequest) {
+            ((MultiPartRequest) param.getRequest()).delete();
+        }
+    }
+
+    private FileCleaningTracker getTracker(SilentGo me) {
+        return (FileCleaningTracker) me.getContext().getAttribute(FILE_CLEANING_TRACKER_ATTRIBUTE);
     }
 
     @Override
@@ -58,41 +62,48 @@ public class MultiPartDispatch implements ParameterDispatcher {
         Request request = param.getRequest();
 
         ServletFileUpload servletFileUpload = new ServletFileUpload();
+        if (!ServletFileUpload.isMultipartContent(request)) return;
+
         FileUploadConfig config = SilentGo.getInstance().getConfig().getFileUploadConfig();
-        ServletFileUpload.isMultipartContent(param.getRequest());
-        servletFileUpload.setSizeMax(config.getMaxSize());
+
 
         DiskFileItemFactory factory = new DiskFileItemFactory();
+
         factory.setRepository(new File(config.getUploadPath()));
         factory.setSizeThreshold(config.getSizeThreshold());
-        factory.setFileCleaningTracker(tracker);
+        factory.setFileCleaningTracker(getTracker(SilentGo.getInstance()));
 
+        servletFileUpload.setSizeMax(config.getMaxSize());
+        servletFileUpload.setFileItemFactory(factory);
+        servletFileUpload.setHeaderEncoding(SilentGo.getInstance().getConfig().getEncoding());
         try {
-            List<FileItem> items = servletFileUpload.parseRequest(param.getRequest());
+            List<FileItem> items = servletFileUpload.parseRequest(request);
 
             List<MultiFile> files = new ArrayList<>();
             items.stream().filter(item -> !item.isFormField()).forEach(item -> {
-                String fileName = item.getName().substring(item.getName().lastIndexOf("\\") + 1);
+                String fileName = item.getName();
                 String ext = fileName.substring(fileName.lastIndexOf(".") + 1);
                 String name = item.getFieldName();
                 String contentType = item.getContentType();
                 long size = item.getSize();
                 File file = null;
-                if (config.isAutoSave()) {
-                    try {
-                        file = new File(config.getUploadPath() + "/" + name + new Date().getTime() + ext);
-                        item.write(file);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
+                InputStream inputStream = null;
                 try {
-                    files.add(new MultiFile(name, fileName, contentType, ext, size, item.getInputStream(), file));
-                } catch (IOException e) {
+                    if (config.isAutoSave()) {
+                        file = new File(config.getUploadPath() + "/Saved/" + name + new Date().getTime() + "." + ext);
+                        item.write(file);
+                    } else {
+                        inputStream = item.getInputStream();
+                    }
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
-
+                files.add(new MultiFile(name, fileName, contentType, ext, size, inputStream, file));
             });
+            if (files.size() > 0) {
+                param.setRequest(new MultiPartRequest(request, files));
+                SilentGo.getInstance().getConfig().getCtx().get().setRequest(param.getRequest());
+            }
         } catch (FileUploadException e) {
             e.printStackTrace();
         }

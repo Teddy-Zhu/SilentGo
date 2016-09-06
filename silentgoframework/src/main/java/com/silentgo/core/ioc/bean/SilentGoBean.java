@@ -68,6 +68,12 @@ public class SilentGoBean extends BeanFactory<BeanDefinition> {
         return beansMap;
     }
 
+    @Override
+    public boolean destory(String name) {
+        beansMap.remove(name);
+        return true;
+    }
+
     private void depend(BeanDefinition beanDefinition) {
         if (beanDefinition.isInjectComplete()) return;
         beanDefinition.getFieldBeans().forEach((k, v) -> {

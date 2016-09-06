@@ -18,6 +18,7 @@ import com.silentgo.core.route.ParameterDispatcher;
 import com.silentgo.core.route.Route;
 import com.silentgo.core.route.support.annotationResolver.ParamAnFactory;
 import com.silentgo.core.route.support.annotationResolver.ParamAnnotationResolver;
+import com.silentgo.core.route.support.paramdispatcher.MultiPartDispatch;
 import com.silentgo.core.route.support.paramdispatcher.ParamDispatchFactory;
 import com.silentgo.core.route.support.RouteFactory;
 import com.silentgo.core.route.support.paramvalueresolve.ParameterResolveFactory;
@@ -67,7 +68,6 @@ public class RouteAction extends ActionChain {
             LOGGER.debug("can not match url {}", param.getRequestURL());
             new ErrorRener().render(request, response, HttpStatus.Code.NOT_FOUND, null, isDev);
         } else {
-
             BeanFactory beanFactory = me.getFactory(BeanFactory.class);
 
             ParamDispatchFactory paramDispatchFactory = me.getFactory(ParamDispatchFactory.class);
@@ -108,8 +108,9 @@ public class RouteAction extends ActionChain {
 
                 exceptionFactory.handle(renderResolverFactory, renderFactory, beanFactory, adviser, request, response, ex);
 
+            } finally {
+                paramDispatchFactory.release(param);
             }
-
 
         }
     }

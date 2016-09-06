@@ -1,12 +1,15 @@
 package com.silentgo.servlet;
 
 import com.silentgo.core.build.SilentGoBuilder;
+import com.silentgo.core.build.SilentGoReleaser;
 import com.silentgo.core.build.annotation.Builder;
+import com.silentgo.core.build.annotation.Releaser;
 import com.silentgo.core.config.Config;
 import com.silentgo.core.config.Const;
 import com.silentgo.core.config.SilentGoConfig;
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.action.ActionParam;
+import com.silentgo.core.config.support.ConfigChecker;
 import com.silentgo.core.exception.AppBuildException;
 import com.silentgo.core.exception.support.ExceptionFactory;
 import com.silentgo.core.render.support.ErrorRener;
@@ -18,6 +21,7 @@ import com.silentgo.kit.logger.LoggerFactory;
 import com.silentgo.servlet.http.HttpStatus;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
+import com.sun.org.apache.regexp.internal.RE;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -72,9 +76,12 @@ public class SilentGoFilter implements Filter {
             AnnotationManager manager = new AnnotationManager(config);
             appContext.setAnnotationManager(manager);
 
+            buildRelease(manager, config);
             build(manager, config);
 
             configInit.afterInit(config);
+
+            ConfigChecker.Check(config);
 
             globalConfig = appContext.getConfig();
 
@@ -100,14 +107,14 @@ public class SilentGoFilter implements Filter {
         requestPath = requestPath.length() == 0 ? Const.Slash : requestPath;
 
         ActionParam param = new ActionParam(false, request, response, requestPath);
-        SilentGo.getInstance().getConfig().getCtx().set(new SilentGoContext(response, request));
+        globalConfig.getCtx().set(new SilentGoContext(response, request));
         try {
             globalConfig.getActionChain().doAction(param);
         } catch (Throwable throwable) {
             new ErrorRener().render(request, response, HttpStatus.Code.INTERNAL_SERVER_ERROR, throwable, appContext.isDevMode());
             return;
         } finally {
-            SilentGo.getInstance().getConfig().getCtx().remove();
+           globalConfig.getCtx().remove();
         }
 
         if (!param.isHandled())
@@ -117,6 +124,29 @@ public class SilentGoFilter implements Filter {
 
     @Override
     public void destroy() {
+        globalConfig.getReleasers().forEach(release -> release.relase(appContext));
+    }
+
+    private void buildRelease(AnnotationManager manager, SilentGoConfig config) {
+        //add realser
+        SilentGoConfig finalConfig = config;
+        manager.getClasses(Releaser.class).forEach(aClass -> {
+            try {
+                if (SilentGoReleaser.class.isAssignableFrom(aClass)) {
+                    finalConfig.getReleasers().add((SilentGoReleaser) aClass.newInstance());
+                } else {
+                    LOGGER.debug("SilentGoReleaser Class {} is invalid, it should be extend {}", aClass.getClass().getName(), SilentGoReleaser.class.getName());
+                }
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        });
+
+        config.getReleasers().sort((o1, o2) -> {
+            int x = o1.priority();
+            int y = o2.priority();
+            return (x < y) ? -1 : ((x == y) ? 0 : 1);
+        });
 
     }
 

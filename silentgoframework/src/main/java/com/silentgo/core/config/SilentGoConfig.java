@@ -6,6 +6,7 @@ import com.silentgo.core.aop.Interceptor;
 import com.silentgo.core.aop.annotationintercept.support.AnnotationInterceptor;
 import com.silentgo.core.aop.validator.support.ValidatorInterceptor;
 import com.silentgo.core.build.SilentGoBuilder;
+import com.silentgo.core.build.SilentGoReleaser;
 import com.silentgo.core.render.Render;
 import com.silentgo.core.render.support.JspRender;
 import com.silentgo.core.route.RoutePaser;
@@ -19,6 +20,7 @@ import com.silentgo.kit.json.FastJsonPaser;
 import com.silentgo.kit.json.JsonPaser;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
+import com.sun.xml.internal.rngom.parse.host.Base;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,130 +35,24 @@ import java.util.Map;
  *         <p>
  *         Created by teddyzhu on 16/7/15.
  */
-public class SilentGoConfig {
-
-    private JsonPaser jsonPaser = new FastJsonPaser();
-
-    private ActionChain actionChain;
-
-    private RoutePaser routePaser = new DefaultRouteParser();
-
-    private String BaseView = Const.BaseView;
-
-    private Map<Class<? extends BaseFactory>, BaseFactory> factoryMap = new HashMap<>();
-
-    private ThreadLocal<SilentGoContext> ctx = new ThreadLocal<>();
-
-    private List<SilentGoBuilder> builders = new ArrayList<>();
-
-    private List<String> staticFolder = new ArrayList<>();
-
-    private List<String> scanPackages;
-
-    private List<String> scanJars;
-
-    private FileUploadConfig fileUploadConfig = new FileUploadConfig(ClassKit.getWebRootPath() + "/UploadFile", -1, 10240, true);
-
-    private PropKit propKit;
-
-    private boolean devMode = false;
-
-    private String encoding = "utf-8";
-
-    private int contextPathLength;
-
-    @SuppressWarnings("unchecked")
-    private ArrayList interceptors = new ArrayList() {{
-        add(new AnnotationInterceptor());
-        add(new ValidatorInterceptor());
-    }};
-
-    public RoutePaser getRoutePaser() {
-        return routePaser;
-    }
-
-    public void setRoutePaser(RoutePaser routePaser) {
-        this.routePaser = routePaser;
-    }
-
-    public List<SilentGoBuilder> getBuilders() {
-        return builders;
-    }
-
-    public void setDevMode(boolean devMode) {
-        this.devMode = devMode;
-    }
-
-
-    public boolean isDevMode() {
-        return devMode;
-    }
-
-    public int getContextPathLength() {
-        return contextPathLength;
-    }
-
-    public String getEncoding() {
-        return encoding;
-    }
-
-    public void setEncoding(String encoding) {
-        this.encoding = encoding;
-    }
-
-    public void setContextPathLength(int contextPathLength) {
-        this.contextPathLength = contextPathLength;
-    }
+public class SilentGoConfig extends FileUploadConfig {
 
     public SilentGoConfig(List<String> scanPackages, List<String> scanJars, boolean devMode, String encoding, int contextPathLength, String fileName) {
-        this.scanPackages = scanPackages;
-        this.scanJars = scanJars;
-        this.devMode = devMode;
-        this.encoding = encoding;
-        this.contextPathLength = contextPathLength;
-        this.propKit = new PropKit(fileName, encoding);
-        this.scanJars.add(Const.ApplicationName + "-" + propKit.getValue(Const.Version) + ".jar");
+        setScanPackages(scanPackages);
+        setScanJars(scanJars);
+        setDevMode(devMode);
+        setEncoding(encoding);
+        setContextPathLength(contextPathLength);
+        setPropKit(new PropKit(fileName, encoding));
+        setScanJars(scanJars);
     }
 
-    public List<String> getScanPackages() {
-        return scanPackages;
-    }
-
-    public void setScanPackages(List<String> scanPackages) {
-        this.scanPackages = scanPackages;
-    }
-
-    public List<String> getScanJars() {
-        return scanJars;
-    }
-
-    public void setScanJars(List<String> scanJars) {
-        this.scanJars = scanJars;
-    }
-
-    public ActionChain getActionChain() {
-        return actionChain;
-    }
-
-    public void setActionChain(ActionChain actionChain) {
-        this.actionChain = actionChain;
-    }
-
-    @SuppressWarnings("unchecked")
-    public boolean addInterceptor(Interceptor interceptor) {
-        return CollectionKit.ListAdd(interceptors, interceptor, false);
-    }
-
-    public ArrayList getInterceptors() {
-        return interceptors;
-    }
-
-    public boolean addFactory(Class<? extends BaseFactory> name, BaseFactory baseFactory) {
-        return CollectionKit.MapAdd(factoryMap, name, baseFactory);
+    public boolean addFactory(Class<? extends BaseFactory> factoryClz, BaseFactory baseFactory) {
+        return CollectionKit.MapAdd(getFactoryMap(), factoryClz, baseFactory);
     }
 
     public boolean addFactory(BaseFactory baseFactory) {
-        return CollectionKit.MapAdd(factoryMap, baseFactory.getClass(), baseFactory);
+        return CollectionKit.MapAdd(getFactoryMap(), baseFactory.getClass(), baseFactory);
     }
 
     public boolean addFactory(Class<? extends BaseFactory> factoryClz) {
@@ -169,47 +65,15 @@ public class SilentGoConfig {
     }
 
     public <T extends BaseFactory> T getFactory(Class<T> name) {
-        return (T) factoryMap.get(name);
-    }
-
-    public List<String> getStaticFolder() {
-        return staticFolder;
+        return (T) getFactoryMap().get(name);
     }
 
     public boolean addStatic(String name) {
-        return CollectionKit.ListAdd(staticFolder, name);
+        return CollectionKit.ListAdd(getStaticFolder(), name);
     }
 
     public boolean setCtx(Request request, Response response) {
-        ctx.set(new SilentGoContext(response, request));
+        getCtx().set(new SilentGoContext(response, request));
         return true;
-    }
-
-    public ThreadLocal<SilentGoContext> getCtx() {
-        return ctx;
-    }
-
-    public String getBaseView() {
-        return BaseView;
-    }
-
-    public void setBaseView(String baseView) {
-        BaseView = baseView;
-    }
-
-    public JsonPaser getJsonPaser() {
-        return jsonPaser;
-    }
-
-    public void setJsonPaser(JsonPaser jsonPaser) {
-        this.jsonPaser = jsonPaser;
-    }
-
-    public FileUploadConfig getFileUploadConfig() {
-        return fileUploadConfig;
-    }
-
-    public void setFileUploadConfig(FileUploadConfig fileUploadConfig) {
-        this.fileUploadConfig = fileUploadConfig;
     }
 }

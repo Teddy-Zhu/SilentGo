@@ -5,22 +5,18 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.action.ActionParam;
-import com.silentgo.core.config.Const;
 import com.silentgo.core.exception.AppParameterPaserException;
 import com.silentgo.core.exception.AppParameterResolverException;
 import com.silentgo.core.route.ParameterDispatcher;
 import com.silentgo.core.route.Route;
 import com.silentgo.core.route.annotation.ParamDispatcher;
 import com.silentgo.core.route.support.paramvalueresolve.ParameterResolveFactory;
-import com.silentgo.core.route.support.paramvalueresolve.support.ParameterResolveKit;
 import com.silentgo.kit.SilentGoContext;
-import com.silentgo.kit.json.JsonPaser;
 import com.silentgo.servlet.http.ContentType;
 import com.silentgo.servlet.http.Request;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.Map;
 
 /**
  * Project : silentgo
@@ -41,14 +37,13 @@ public class JsonParamDispatch implements ParameterDispatcher {
     public void dispatch(ParameterResolveFactory parameterResolveFactory, ActionParam param, Route route, Object[] args) throws AppParameterResolverException, AppParameterPaserException {
         Request request = param.getRequest();
 
-        String jsonHash =  JSON.toJSONString(request.getResolvedMap());
+        String jsonHash = JSON.toJSONString(request.getResolvedMap());
         JSONObject jsonObjectParam = JSON.parseObject(jsonHash);
         SilentGoContext context = SilentGo.getInstance().getConfig().getCtx().get();
         context.setJsonObject(jsonObjectParam);
         context.setHashString(jsonHash);
 
-        ContentType type = ContentType.fromString(request.getContentType());
-        if (type == null || !type.equals(ContentType.JSON)) {
+        if (!request.getContentType().contains(ContentType.JSON.toString())) {
             return;
         }
         int contentLength = request.getContentLength();

@@ -25,4 +25,6 @@ public abstract class BeanFactory<T extends BeanWrapper> extends BaseFactory {
 
     public abstract Object getBeans();
 
+    public abstract boolean destory(String name);
+
 }

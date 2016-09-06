@@ -23,6 +23,14 @@ public class MultiPartRequest extends Request {
         orifiles.forEach(file -> files.put(file.getFormName(), file));
     }
 
+    public void delete() {
+        if (files != null && files.size() > 0) {
+            files.forEach((k, v) -> {
+                if (v.file.exists()) v.file.delete();
+            });
+        }
+    }
+
     public MultiPartRequest(HttpServletRequest request) {
         super(request);
     }
