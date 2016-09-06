@@ -1,4 +1,4 @@
-# SilentGo Framework (Not Complete)
+# SilentGo Framework
 a light web mvc framework.
 
 ####  IOC
