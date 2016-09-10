@@ -1,5 +1,14 @@
 # SilentGo Framework
 a light web mvc framework.
+#### How to Use
+add maven dependency
+```
+<dependency>
+    <groupId>com.silentgo</groupId>
+    <artifactId>silentgoframework</artifactId>
+    <version>0.0.1</version>
+</dependency>
+```
 
 ####  IOC
 use with @Inject  
