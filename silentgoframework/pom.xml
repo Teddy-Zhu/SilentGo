@@ -7,12 +7,13 @@
         <groupId>com.silentgo</groupId>
         <version>0.0.1</version>
     </parent>
-    <version>0.0.5</version>
+    <version>0.0.6</version>
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
 
     <artifactId>silentgoframework</artifactId>
     <properties>
+        <frame-version>0.0.6</frame-version>
         <slf4j.version>1.7.7</slf4j.version>
         <log4j.version>1.7.12</log4j.version>
         <jetty.version>9.2.12.v20150709</jetty.version>
