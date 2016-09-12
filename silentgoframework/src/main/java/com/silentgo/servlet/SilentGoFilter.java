@@ -66,8 +66,8 @@ public class SilentGoFilter implements Filter {
             } else {
                 LOGGER.warn("Config class can not be found , the application may be run unnromally");
             }
-
-            configInit.init(config);
+            if (configInit != null)
+                configInit.init(config);
 
             config.setContextPathLength(contextPathLength);
 
@@ -114,7 +114,7 @@ public class SilentGoFilter implements Filter {
             new ErrorRener().render(request, response, HttpStatus.Code.INTERNAL_SERVER_ERROR, throwable, appContext.isDevMode());
             return;
         } finally {
-           globalConfig.getCtx().remove();
+            globalConfig.getCtx().remove();
         }
 
         if (!param.isHandled())
