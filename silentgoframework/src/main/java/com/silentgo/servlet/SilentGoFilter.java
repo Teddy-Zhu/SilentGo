@@ -35,11 +35,11 @@ public class SilentGoFilter implements Filter {
 
     private static Logger LOGGER = LoggerFactory.getLog(SilentGoFilter.class);
 
-    private Config configInit;
+    private Config configInit = null;
 
     private static com.silentgo.core.SilentGo appContext = com.silentgo.core.SilentGo.getInstance();
 
-    private SilentGoConfig globalConfig;
+    private SilentGoConfig globalConfig = null;
 
     public SilentGoFilter() {
     }
@@ -63,12 +63,10 @@ public class SilentGoFilter implements Filter {
             String configClassName = filterConfig.getInitParameter("config");
             if (!StringKit.isNullOrEmpty(configClassName)) {
                 configInit = getConfig(configClassName);
+                configInit.init(config);
             } else {
                 LOGGER.warn("Config class can not be found , the application may be run unnromally");
             }
-            if (configInit != null)
-                configInit.init(config);
-
             config.setContextPathLength(contextPathLength);
 
             appContext.setContext(context);
