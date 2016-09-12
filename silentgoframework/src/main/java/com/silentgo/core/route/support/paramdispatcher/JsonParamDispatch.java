@@ -43,7 +43,7 @@ public class JsonParamDispatch implements ParameterDispatcher {
         context.setJsonObject(jsonObjectParam);
         context.setHashString(jsonHash);
 
-        if (!request.getContentType().contains(ContentType.JSON.toString())) {
+        if (request.getContentType() == null || !request.getContentType().contains(ContentType.JSON.toString())) {
             return;
         }
         int contentLength = request.getContentLength();
