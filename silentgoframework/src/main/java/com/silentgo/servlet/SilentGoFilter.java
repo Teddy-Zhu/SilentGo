@@ -63,7 +63,6 @@ public class SilentGoFilter implements Filter {
             String configClassName = filterConfig.getInitParameter("config");
             if (!StringKit.isNullOrEmpty(configClassName)) {
                 configInit = getConfig(configClassName);
-                configInit.init(config);
             } else {
                 LOGGER.warn("Config class can not be found , the application may be run unnromally");
             }
@@ -71,13 +70,19 @@ public class SilentGoFilter implements Filter {
 
             appContext.setContext(context);
 
+            if (configInit != null) {
+                configInit.init(config);
+            }
+
             AnnotationManager manager = new AnnotationManager(config);
             appContext.setAnnotationManager(manager);
 
             buildRelease(manager, config);
             build(manager, config);
 
-            configInit.afterInit(config);
+            if (configInit != null) {
+                configInit.afterInit(config);
+            }
 
             ConfigChecker.Check(config);
 

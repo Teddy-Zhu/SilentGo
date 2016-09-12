@@ -26,6 +26,7 @@ public class SilentGoConfig extends BaseConfig {
         setEncoding(encoding);
         setContextPathLength(contextPathLength);
         setPropKit(new PropKit(fileName, encoding));
+        scanJars.add(Const.ApplicationName + "-" + getPropKit().getValue(Const.Version) + ".jar");
         setScanJars(scanJars);
     }
 
