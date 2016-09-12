@@ -8,7 +8,8 @@
     <artifactId>parent</artifactId>
     <version>0.0.1</version>
     <modules>
-        <module>silentgoframework</module>
+        <module>framework</module>
+        <module>utils</module>
     </modules>
     <packaging>pom</packaging>
 
