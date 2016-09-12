@@ -6,7 +6,7 @@
 
     <groupId>com.silentgo</groupId>
     <artifactId>parent</artifactId>
-    <version>${project-version}</version>
+    <version>0.0.1</version>
     <modules>
         <module>silentgoframework</module>
     </modules>
@@ -142,8 +142,8 @@
                         <version>1.5</version>
                         <executions>
                             <execution>
-                                <id>TeddyZhuMaven</id>
-                                <phase>TyWhxhxr2012</phase>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>

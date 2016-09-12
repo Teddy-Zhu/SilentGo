@@ -8,7 +8,7 @@ package com.silentgo.core.config;
  *         <p>
  *         Created by teddyzhu on 16/9/1.
  */
-public class FileUploadConfig extends BaseConfig {
+public class FileUploadConfig {
 
     private String uploadPath;
 

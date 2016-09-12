@@ -17,7 +17,7 @@ import java.util.List;
  *         <p>
  *         Created by teddyzhu on 16/7/15.
  */
-public class SilentGoConfig extends FileUploadConfig {
+public class SilentGoConfig extends BaseConfig {
 
     public SilentGoConfig(List<String> scanPackages, List<String> scanJars, boolean devMode, String encoding, int contextPathLength, String fileName) {
         setScanPackages(scanPackages);
