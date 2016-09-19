@@ -1,7 +1,5 @@
 package com.silentgo.core.exception;
 
-import java.io.IOException;
-
 /**
  * Project : silentgo
  * com.silentgo.core.exception

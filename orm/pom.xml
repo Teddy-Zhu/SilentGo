@@ -18,6 +18,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.silentgo</groupId>
+            <artifactId>utils</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+
+        <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>6.0.4</version>

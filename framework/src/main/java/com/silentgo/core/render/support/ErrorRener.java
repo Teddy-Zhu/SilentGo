@@ -3,7 +3,6 @@ package com.silentgo.core.render.support;
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.config.Const;
 import com.silentgo.core.exception.AppException;
-import com.silentgo.core.render.Render;
 import com.silentgo.servlet.http.HttpStatus;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;

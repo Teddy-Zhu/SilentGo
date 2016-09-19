@@ -1,6 +1,5 @@
 package com.silentgo.core.route;
 
-import com.silentgo.core.SilentGo;
 import com.silentgo.core.base.Priority;
 import com.silentgo.core.action.ActionParam;
 import com.silentgo.core.exception.AppParameterPaserException;

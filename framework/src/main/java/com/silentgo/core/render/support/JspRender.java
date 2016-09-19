@@ -1,9 +1,7 @@
 package com.silentgo.core.render.support;
 
-import com.silentgo.core.action.ActionParam;
 import com.silentgo.core.exception.AppRenderException;
 import com.silentgo.core.render.Render;
-import com.silentgo.core.route.Route;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
 
