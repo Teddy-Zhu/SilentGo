@@ -24,7 +24,7 @@ public class ParameterResolveKit {
 
         paramsMap.forEach((k, v) -> {
             String[] ks = k.indexOf('.') > 0 ? k.split("\\.") : new String[]{k};
-            if (ks.length == 0 || StringKit.isNullOrEmpty(ks[0])) return;
+            if (ks.length == 0 || StringKit.isBlank(ks[0])) return;
 
 
             if (ks.length == 1) {

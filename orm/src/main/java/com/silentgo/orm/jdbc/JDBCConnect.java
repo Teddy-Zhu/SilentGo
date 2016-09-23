@@ -1,6 +1,13 @@
 package com.silentgo.orm.jdbc;
 
+import com.silentgo.orm.base.DBConfig;
+import com.silentgo.orm.base.DBConnect;
+import com.silentgo.utils.logger.Logger;
+import com.silentgo.utils.logger.LoggerFactory;
+import com.silentgo.utils.random.RandomUtil;
+
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Date;
 
 /**
@@ -11,25 +18,40 @@ import java.util.Date;
  *         <p>
  *         Created by teddyzhu on 16/9/13.
  */
-public class JDBCConnect {
+public class JDBCConnect implements DBConnect {
+
+    private static final Logger LOGGER = LoggerFactory.getLog(JDBCConnect.class);
+
+    private String name;
 
     private Date start;
     private Date end;
 
     private boolean used = false;
 
+    private int maxIdle;
+    private int timeOut;
     private Connection connection;
-
-    private Date lastAlive;
 
     public boolean isUsed() {
         return used;
     }
 
-    public JDBCConnect(Date start, Date end, Connection connection) {
-        this.start = start;
-        this.end = end;
+    public JDBCConnect(Connection connection, DBConfig config) {
+        this.start = new Date();
+        this.name = RandomUtil.String(10);
+        this.maxIdle = config.getMaxIdle();
+        this.end = new Date(this.start.getTime() + maxIdle);
         this.connection = connection;
+        this.timeOut = config.getTimeOut();
+    }
+
+    public int getTimeOut() {
+        return timeOut;
+    }
+
+    public void setTimeOut(int timeOut) {
+        this.timeOut = timeOut;
     }
 
     public Date getStart() {
@@ -49,11 +71,51 @@ public class JDBCConnect {
     }
 
     public Connection getConnection() {
-        lastAlive = new Date();
         return connection;
+    }
+
+    public boolean isValid() {
+        return new Date().getTime() < end.getTime();
     }
 
     public void setConnection(Connection connection) {
         this.connection = connection;
+    }
+
+    @Override
+    public Connection getConnect() {
+        return connection;
+    }
+
+    @Override
+    public synchronized boolean use() {
+        if (this.used) {
+            return false;
+        }
+        LOGGER.info("use connect :{} ", name);
+        this.used = true;
+        this.end = new Date(new Date().getTime() + maxIdle);
+        return true;
+    }
+
+    @Override
+    public boolean release() {
+        if (this.used) {
+            LOGGER.info("release connect:{}", name);
+            this.used = false;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean destroy() {
+        used = true;
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 }

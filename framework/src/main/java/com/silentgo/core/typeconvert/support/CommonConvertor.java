@@ -1,5 +1,6 @@
 package com.silentgo.core.typeconvert.support;
 
+
 import com.silentgo.core.typeconvert.ITypeConvertor;
 
 /**

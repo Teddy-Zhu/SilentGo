@@ -2,8 +2,6 @@ package com.silentgo.core.route;
 
 import com.silentgo.core.aop.MethodAdviser;
 
-import java.util.regex.Pattern;
-
 /**
  * Project : silentgo
  * com.silentgo.core.route

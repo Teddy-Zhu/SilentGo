@@ -1,5 +1,7 @@
 package com.silentgo.core.config.support;
 
+import com.silentgo.core.config.Const;
+import com.silentgo.core.config.FileUploadConfig;
 import com.silentgo.core.config.SilentGoConfig;
 import com.silentgo.utils.StringKit;
 
@@ -16,15 +18,16 @@ import java.io.File;
 public class ConfigChecker {
 
     public static void Check(SilentGoConfig config) throws RuntimeException {
-        String path = config.getFileUploadConfig().getUploadPath();
-        if (!StringKit.isNullOrEmpty(path)) {
+        FileUploadConfig fileUploadConfig = ((FileUploadConfig) config.getConfig(Const.FileUploadConfig));
+        String path = fileUploadConfig.getUploadPath();
+        if (!StringKit.isBlank(path)) {
             File file = new File(path);
             file.mkdirs();
             if (!file.isDirectory()) {
                 throw new RuntimeException("upload file path is invalid");
             }
         }
-        if (config.getFileUploadConfig().isAutoSave()) {
+        if (fileUploadConfig.isAutoSave()) {
             File file = new File(path + "/Saved");
             file.mkdirs();
         }

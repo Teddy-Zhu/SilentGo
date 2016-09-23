@@ -1,12 +1,12 @@
 package com.silentgo.core.route.support;
 
+import com.silentgo.core.SilentGo;
+import com.silentgo.core.aop.MethodAdviser;
+import com.silentgo.core.aop.support.MethodAOPFactory;
 import com.silentgo.core.build.SilentGoBuilder;
 import com.silentgo.core.build.annotation.Builder;
 import com.silentgo.core.config.Const;
 import com.silentgo.core.config.Regex;
-import com.silentgo.core.SilentGo;
-import com.silentgo.core.aop.MethodAdviser;
-import com.silentgo.core.aop.support.MethodAOPFactory;
 import com.silentgo.core.ioc.bean.BeanFactory;
 import com.silentgo.core.ioc.bean.BeanWrapper;
 import com.silentgo.core.route.BasicRoute;
@@ -100,8 +100,8 @@ public class RouteBuilder extends SilentGoBuilder {
             if (ruleSolved.length() > Regex.RouteSplit.length()) {
                 String name = StringKit.getLeft(ruleSolved, Regex.RouteSplit).trim();
                 String regex = StringKit.getRight(ruleSolved, Regex.RouteSplit).trim();
-                regex = StringKit.isNullOrEmpty(regex) ? Regex.RegexAll : regex;
-                boolean needName = !StringKit.isNullOrEmpty(name);
+                regex = StringKit.isBlank(regex) ? Regex.RegexAll : regex;
+                boolean needName = !StringKit.isBlank(name);
                 String replacement = needName ? Regex.RoutePathNameRegexMatch : Regex.RoutePathCustomMatch;
                 if (needName) {
                     route.addName(name);

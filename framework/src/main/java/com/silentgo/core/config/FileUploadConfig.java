@@ -8,7 +8,7 @@ package com.silentgo.core.config;
  *         <p>
  *         Created by teddyzhu on 16/9/1.
  */
-public class FileUploadConfig {
+public class FileUploadConfig  extends AbstractConfig{
 
     private String uploadPath;
 
@@ -62,5 +62,10 @@ public class FileUploadConfig {
 
     public void setMaxSize(Integer maxSize) {
         this.maxSize = maxSize;
+    }
+
+    @Override
+    public String name() {
+        return Const.FileUploadConfig;
     }
 }

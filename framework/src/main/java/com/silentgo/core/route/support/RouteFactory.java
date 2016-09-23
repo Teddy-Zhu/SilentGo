@@ -1,7 +1,5 @@
 package com.silentgo.core.route.support;
 
-import com.silentgo.core.config.Const;
-import com.silentgo.core.config.Regex;
 import com.silentgo.core.route.BasicRoute;
 import com.silentgo.core.route.RegexRoute;
 import com.silentgo.core.route.Route;

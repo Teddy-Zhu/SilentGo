@@ -1,4 +1,4 @@
-package com.silentgo.orm;
+package com.silentgo.orm.base;
 
 /**
  * Project : silentgo
@@ -10,6 +10,7 @@ package com.silentgo.orm;
  */
 public class DBConfig {
 
+    private String name;
     private String driver;
     private String url;
     private String userName;
@@ -28,7 +29,14 @@ public class DBConfig {
      */
     private int maxIdle;
 
-    public DBConfig(String driver, String url, String userName, String password, int statementTimeout, int maxActive, int minActive, int maxIdle) {
+    private int timeOut;
+
+    public DBConfig() {
+    }
+
+    public DBConfig(String name, int timeOut, String driver, String url, String userName, String password, int statementTimeout, int maxActive, int minActive, int maxIdle) {
+        this.name = name;
+        this.timeOut = timeOut;
         this.driver = driver;
         this.url = url;
         this.userName = userName;
@@ -37,6 +45,22 @@ public class DBConfig {
         this.maxActive = maxActive;
         this.minActive = minActive;
         this.maxIdle = maxIdle;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getTimeOut() {
+        return timeOut;
+    }
+
+    public void setTimeOut(int timeOut) {
+        this.timeOut = timeOut;
     }
 
     public String getDriver() {

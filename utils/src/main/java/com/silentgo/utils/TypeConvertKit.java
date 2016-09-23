@@ -1,5 +1,7 @@
-package com.silentgo.core.typeconvert.support;
+package com.silentgo.utils;
 
+import java.sql.SQLXML;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 /**
@@ -10,7 +12,7 @@ import java.util.ArrayList;
  *         <p>
  *         Created by teddyzhu on 16/7/26.
  */
-public class TypeConvert {
+public class TypeConvertKit {
 
     private static final ArrayList<Class<?>> type = new ArrayList<Class<?>>() {{
         add(Boolean.class);
@@ -35,6 +37,16 @@ public class TypeConvert {
         add(float.class);
         add(short.class);
     }};
+
+    private static final ArrayList sqlType = new ArrayList() {{
+        add(Timestamp.class);
+        add(SQLXML.class);
+    }};
+
+    public static boolean isSqlBaseType(Class<?> clz) {
+        return type.contains(clz) || primitiveType.contains(clz) || sqlType.contains(clz);
+    }
+
 
     public static Class<?> getConvertType(Class<?> clz) {
         return type.get(primitiveType.indexOf(clz));

@@ -1,10 +1,10 @@
 package com.silentgo.core.aop.validator.support;
 
-import com.silentgo.core.aop.annotation.Intercept;
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.AOPPoint;
 import com.silentgo.core.aop.Interceptor;
 import com.silentgo.core.aop.MethodParam;
+import com.silentgo.core.aop.annotation.Intercept;
 import com.silentgo.core.aop.annotationintercept.support.AnnotationInterceptor;
 import com.silentgo.core.aop.validator.IValidator;
 import com.silentgo.core.aop.validator.exception.ValidateException;

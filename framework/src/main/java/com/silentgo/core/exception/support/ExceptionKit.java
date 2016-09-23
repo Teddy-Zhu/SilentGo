@@ -1,7 +1,6 @@
 package com.silentgo.core.exception.support;
 
 import com.silentgo.core.aop.MethodAdviser;
-import com.silentgo.core.aop.MethodParam;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
 

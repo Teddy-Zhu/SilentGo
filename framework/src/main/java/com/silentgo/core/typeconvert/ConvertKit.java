@@ -1,8 +1,9 @@
 package com.silentgo.core.typeconvert;
 
+
 import com.silentgo.core.typeconvert.support.CommonConvertor;
-import com.silentgo.core.typeconvert.support.TypeConvert;
 import com.silentgo.utils.ClassKit;
+import com.silentgo.utils.TypeConvertKit;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -30,7 +31,7 @@ public class ConvertKit {
 
     public ITypeConvertor getTypeConvert(Class<?> source, Class<?> target, ITypeConvertor defaultVal) {
         if (target.isPrimitive()) {
-            target = TypeConvert.getConvertType(target);
+            target = TypeConvertKit.getConvertType(target);
         }
 
         Map<Class<?>, ITypeConvertor> convertorMap = convertMap.get(source);

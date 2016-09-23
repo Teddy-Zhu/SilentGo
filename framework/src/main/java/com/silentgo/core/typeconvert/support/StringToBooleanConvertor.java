@@ -1,8 +1,8 @@
 package com.silentgo.core.typeconvert.support;
 
-import com.silentgo.core.config.Const;
 import com.silentgo.core.typeconvert.ITypeConvertor;
 import com.silentgo.core.typeconvert.annotation.Convertor;
+import com.silentgo.utils.common.Const;
 
 /**
  * Project : silentgo

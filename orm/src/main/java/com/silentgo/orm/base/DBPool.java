@@ -1,4 +1,4 @@
-package com.silentgo.orm;
+package com.silentgo.orm.base;
 
 /**
  * Project : silentgo
@@ -9,5 +9,7 @@ package com.silentgo.orm;
  *         Created by teddyzhu on 16/9/13.
  */
 public interface DBPool {
-    public Object getConnect();
+    public DBConnect getDBConnect();
+
+    public boolean destory();
 }

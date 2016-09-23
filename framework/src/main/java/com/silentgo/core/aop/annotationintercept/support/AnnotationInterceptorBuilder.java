@@ -68,9 +68,7 @@ public class AnnotationInterceptorBuilder extends SilentGoBuilder {
 
         Map<Annotation, IAnnotation> annotationIAnnotationMap = new HashMap<>();
         //build IAnnotation
-        adviser.getAnnotations().forEach(annotation -> {
-            CollectionKit.MapAdd(annotationIAnnotationMap, annotation, annotationInceptFactory.getAnnotationInterceptor(annotation.annotationType()));
-        });
+        adviser.getAnnotations().forEach(annotation -> CollectionKit.MapAdd(annotationIAnnotationMap, annotation, annotationInceptFactory.getAnnotationInterceptor(annotation.annotationType())));
 
         annotationInceptFactory.addSortedIAnnotation(adviser.getName(), sortAnnotationMap(annotationIAnnotationMap));
         annotationInceptFactory.addIAnnotation(adviser.getName(), annotationIAnnotationMap);

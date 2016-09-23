@@ -9,13 +9,13 @@ import com.silentgo.core.config.Config;
 import com.silentgo.core.config.Const;
 import com.silentgo.core.config.SilentGoConfig;
 import com.silentgo.core.config.support.ConfigChecker;
+import com.silentgo.core.exception.AppBuildException;
 import com.silentgo.core.render.support.ErrorRener;
 import com.silentgo.core.support.AnnotationManager;
 import com.silentgo.servlet.http.HttpStatus;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
 import com.silentgo.utils.StringKit;
-import com.silentgo.core.exception.AppBuildException;
 import com.silentgo.utils.logger.Logger;
 import com.silentgo.utils.logger.LoggerFactory;
 
@@ -57,7 +57,7 @@ public class SilentGoFilter implements Filter {
 
             appContext.setConfig(config);
             String configClassName = filterConfig.getInitParameter("config");
-            if (!StringKit.isNullOrEmpty(configClassName)) {
+            if (!StringKit.isBlank(configClassName)) {
                 configInit = getConfig(configClassName);
             } else {
                 LOGGER.warn("Config class can not be found , the application may be run unnromally");

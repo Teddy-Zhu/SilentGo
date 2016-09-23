@@ -1,7 +1,7 @@
 package com.silentgo.core.ioc.bean;
 
-import com.silentgo.core.config.Const;
 import com.silentgo.core.SilentGo;
+import com.silentgo.core.config.Const;
 import com.silentgo.core.ioc.annotation.Component;
 import com.silentgo.core.ioc.annotation.Inject;
 import com.silentgo.core.ioc.annotation.Service;
@@ -54,6 +54,11 @@ public class BeanDefinition extends BeanWrapper {
         Create(clz.getName(), clz, inject);
     }
 
+    public BeanDefinition(Class<?> clz, Object target, boolean inject, boolean isSingle) {
+        this.isSingle = isSingle;
+        Create(clz.getName(), clz, inject, target);
+    }
+
     public BeanDefinition(String beanName, Class<?> clz, boolean inject) {
         Create(beanName, clz, inject);
     }
@@ -67,21 +72,17 @@ public class BeanDefinition extends BeanWrapper {
         Create(beanName, clz, true);
     }
 
-    private void Create(String beanName, Class<?> clz, boolean needInject) {
+    private void Create(String beanName, Class<?> clz, boolean needInject, Object target) {
         this.needInject = needInject;
         this.beanName = beanName;
         this.clz = clz;
-        try {
-            fastClass = FastClass.create(clz);
-            target = clz.newInstance();
-            interfaceClass = clz.getInterfaces().length > 0 ? clz.getInterfaces()[0] : clz;
-            if (needInject)
-                proxyTarget = CGLibKit.Proxy(target);
-            else
-                proxyTarget = target;
-        } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        this.target = target;
+        fastClass = FastClass.create(clz);
+        interfaceClass = clz.getInterfaces().length > 0 ? clz.getInterfaces()[0] : clz;
+        if (needInject)
+            proxyTarget = CGLibKit.Proxy(target);
+        else
+            proxyTarget = target;
 
         fieldBeans = new HashMap<>();
         Field[] fields = clz.getDeclaredFields();
@@ -95,6 +96,16 @@ public class BeanDefinition extends BeanWrapper {
                     fieldBeans.put(inject.value(), new FieldBean(field));
             }
         }
+    }
+
+    private void Create(String beanName, Class<?> clz, boolean needInject) {
+        Object obj = null;
+        try {
+            obj = clz.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        Create(beanName, clz, needInject, obj);
     }
 
     private boolean containAnnotation(Field field) {

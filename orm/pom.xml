@@ -12,9 +12,11 @@
     <packaging>jar</packaging>
 
     <artifactId>orm</artifactId>
-    <properties>
 
+    <properties>
+        <orm-version>0.0.1</orm-version>
     </properties>
+
 
     <dependencies>
         <dependency>

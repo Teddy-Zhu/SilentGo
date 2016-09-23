@@ -1,7 +1,7 @@
 package com.silentgo.core.route;
 
-import com.silentgo.core.base.Priority;
 import com.silentgo.core.action.ActionParam;
+import com.silentgo.core.base.Priority;
 import com.silentgo.core.exception.AppParameterPaserException;
 import com.silentgo.core.exception.AppParameterResolverException;
 import com.silentgo.core.route.support.paramvalueresolve.ParameterResolveFactory;

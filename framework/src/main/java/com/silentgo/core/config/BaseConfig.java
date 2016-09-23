@@ -7,11 +7,14 @@ import com.silentgo.core.build.SilentGoReleaser;
 import com.silentgo.core.route.RoutePaser;
 import com.silentgo.core.route.support.routeparse.DefaultRouteParser;
 import com.silentgo.utils.ClassKit;
+import com.silentgo.utils.CollectionKit;
 import com.silentgo.utils.json.FastJsonPaser;
 import com.silentgo.utils.json.JsonPaser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Project : silentgo
@@ -23,10 +26,16 @@ import java.util.List;
  */
 public class BaseConfig extends InterConfig {
 
+    Map<String, AbstractConfig> abstractConfigMap = new HashMap() {{
+        put(Const.FileUploadConfig, new FileUploadConfig(ClassKit.getWebRootPath() + "/UploadFile", -1, 10240, true));
+    }};
+
+
     private JsonPaser jsonPaser = new FastJsonPaser();
 
     private RoutePaser routePaser = new DefaultRouteParser();
 
+    private String dbType;
     private String BaseView = Const.BaseView;
 
     private final List<SilentGoBuilder> builders = new ArrayList<>();
@@ -38,8 +47,6 @@ public class BaseConfig extends InterConfig {
     private List<String> scanPackages = new ArrayList<>();
 
     private List<String> scanJars = new ArrayList<>();
-
-    private FileUploadConfig fileUploadConfig = new FileUploadConfig(ClassKit.getWebRootPath() + "/UploadFile", -1, 10240, true);
 
     private boolean devMode = false;
 
@@ -109,14 +116,6 @@ public class BaseConfig extends InterConfig {
         this.scanJars = scanJars;
     }
 
-    public FileUploadConfig getFileUploadConfig() {
-        return fileUploadConfig;
-    }
-
-    public void setFileUploadConfig(FileUploadConfig fileUploadConfig) {
-        this.fileUploadConfig = fileUploadConfig;
-    }
-
     public boolean isDevMode() {
         return devMode;
     }
@@ -147,5 +146,21 @@ public class BaseConfig extends InterConfig {
 
     public void setInterceptors(ArrayList interceptors) {
         this.interceptors = interceptors;
+    }
+
+    public boolean addAbstractConfig(AbstractConfig config) {
+        return CollectionKit.MapAdd(abstractConfigMap, config.name(), config);
+    }
+
+    public AbstractConfig getConfig(String name) {
+        return abstractConfigMap.get(name);
+    }
+
+    public String getDbType() {
+        return dbType;
+    }
+
+    public void setDbType(String dbType) {
+        this.dbType = dbType;
     }
 }

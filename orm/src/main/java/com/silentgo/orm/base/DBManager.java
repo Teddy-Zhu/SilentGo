@@ -1,4 +1,4 @@
-package com.silentgo.orm;
+package com.silentgo.orm.base;
 
 /**
  * Project : silentgo
@@ -10,8 +10,12 @@ package com.silentgo.orm;
  */
 public interface DBManager {
 
+    public void initial(DBConfig...configs);
+
     public DBPool getPool(String name);
 
-    public DBConnect getConnect();
+    public DBConnect getConnect(String name);
+
+    public boolean destory();
 
 }

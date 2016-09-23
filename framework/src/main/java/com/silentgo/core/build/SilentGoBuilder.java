@@ -1,7 +1,7 @@
 package com.silentgo.core.build;
 
-import com.silentgo.core.base.Priority;
 import com.silentgo.core.SilentGo;
+import com.silentgo.core.base.Priority;
 import com.silentgo.core.exception.AppBuildException;
 
 /**

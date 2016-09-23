@@ -23,13 +23,13 @@ public class Assert {
     }
 
     public static void isBlank(String string, String message) {
-        if (!StringKit.isNullOrEmpty(string)) {
+        if (!StringKit.isBlank(string)) {
             throw new RuntimeException(message);
         }
     }
 
     public static void isNotBlank(String string, String message) {
-        if (StringKit.isNullOrEmpty(string)) {
+        if (StringKit.isBlank(string)) {
             throw new RuntimeException(message);
         }
     }

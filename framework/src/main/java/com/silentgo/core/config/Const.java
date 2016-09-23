@@ -47,12 +47,20 @@ public final class Const {
     }};
 
 
-    public static final String Version = "version";
+    public static final String Version = "0.0.8";
 
     public static final String configName = "application.properties";
 
-    public static final String ApplicationName = "silentgoframework";
+    public static final String ApplicationName = "framework";
+
+    public static final String ApplicationUtils = "utils";
+
 
     public static final String BaseView = "/WEB-INF/";
+
+    public static final String FileUploadConfig = "FileUpload";
+
+
+    public static final String DEFAULT_PY_KEY = "id";
 
 }

@@ -1,7 +1,5 @@
 package com.silentgo.core.route.annotation;
 
-import com.silentgo.core.config.Const;
-
 import java.lang.annotation.*;
 
 /**

@@ -2,6 +2,7 @@ package com.silentgo.core.route.support.paramdispatcher;
 
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.action.ActionParam;
+import com.silentgo.core.config.Const;
 import com.silentgo.core.config.FileUploadConfig;
 import com.silentgo.core.exception.AppParameterPaserException;
 import com.silentgo.core.exception.AppParameterResolverException;
@@ -61,7 +62,7 @@ public class MultiPartDispatch implements ParameterDispatcher {
         ServletFileUpload servletFileUpload = new ServletFileUpload();
         if (!ServletFileUpload.isMultipartContent(request)) return;
 
-        FileUploadConfig config = SilentGo.getInstance().getConfig().getFileUploadConfig();
+        FileUploadConfig config = (FileUploadConfig) SilentGo.getInstance().getConfig().getConfig(Const.FileUploadConfig);
 
 
         DiskFileItemFactory factory = new DiskFileItemFactory();

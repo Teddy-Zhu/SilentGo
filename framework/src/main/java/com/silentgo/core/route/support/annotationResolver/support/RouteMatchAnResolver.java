@@ -47,7 +47,7 @@ public class RouteMatchAnResolver implements ParamAnnotationResolver<RouteMatch>
 
     private void validateProduces(String[] produces, Request request) throws AppException {
         String accept = request.getHeader("Accept");
-        if (StringKit.isNullOrEmpty(accept) && produces.length > 0)
+        if (StringKit.isBlank(accept) && produces.length > 0)
             throw new AppException(405);
         for (String produce : produces) {
             if (!accept.contains(produce))
@@ -59,7 +59,7 @@ public class RouteMatchAnResolver implements ParamAnnotationResolver<RouteMatch>
         for (String header : headers) {
             String[] heads = header.split("=");
             if (heads.length == 1) {
-                if (!StringKit.isNullOrEmpty(request.getHeader(heads[0]))) {
+                if (!StringKit.isBlank(request.getHeader(heads[0]))) {
                     return;
                 }
             } else if (heads.length == 2) {

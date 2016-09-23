@@ -27,7 +27,7 @@ public enum ContentType {
     }
 
     public static ContentType parse(String contentType) {
-        if (StringKit.isNullOrEmpty(contentType)) return null;
+        if (StringKit.isBlank(contentType)) return null;
         for (ContentType t : ContentType.values()) {
             if (contentType.equalsIgnoreCase(t.contentType)) {
                 return t;

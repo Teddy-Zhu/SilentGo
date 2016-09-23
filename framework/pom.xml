@@ -26,6 +26,12 @@
             <version>0.0.1</version>
         </dependency>
         <dependency>
+            <groupId>com.silentgo</groupId>
+            <artifactId>orm</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>${servlet.version}</version>

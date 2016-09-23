@@ -1,8 +1,5 @@
 package com.silentgo.core.aop;
 
-import com.silentgo.core.SilentGo;
-import com.silentgo.core.aop.support.InterceptChain;
-
 /**
  * Project : silentgo
  * com.silentgo.core.aop

@@ -8,9 +8,9 @@ import com.silentgo.core.route.annotation.PathVariable;
 import com.silentgo.core.route.support.paramvalueresolve.annotation.ParameterResolver;
 import com.silentgo.core.typeconvert.ConvertKit;
 import com.silentgo.core.typeconvert.ITypeConvertor;
-import com.silentgo.core.typeconvert.support.TypeConvert;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
+import com.silentgo.utils.TypeConvertKit;
 
 /**
  * Project : silentgo
@@ -29,7 +29,7 @@ public class PathValueParamResolver implements ParameterValueResolver {
 
     @Override
     public Object getValue(Response response, Request request, MethodParam methodParam) throws AppParameterPaserException {
-        if (!TypeConvert.isBaseType(methodParam.getType())) return null;
+        if (!TypeConvertKit.isBaseType(methodParam.getType())) return null;
         PathVariable pathVariable = methodParam.getAnnotation(PathVariable.class);
         String jsonString = pathVariable.index() > -1 ? request.getPathParameter(pathVariable.index()) :
                 Const.EmptyString.equals(pathVariable.value()) ? request.getPathParameter(methodParam.getName()) :
