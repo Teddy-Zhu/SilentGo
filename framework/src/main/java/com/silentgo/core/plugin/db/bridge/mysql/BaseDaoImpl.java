@@ -1,6 +1,5 @@
 package com.silentgo.core.plugin.db.bridge.mysql;
 
-import com.silentgo.core.plugin.db.SQLTool;
 import com.silentgo.core.plugin.db.bridge.BaseTableInfo;
 import com.silentgo.core.plugin.db.bridge.TableModel;
 import com.silentgo.utils.StringKit;
@@ -125,8 +124,35 @@ public class BaseDaoImpl implements IBaseDao {
         return sqlTool;
     }
 
+    @Override
+    public <T extends TableModel> SQLTool updateByPrimaryKey(BaseTableInfo table, T t, String... columns) {
+        SQLTool sqlTool = new SQLTool();
+        sqlTool.select(table.getTableName(), table.getFullColumns().values());
 
 
+        getCachedProps(t.getClass(), table).forEach(propertyDescriptor -> {
+            Object target = null;
+            try {
+                target = propertyDescriptor.getReadMethod().invoke(t);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+
+            if (target == null) {
+                return;
+            }
+            if (target instanceof String && StringKit.isBlank(target.toString())) {
+                return;
+            }
+            sqlTool.whereEquals(table.getFullColumns().get(propertyDescriptor.getName())).appendParam(target);
+        });
+        return null;
+    }
+
+    @Override
+    public <T extends TableModel> SQLTool updateByPrimaryKeySelective(BaseTableInfo table, T t) {
+        return null;
+    }
 
 
     private BeanInfo getBeanInfo(Class<? extends TableModel> t) {

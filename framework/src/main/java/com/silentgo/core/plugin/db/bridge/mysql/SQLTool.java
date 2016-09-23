@@ -1,4 +1,4 @@
-package com.silentgo.core.plugin.db;
+package com.silentgo.core.plugin.db.bridge.mysql;
 
 import com.silentgo.utils.StringKit;
 
@@ -30,6 +30,10 @@ public class SQLTool {
     private StringBuilder exceptSelectSQL = new StringBuilder();
 
     private List<String> selectList = new ArrayList<>();
+
+    private List<String> updateList = new ArrayList<>();
+
+    private List<String> updateWhereList = new ArrayList<>();
 
     private List<String> joinList = new ArrayList<>();
 
@@ -140,6 +144,38 @@ public class SQLTool {
         return this;
     }
 
+    //update
+    public SQLTool update(String tableName) {
+        this.type = SQLType.UPDATE;
+        this.tableName = tableName;
+        return this;
+    }
+
+    public SQLTool update(String tableName, Collection<String> columns) {
+        this.type = SQLType.UPDATE;
+        this.tableName = tableName;
+        this.updateWhereList.addAll(columns);
+        return this;
+    }
+
+
+    public SQLTool update(String tableName, String... columns) {
+        this.type = SQLType.UPDATE;
+        this.tableName = tableName;
+        Collections.addAll(this.updateWhereList, columns);
+        return this;
+    }
+
+    public SQLTool update(String... columns) {
+        Collections.addAll(this.updateWhereList, columns);
+        return this;
+    }
+
+
+    //end update
+
+    // select start
+
     public SQLTool select(String tableName, Collection<String> columns) {
         this.type = SQLType.QUERY;
         this.tableName = tableName;
@@ -154,6 +190,9 @@ public class SQLTool {
         return this;
     }
 
+    //end select
+
+    //insert start
     public SQLTool insert(String tableName) {
         this.type = SQLType.INSERT;
         this.tableName = tableName;
@@ -178,6 +217,7 @@ public class SQLTool {
         Collections.addAll(this.insertList, columns);
         return this;
     }
+    //insert end
 
     public SQLTool value(int count) {
         this.insertCount = count;

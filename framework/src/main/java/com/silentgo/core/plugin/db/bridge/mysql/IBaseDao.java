@@ -1,6 +1,5 @@
 package com.silentgo.core.plugin.db.bridge.mysql;
 
-import com.silentgo.core.plugin.db.SQLTool;
 import com.silentgo.core.plugin.db.bridge.BaseTableInfo;
 import com.silentgo.core.plugin.db.bridge.TableModel;
 

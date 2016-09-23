@@ -1,4 +1,4 @@
-package com.silentgo.core.plugin.db;
+package com.silentgo.core.plugin.db.bridge.mysql;
 
 /**
  * Project : silentgo
