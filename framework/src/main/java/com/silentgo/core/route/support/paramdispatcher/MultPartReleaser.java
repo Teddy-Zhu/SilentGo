@@ -19,7 +19,7 @@ public class MultPartReleaser extends SilentGoReleaser {
             = MultiPartDispatch.class.getName() + ".FileCleaningTracker";
 
     @Override
-    public void relase(SilentGo me) {
+    public void release(SilentGo me) {
         ((FileCleaningTracker) me.getContext().getAttribute(FILE_CLEANING_TRACKER_ATTRIBUTE)).exitWhenFinished();
     }
 }

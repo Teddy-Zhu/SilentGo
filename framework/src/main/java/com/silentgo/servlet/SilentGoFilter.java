@@ -123,7 +123,7 @@ public class SilentGoFilter implements Filter {
 
     @Override
     public void destroy() {
-        globalConfig.getReleasers().forEach(release -> release.relase(appContext));
+        globalConfig.getReleasers().forEach(release -> release.release(appContext));
     }
 
     private void buildRelease(AnnotationManager manager, SilentGoConfig config) {

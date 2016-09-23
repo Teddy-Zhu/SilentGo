@@ -17,5 +17,5 @@ public abstract class SilentGoReleaser implements Priority {
         return 100;
     }
 
-    public abstract void relase(SilentGo me);
+    public abstract void release(SilentGo me);
 }
