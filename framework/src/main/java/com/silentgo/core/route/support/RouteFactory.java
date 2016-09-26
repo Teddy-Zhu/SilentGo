@@ -10,12 +10,9 @@ import com.silentgo.core.exception.AppReleaseException;
 import com.silentgo.core.ioc.bean.BeanFactory;
 import com.silentgo.core.ioc.bean.BeanWrapper;
 import com.silentgo.core.route.BasicRoute;
-import com.silentgo.core.route.ParameterDispatcher;
 import com.silentgo.core.route.RegexRoute;
 import com.silentgo.core.route.Route;
 import com.silentgo.core.route.annotation.Controller;
-import com.silentgo.core.route.annotation.ParamDispatcher;
-import com.silentgo.core.route.support.paramdispatcher.ParamDispatchFactory;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.utils.StringKit;
 import com.silentgo.utils.logger.Logger;
@@ -79,23 +76,9 @@ public class RouteFactory extends BaseFactory {
     public boolean initialize(SilentGo me) {
 
         //build route
-        RouteFactory routeFactory = new RouteFactory();
-        me.getConfig().addFactory(routeFactory);
-        me.getAnnotationManager().getClasses(Controller.class).forEach(aClass -> buildClass(aClass, me, routeFactory));
 
+        me.getAnnotationManager().getClasses(Controller.class).forEach(aClass -> buildClass(aClass, me));
 
-        //build parameter dispatcher
-        ParamDispatchFactory dispatchFactory = new ParamDispatchFactory();
-        me.getConfig().addFactory(dispatchFactory);
-        me.getAnnotationManager().getClasses(ParamDispatcher.class).forEach(aClass -> {
-            if (!ParameterDispatcher.class.isAssignableFrom(aClass)) return;
-            try {
-                dispatchFactory.addDispatcher((ParameterDispatcher) aClass.newInstance());
-            } catch (InstantiationException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        });
-        dispatchFactory.resort();
         return true;
     }
 
@@ -105,7 +88,7 @@ public class RouteFactory extends BaseFactory {
     }
 
 
-    private void buildClass(Class<?> aClass, SilentGo me, RouteFactory routeFactory) {
+    private void buildClass(Class<?> aClass, SilentGo me) {
         Controller controller = aClass.getAnnotation(Controller.class);
         com.silentgo.core.route.annotation.Route route = aClass.getAnnotation(com.silentgo.core.route.annotation.Route.class);
         boolean parentRegex = route != null && route.regex();
@@ -127,9 +110,9 @@ public class RouteFactory extends BaseFactory {
             Matcher matcher = routePattern.matcher(fullPath);
 
             if (an.regex() || parentRegex || matcher.find()) {
-                routeFactory.addRoute(buildRegexRoute(fullPath, matcher, adviser));
+                addRoute(buildRegexRoute(fullPath, matcher, adviser));
             } else {
-                routeFactory.addRoute(buildBasicRoute(fullPath, adviser));
+                addRoute(buildBasicRoute(fullPath, adviser));
             }
         }
 

@@ -5,6 +5,8 @@ import com.silentgo.core.route.annotation.Controller;
 import com.silentgo.core.route.annotation.PathVariable;
 import com.silentgo.core.route.annotation.ResponseBody;
 import com.silentgo.core.route.annotation.Route;
+import com.silentgo.utils.logger.Logger;
+import com.silentgo.utils.logger.LoggerFactory;
 
 /**
  * Project : silentgo
@@ -18,6 +20,8 @@ import com.silentgo.core.route.annotation.Route;
 @Route("/")
 public class view {
 
+    private static final Logger LOGGER = LoggerFactory.getLog(view.class);
+
     @Route("/")
     public String index() {
         return "index.jsp";
@@ -26,6 +30,7 @@ public class view {
     @Route("/{string}")
     @ResponseBody
     public String test(@PathVariable String string) {
+        LOGGER.info("msg:{}", string);
         return string;
     }
 }

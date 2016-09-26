@@ -77,18 +77,16 @@ public class ParameterResolveFactory extends BaseFactory {
     @Override
     public boolean initialize(SilentGo me) throws AppBuildException {
 
-        ParameterResolveFactory parameterResolveFactory = new ParameterResolveFactory();
-        me.getConfig().addFactory(parameterResolveFactory);
         me.getAnnotationManager().getClasses(ParameterResolver.class).forEach(aClass -> {
             if (!ParameterValueResolver.class.isAssignableFrom(aClass)) return;
             try {
-                parameterResolveFactory.addParameterResolver((ParameterValueResolver) aClass.newInstance());
+                addParameterResolver((ParameterValueResolver) aClass.newInstance());
             } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
             }
         });
 
-        parameterResolveFactory.resortParameterResolvers();
+        resortParameterResolvers();
 
         MethodAOPFactory methodAOPFactory = me.getFactory(MethodAOPFactory.class);
 
@@ -100,8 +98,8 @@ public class ParameterResolveFactory extends BaseFactory {
                 //LOGGER.info("find adviser", adviser.getName());
                 for (MethodParam methodParam : adviser.getParams()) {
                     try {
-                        parameterResolveFactory.addMethodParameterValueResolver(methodParam);
-                    } catch (AppParameterPaserException e) {
+                        addMethodParameterValueResolver(methodParam);
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }

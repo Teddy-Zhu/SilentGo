@@ -81,25 +81,23 @@ public class RenderResolverFactory extends BaseFactory {
 
     @Override
     public boolean initialize(SilentGo me) throws AppBuildException {
-        RenderResolverFactory renderResolverFactory = new RenderResolverFactory();
-        me.getConfig().addFactory(renderResolverFactory);
 
         MethodAOPFactory methodAOPFactory = me.getFactory(MethodAOPFactory.class);
         me.getAnnotationManager().getClasses(RenderResolve.class).forEach(aClass -> {
             if (RenderResolver.class.isAssignableFrom(aClass)) {
                 try {
-                    renderResolverFactory.addRenderResolver((RenderResolver) aClass.newInstance());
+                    addRenderResolver((RenderResolver) aClass.newInstance());
                 } catch (InstantiationException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
             }
         });
-        renderResolverFactory.resortRenderResolver();
+        resortRenderResolver();
         me.getAnnotationManager().getClasses(Controller.class).forEach(aClass -> {
 
             for (Method method : aClass.getDeclaredMethods()) {
                 if (method.getAnnotation(Route.class) != null || method.getAnnotation(ExceptionHandler.class) != null) {
-                    renderResolverFactory.addRenderResolver(methodAOPFactory.getMethodAdviser(method));
+                    addRenderResolver(methodAOPFactory.getMethodAdviser(method));
                 }
             }
         });

@@ -72,7 +72,7 @@ public class SilentGoFilter implements Filter {
             AnnotationManager manager = new AnnotationManager(config);
             appContext.setAnnotationManager(manager);
 
-            build(manager, config, appContext);
+            build(manager, config);
 
             if (configInit != null) {
                 configInit.afterInit(config);
@@ -106,12 +106,15 @@ public class SilentGoFilter implements Filter {
         ActionParam param = new ActionParam(false, request, response, requestPath);
         globalConfig.getCtx().set(new SilentGoContext(response, request));
         try {
+            LOGGER.info("start action");
             globalConfig.getActionChain().doAction(param);
+            LOGGER.info("end action");
         } catch (Throwable throwable) {
             new ErrorRener().render(request, response, HttpStatus.Code.INTERNAL_SERVER_ERROR, throwable, appContext.isDevMode());
             return;
         } finally {
             globalConfig.getCtx().remove();
+            LOGGER.info("final action");
         }
 
         if (!param.isHandled())
@@ -121,6 +124,7 @@ public class SilentGoFilter implements Filter {
 
     @Override
     public void destroy() {
+        LOGGER.info("destroy filter");
         globalConfig.getFactoryMap()
                 .forEach((k, v) -> {
                     try {
@@ -131,11 +135,11 @@ public class SilentGoFilter implements Filter {
                 });
     }
 
-    private void build(AnnotationManager manager, SilentGoConfig config, SilentGo me) {
+    private void build(AnnotationManager manager, SilentGoConfig config) {
         //add builder
-        manager.getClasses(Factory.class).forEach(factory -> {
+        manager.getClasses(Factory.class).stream().forEach(factory -> {
             if (!factory.isInterface() && BaseFactory.class.isAssignableFrom(factory)) {
-                me.getFactory(factory);
+                appContext.getFactory(factory);
             }
         });
     }

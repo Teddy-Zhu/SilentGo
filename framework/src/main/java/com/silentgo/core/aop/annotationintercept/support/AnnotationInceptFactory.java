@@ -68,14 +68,12 @@ public class AnnotationInceptFactory extends BaseFactory {
     @Override
     public boolean initialize(SilentGo me) {
         MethodAOPFactory methodAOPFactory = me.getFactory(MethodAOPFactory.class);
-        AnnotationInceptFactory annotationInceptFactory = new AnnotationInceptFactory();
-        me.getConfig().addFactory(annotationInceptFactory);
 
         me.getAnnotationManager().getClasses(CustomInterceptor.class).forEach(aClass -> {
             if (IAnnotation.class.isAssignableFrom(aClass)) {
                 Class<? extends Annotation> an = (Class<? extends Annotation>) ClassKit.getGenericClass(aClass, 0);
                 try {
-                    if (annotationInceptFactory.addAnnotationInterceptor(an, (IAnnotation) aClass.newInstance())) {
+                    if (addAnnotationInterceptor(an, (IAnnotation) aClass.newInstance())) {
                         if (me.getConfig().isDevMode()) {
                             LOGGER.debug("Register Custom Interceptor [{}] successfully", aClass.getName());
                         }
@@ -90,7 +88,7 @@ public class AnnotationInceptFactory extends BaseFactory {
 
         methodAOPFactory.getMethodAdviserMap().forEach((k, v) -> {
             //special interceptors
-            buildIAnnotation(annotationInceptFactory, v);
+            buildIAnnotation(v);
         });
         return true;
     }
@@ -101,14 +99,14 @@ public class AnnotationInceptFactory extends BaseFactory {
     }
 
 
-    private void buildIAnnotation(AnnotationInceptFactory annotationInceptFactory, MethodAdviser adviser) {
+    private void buildIAnnotation(MethodAdviser adviser) {
 
         Map<Annotation, IAnnotation> annotationIAnnotationMap = new HashMap<>();
         //build IAnnotation
-        adviser.getAnnotations().forEach(annotation -> CollectionKit.MapAdd(annotationIAnnotationMap, annotation, annotationInceptFactory.getAnnotationInterceptor(annotation.annotationType())));
+        adviser.getAnnotations().forEach(annotation -> CollectionKit.MapAdd(annotationIAnnotationMap, annotation, getAnnotationInterceptor(annotation.annotationType())));
 
-        annotationInceptFactory.addSortedIAnnotation(adviser.getName(), sortAnnotationMap(annotationIAnnotationMap));
-        annotationInceptFactory.addIAnnotation(adviser.getName(), annotationIAnnotationMap);
+        addSortedIAnnotation(adviser.getName(), sortAnnotationMap(annotationIAnnotationMap));
+        addIAnnotation(adviser.getName(), annotationIAnnotationMap);
 
     }
 

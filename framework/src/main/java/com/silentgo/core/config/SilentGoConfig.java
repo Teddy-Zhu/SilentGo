@@ -8,6 +8,8 @@ import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
 import com.silentgo.utils.CollectionKit;
 import com.silentgo.utils.PropKit;
+import com.silentgo.utils.logger.Logger;
+import com.silentgo.utils.logger.LoggerFactory;
 
 import java.util.List;
 
@@ -21,6 +23,9 @@ import java.util.List;
  */
 public class SilentGoConfig extends BaseConfig {
 
+    private static final Logger LOGGER = LoggerFactory.getLog(SilentGoConfig.class);
+
+
     public SilentGoConfig(List<String> scanPackages, List<String> scanJars, boolean devMode, String encoding, int contextPathLength, String fileName) {
         setScanPackages(scanPackages);
         setScanJars(scanJars);
@@ -32,15 +37,11 @@ public class SilentGoConfig extends BaseConfig {
         setScanJars(scanJars);
     }
 
-    public boolean addFactory(Class<? extends BaseFactory> factoryClz, BaseFactory baseFactory) {
-        return CollectionKit.MapAdd(getFactoryMap(), factoryClz, baseFactory);
-    }
-
-    public boolean addFactory(BaseFactory baseFactory) {
+    private boolean addFactory(BaseFactory baseFactory) {
         return CollectionKit.MapAdd(getFactoryMap(), baseFactory.getClass(), baseFactory);
     }
 
-    public boolean addFactory(Class<? extends BaseFactory> factoryClz) {
+    private boolean addFactory(Class<? extends BaseFactory> factoryClz) {
         try {
             return addFactory(factoryClz.newInstance());
         } catch (InstantiationException | IllegalAccessException e) {
@@ -54,8 +55,8 @@ public class SilentGoConfig extends BaseConfig {
         if (factory == null) {
             try {
                 factory = name.newInstance();
-                factory.initialize(me);
                 addFactory(factory);
+                factory.initialize(me);
             } catch (InstantiationException | IllegalAccessException | AppBuildException e) {
                 e.printStackTrace();
             }

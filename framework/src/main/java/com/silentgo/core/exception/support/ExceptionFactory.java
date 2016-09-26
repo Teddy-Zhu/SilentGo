@@ -109,13 +109,11 @@ public class ExceptionFactory extends BaseFactory {
 
     @Override
     public boolean initialize(SilentGo me) throws AppBuildException {
-        ExceptionFactory exceptionFactory = new ExceptionFactory();
         MethodAOPFactory methodAOPFactory = me.getFactory(MethodAOPFactory.class);
-        me.getConfig().addFactory(exceptionFactory);
         me.getAnnotationManager().getClasses(ExceptionHandler.class).forEach(aClass -> {
             if (IExceptionHandler.class.isAssignableFrom(aClass)) {
                 try {
-                    exceptionFactory.addGlobalExceptionHandler((IExceptionHandler) aClass.newInstance());
+                    addGlobalExceptionHandler((IExceptionHandler) aClass.newInstance());
                 } catch (InstantiationException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
@@ -136,7 +134,7 @@ public class ExceptionFactory extends BaseFactory {
                             }
                         }
                         if (bc || methodParamExcetpion == null) continue;
-                        exceptionFactory.addToExceptionHandler((Class<? extends Exception>) methodParamExcetpion.getType(), adviser);
+                        addToExceptionHandler((Class<? extends Exception>) methodParamExcetpion.getType(), adviser);
                     }
                 }
             }
@@ -171,7 +169,7 @@ public class ExceptionFactory extends BaseFactory {
                     }
                 }
             }
-            names.forEach(name -> exceptionFactory.addMethodExceptionHandler(name, map));
+            names.forEach(name -> addMethodExceptionHandler(name, map));
         });
         return true;
     }

@@ -146,11 +146,7 @@ public class SilentGoBean extends BeanFactory<BeanDefinition> {
             if (aClass.isInterface()) return;
             beanDefinitions.add(new BeanDefinition(aClass.getName(), aClass, false));
         });
-
-        SilentGoBean beanFactory = new SilentGoBean();
-        me.getConfig().addFactory(beanFactory);
-        beanFactory.build(beanDefinitions, me.getConfig());
-
+        build(beanDefinitions, me.getConfig());
         return true;
     }
 

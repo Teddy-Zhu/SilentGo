@@ -63,14 +63,12 @@ public class ValidatorFactory extends BaseFactory {
 
     @Override
     public boolean initialize(SilentGo me) throws AppBuildException {
-        ValidatorFactory validatorFactory = new ValidatorFactory();
 
-        me.getConfig().addFactory(validatorFactory);
         me.getAnnotationManager().getClasses(Validator.class).forEach(aClass -> {
             if (IValidator.class.isAssignableFrom(aClass)) {
                 Class<? extends Annotation> an = (Class<? extends Annotation>) ClassKit.getGenericClass(aClass, 0);
                 try {
-                    if (validatorFactory.addValidator(an, (IValidator) aClass.newInstance())) {
+                    if (addValidator(an, (IValidator) aClass.newInstance())) {
                         if (me.getConfig().isDevMode()) {
                             LOGGER.debug("Register Custom Validator [{}] successfully", aClass.getName());
                         }
@@ -84,7 +82,7 @@ public class ValidatorFactory extends BaseFactory {
         });
         MethodAOPFactory methodAOPFactory = me.getFactory(MethodAOPFactory.class);
         methodAOPFactory.getMethodAdviserMap().forEach((k, v) ->
-                validatorFactory.addMethodParamValidator(v.getName(), buildIValidator(v, validatorFactory)));
+                addMethodParamValidator(v.getName(), buildIValidator(v)));
 
         return true;
     }
@@ -94,7 +92,7 @@ public class ValidatorFactory extends BaseFactory {
         return false;
     }
 
-    private Map<String, Map<Annotation, IValidator>> buildIValidator(MethodAdviser adviser, ValidatorFactory validatorFactory) {
+    private Map<String, Map<Annotation, IValidator>> buildIValidator(MethodAdviser adviser) {
 
         Map<String, Map<Annotation, IValidator>> methodParamsMap = new HashMap<>();
 
@@ -104,7 +102,7 @@ public class ValidatorFactory extends BaseFactory {
 
             methodParam.getAnnotations().forEach(annotation -> {
 
-                IValidator iValidator = validatorFactory.getValidator(annotation.annotationType());
+                IValidator iValidator = getValidator(annotation.annotationType());
 
                 CollectionKit.MapAdd(validatorMap, annotation, iValidator);
 

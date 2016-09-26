@@ -37,13 +37,10 @@ public class RenderFactory extends BaseFactory {
 
     @Override
     public boolean initialize(SilentGo me) throws AppBuildException {
-        RenderFactory renderFactory = new RenderFactory();
 
-        me.getConfig().addFactory(renderFactory);
+        addAndReplaceRender(RenderType.View, new JspRender(me.getConfig().getBaseView()));
 
-        renderFactory.addAndReplaceRender(RenderType.View, new JspRender(me.getConfig().getBaseView()));
-
-        renderFactory.addAndReplaceRender(RenderType.JSON, new JsonRender(me.getConfig().getEncoding()));
+        addAndReplaceRender(RenderType.JSON, new JsonRender(me.getConfig().getEncoding()));
 
         return true;
     }

@@ -58,9 +58,6 @@ public class AspectFactory extends BaseFactory {
     @Override
     public boolean initialize(SilentGo me) throws AppBuildException {
         BeanFactory beanFactory = me.getFactory(me.getConfig().getBeanClass());
-        AspectFactory aspectFactory = new AspectFactory();
-
-        me.getConfig().addFactory(aspectFactory);
 
         me.getAnnotationManager().getClasses(Aspect.class).forEach(aClass -> {
 
@@ -70,7 +67,7 @@ public class AspectFactory extends BaseFactory {
             for (Method method : methods) {
                 Around annotation = method.getAnnotation(Around.class);
                 if (annotation == null) continue;
-                aspectFactory.addAspectMethod(new AspectMethod(annotation.value()
+                addAspectMethod(new AspectMethod(annotation.value()
                         , annotation.regex()
                         , beanDefinition.getBeanClass().getMethod(method)
                         , beanDefinition.getBean()
@@ -84,7 +81,7 @@ public class AspectFactory extends BaseFactory {
         });
 
         //build aspect
-        aspectFactory.getAspectMethods().forEach(aspectMethod -> {
+        aspectMethods.forEach(aspectMethod -> {
             if (aspectMethod.getMethod().getJavaMethod().getParameterCount() != 1) {
                 LOGGER.warn("The Method [{}] ignored .", aspectMethod.getMethod().getJavaMethod().getName());
                 return;
@@ -93,12 +90,12 @@ public class AspectFactory extends BaseFactory {
             if (aspectMethod.isRegex()) {
                 methodNames.forEach(name -> {
                     if (name.matches(aspectMethod.getRule())) {
-                        addAspectMethod(aspectFactory, methodAOPFactory, aspectMethod, name);
+                        addAspectMethod(methodAOPFactory, aspectMethod, name);
                     }
                 });
             } else {
                 if (methodNames.contains(aspectMethod.getRule())) {
-                    addAspectMethod(aspectFactory, methodAOPFactory, aspectMethod, aspectMethod.getRule());
+                    addAspectMethod(methodAOPFactory, aspectMethod, aspectMethod.getRule());
                 }
             }
         });
@@ -111,10 +108,10 @@ public class AspectFactory extends BaseFactory {
     }
 
 
-    private void addAspectMethod(AspectFactory aspectFactory, MethodAOPFactory methodAOPFactory, AspectMethod aspectMethod, String methodName) {
+    private void addAspectMethod(MethodAOPFactory methodAOPFactory, AspectMethod aspectMethod, String methodName) {
         methodAOPFactory.getMethodAdviserMap().forEach((k, v) -> {
             if (v.getMethodName().equals(methodName)) {
-                aspectFactory.addAspectMethodInMap(v.getName(), aspectMethod);
+                addAspectMethodInMap(v.getName(), aspectMethod);
             }
         });
     }

@@ -79,8 +79,6 @@ public class InterceptFactory extends BaseFactory {
 
     @Override
     public boolean initialize(SilentGo me) throws AppBuildException {
-        InterceptFactory interceptFactory = new InterceptFactory();
-        me.getConfig().addFactory(interceptFactory);
 
         //build global interceptors
         List<Interceptor> globalInterceptors = me.getConfig().getInterceptors();
@@ -95,7 +93,7 @@ public class InterceptFactory extends BaseFactory {
                 }
             }
         });
-        interceptFactory.addAllInterceltor(globalInterceptors);
+        addAllInterceltor(globalInterceptors);
         BeanFactory beanFactory = me.getFactory(me.getConfig().getBeanClass());
 
 
@@ -104,7 +102,7 @@ public class InterceptFactory extends BaseFactory {
             Intercept classIntercept = v.getSourceClass().getAnnotation(Intercept.class);
             if (classIntercept != null && classIntercept.value().length != 0) {
                 for (Class<? extends Interceptor> aClass : classIntercept.value()) {
-                    interceptFactory.addClassInterceptor(v.getSourceClass().getName(), getInterceptor(interceptFactory, aClass));
+                    addClassInterceptor(v.getSourceClass().getName(), getInterceptor(aClass));
                 }
             }
             Method[] methods = v.getSourceClass().getDeclaredMethods();
@@ -112,7 +110,7 @@ public class InterceptFactory extends BaseFactory {
                 Intercept intercept = method.getAnnotation(Intercept.class);
                 if (intercept != null && intercept.value().length != 0) {
                     for (Class<? extends Interceptor> aClass : intercept.value()) {
-                        interceptFactory.addMethodInterceptor(method, getInterceptor(interceptFactory, aClass));
+                        addMethodInterceptor(method, getInterceptor(aClass));
                     }
                 }
             }
@@ -126,14 +124,14 @@ public class InterceptFactory extends BaseFactory {
         return false;
     }
 
-    public Interceptor getInterceptor(InterceptFactory interceptFactory, Class<? extends Interceptor> interceptor) {
+    public Interceptor getInterceptor(Class<? extends Interceptor> interceptor) {
         try {
-            interceptFactory.addAllInterceltor(interceptor, interceptor.newInstance());
+            addAllInterceltor(interceptor, interceptor.newInstance());
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
 
-        return interceptFactory.getAllInterceptors().get(interceptor);
+        return allInterceptors.get(interceptor);
     }
 
     private boolean addIntercept(List<Interceptor> interceptors, Class<? extends Interceptor> clz) {

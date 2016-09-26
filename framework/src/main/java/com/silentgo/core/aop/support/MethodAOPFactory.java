@@ -59,9 +59,6 @@ public class MethodAOPFactory extends BaseFactory {
 
     @Override
     public boolean initialize(SilentGo me) throws AppBuildException {
-        MethodAOPFactory methodAOPFactory = new MethodAOPFactory();
-
-        me.getConfig().addFactory(methodAOPFactory);
 
         InterceptFactory interceptFactory = me.getFactory(InterceptFactory.class);
 
@@ -76,11 +73,11 @@ public class MethodAOPFactory extends BaseFactory {
             Method[] methods = v.getSourceClass().getDeclaredMethods();
             FastClass clz = v.getBeanClass();
             for (Method method : methods) {
-                methodAOPFactory.addMethodAdviser(BuildAdviser(clz.getMethod(method), annotations));
+                addMethodAdviser(BuildAdviser(clz.getMethod(method), annotations));
             }
         });
 
-        methodAOPFactory.getMethodAdviserMap().forEach((k, v) -> {
+        methodAdviserMap.forEach((k, v) -> {
 
             List interceptors = new ArrayList<Interceptor>() {{
                 //add global
@@ -97,7 +94,7 @@ public class MethodAOPFactory extends BaseFactory {
             //save method interceptors
             sortInterceptrs(interceptors);
 
-            methodAOPFactory.addBuildedInterceptor(v.getName(), interceptors);
+            addBuildedInterceptor(v.getName(), interceptors);
 
         });
         return true;

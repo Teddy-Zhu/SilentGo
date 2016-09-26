@@ -9,6 +9,7 @@ import com.silentgo.core.exception.AppParameterResolverException;
 import com.silentgo.core.exception.AppReleaseException;
 import com.silentgo.core.route.ParameterDispatcher;
 import com.silentgo.core.route.Route;
+import com.silentgo.core.route.annotation.ParamDispatcher;
 import com.silentgo.core.route.support.paramvalueresolve.ParameterResolveFactory;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.utils.CollectionKit;
@@ -67,6 +68,17 @@ public class ParamDispatchFactory extends BaseFactory {
     @Override
     public boolean initialize(SilentGo me) throws AppBuildException {
         me.getContext().setAttribute(FILE_CLEANING_TRACKER_ATTRIBUTE, new FileCleaningTracker());
+
+        //build parameter dispatcher
+        me.getAnnotationManager().getClasses(ParamDispatcher.class).forEach(aClass -> {
+            if (!ParameterDispatcher.class.isAssignableFrom(aClass)) return;
+            try {
+                addDispatcher((ParameterDispatcher) aClass.newInstance());
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        });
+        resort();
         return true;
     }
 

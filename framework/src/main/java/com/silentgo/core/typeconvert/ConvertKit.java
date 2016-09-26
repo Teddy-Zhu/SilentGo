@@ -77,14 +77,11 @@ public class ConvertKit extends BaseFactory {
 
     @Override
     public boolean initialize(SilentGo me) throws AppBuildException {
-        ConvertKit convertKit = new ConvertKit();
         me.getAnnotationManager().getClasses(Convertor.class)
                 .forEach(aClass -> {
                     if (ITypeConvertor.class.isAssignableFrom(aClass))
-                        convertKit.addConvert(aClass);
+                        addConvert(aClass);
                 });
-
-        me.getConfig().addFactory(convertKit);
         return true;
     }
 

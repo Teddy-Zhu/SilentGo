@@ -53,13 +53,11 @@ public class ParamAnFactory extends BaseFactory {
 
     @Override
     public boolean initialize(SilentGo me) throws AppBuildException {
-        ParamAnFactory paramAnFactory = new ParamAnFactory();
-        me.getConfig().addFactory(paramAnFactory);
 
         me.getAnnotationManager().getClasses(ParamAnResolver.class).forEach(aClass -> {
             if (ParamAnnotationResolver.class.isAssignableFrom(aClass)) {
                 try {
-                    paramAnFactory.addResolver((ParamAnnotationResolver) aClass.newInstance());
+                    addResolver((ParamAnnotationResolver) aClass.newInstance());
                 } catch (InstantiationException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
