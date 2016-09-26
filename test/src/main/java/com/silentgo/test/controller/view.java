@@ -1,6 +1,10 @@
 package com.silentgo.test.controller;
 
 
+import com.silentgo.core.route.annotation.Controller;
+import com.silentgo.core.route.annotation.PathVariable;
+import com.silentgo.core.route.annotation.ResponseBody;
+import com.silentgo.core.route.annotation.Route;
 
 /**
  * Project : silentgo
