@@ -1,9 +1,18 @@
 package com.silentgo.core.exception.support;
 
+import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.MethodAdviser;
+import com.silentgo.core.aop.MethodParam;
+import com.silentgo.core.aop.support.MethodAOPFactory;
+import com.silentgo.core.build.Factory;
+import com.silentgo.core.exception.AppBuildException;
+import com.silentgo.core.exception.AppReleaseException;
+import com.silentgo.core.exception.annotaion.ExceptionHandler;
 import com.silentgo.core.ioc.bean.BeanFactory;
 import com.silentgo.core.render.renderresolver.RenderResolverFactory;
 import com.silentgo.core.render.support.RenderFactory;
+import com.silentgo.core.route.annotation.Controller;
+import com.silentgo.core.route.annotation.Route;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
@@ -24,6 +33,7 @@ import java.util.Map;
  *         <p>
  *         Created by teddyzhu on 16/8/29.
  */
+@Factory
 public class ExceptionFactory extends BaseFactory {
 
     /**
@@ -96,4 +106,86 @@ public class ExceptionFactory extends BaseFactory {
             }
         }
     }
+
+    @Override
+    public boolean initialize(SilentGo me) throws AppBuildException {
+        ExceptionFactory exceptionFactory = new ExceptionFactory();
+        MethodAOPFactory methodAOPFactory = me.getFactory(MethodAOPFactory.class);
+        me.getConfig().addFactory(exceptionFactory);
+        me.getAnnotationManager().getClasses(ExceptionHandler.class).forEach(aClass -> {
+            if (IExceptionHandler.class.isAssignableFrom(aClass)) {
+                try {
+                    exceptionFactory.addGlobalExceptionHandler((IExceptionHandler) aClass.newInstance());
+                } catch (InstantiationException | IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Method[] methods = aClass.getDeclaredMethods();
+                for (Method method : methods) {
+                    MethodAdviser adviser = methodAOPFactory.getMethodAdviser(method);
+                    if (adviser.getParams().length > 3) {
+                    } else {
+                        boolean bc = false;
+                        MethodParam methodParamExcetpion = null;
+                        for (MethodParam methodParam : adviser.getParams()) {
+                            if (!list.contains(methodParam.getType())) {
+                                bc = true;
+                            }
+                            if (Exception.class.isAssignableFrom(methodParam.getType())) {
+                                methodParamExcetpion = methodParam;
+                            }
+                        }
+                        if (bc || methodParamExcetpion == null) continue;
+                        exceptionFactory.addToExceptionHandler((Class<? extends Exception>) methodParamExcetpion.getType(), adviser);
+                    }
+                }
+            }
+        });
+
+        //build controller exception in controller class
+        me.getAnnotationManager().getClasses(Controller.class).forEach(aClass -> {
+            String classsuffix = aClass.getName() + ".";
+            List<Method> names = new ArrayList<>();
+            Map<Class<? extends Exception>, List<MethodAdviser>> map = new HashMap<>();
+            for (Method method : aClass.getDeclaredMethods()) {
+                if (method.getAnnotation(Route.class) != null) {
+                    names.add(method);
+                }
+                ExceptionHandler handler = method.getAnnotation(ExceptionHandler.class);
+                if (handler != null) {
+                    MethodAdviser adviser = methodAOPFactory.getMethodAdviser(method);
+                    if (adviser.getParams().length > 3) {
+                    } else {
+                        boolean bc = false;
+                        MethodParam methodParamExcetpion = null;
+                        for (MethodParam methodParam : adviser.getParams()) {
+                            if (!list.contains(methodParam.getType())) {
+                                bc = true;
+                            }
+                            if (Exception.class.isAssignableFrom(methodParam.getType())) {
+                                methodParamExcetpion = methodParam;
+                            }
+                        }
+                        if (bc || methodParamExcetpion == null) continue;
+                        CollectionKit.ListMapAdd(map, (Class<? extends Exception>) methodParamExcetpion.getType(), adviser);
+                    }
+                }
+            }
+            names.forEach(name -> exceptionFactory.addMethodExceptionHandler(name, map));
+        });
+        return true;
+    }
+
+    @Override
+    public boolean destroy(SilentGo me) throws AppReleaseException {
+        return true;
+    }
+
+    private static final ArrayList list = new ArrayList() {{
+        add(Response.class);
+        add(Request.class);
+        add(Exception.class);
+    }};
+
+
 }

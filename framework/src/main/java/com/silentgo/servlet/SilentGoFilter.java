@@ -1,17 +1,16 @@
 package com.silentgo.servlet;
 
+import com.silentgo.core.SilentGo;
 import com.silentgo.core.action.ActionParam;
-import com.silentgo.core.build.SilentGoBuilder;
-import com.silentgo.core.build.SilentGoReleaser;
-import com.silentgo.core.build.annotation.Builder;
-import com.silentgo.core.build.annotation.Releaser;
+import com.silentgo.core.build.Factory;
 import com.silentgo.core.config.Config;
 import com.silentgo.core.config.Const;
 import com.silentgo.core.config.SilentGoConfig;
 import com.silentgo.core.config.support.ConfigChecker;
-import com.silentgo.core.exception.AppBuildException;
+import com.silentgo.core.exception.AppReleaseException;
 import com.silentgo.core.render.support.ErrorRener;
 import com.silentgo.core.support.AnnotationManager;
+import com.silentgo.core.support.BaseFactory;
 import com.silentgo.servlet.http.HttpStatus;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
@@ -33,7 +32,7 @@ public class SilentGoFilter implements Filter {
 
     private Config configInit = null;
 
-    private static com.silentgo.core.SilentGo appContext = com.silentgo.core.SilentGo.getInstance();
+    private static SilentGo appContext = SilentGo.getInstance();
 
     private SilentGoConfig globalConfig = null;
 
@@ -45,7 +44,7 @@ public class SilentGoFilter implements Filter {
         if (!appContext.isLoaded()) {
             SilentGoConfig config = null;
             long startTime = System.currentTimeMillis();
-            LOGGER.info("Start SilentGoConfig Init ...");
+            LOGGER.info("start SilentGoConfig initial ...");
 
             ServletContext context = filterConfig.getServletContext();
 
@@ -73,8 +72,7 @@ public class SilentGoFilter implements Filter {
             AnnotationManager manager = new AnnotationManager(config);
             appContext.setAnnotationManager(manager);
 
-            buildRelease(manager, config);
-            build(manager, config);
+            build(manager, config, appContext);
 
             if (configInit != null) {
                 configInit.afterInit(config);
@@ -86,7 +84,7 @@ public class SilentGoFilter implements Filter {
 
             appContext.setLoaded(true);
 
-            LOGGER.info("SilentGoConfig Loader initialize successfully, Time : {} ms.", System.currentTimeMillis() - startTime);
+            LOGGER.info("SilentGoConfig filter initialize successfully, Time : {} ms.", System.currentTimeMillis() - startTime);
         }
     }
 
@@ -123,65 +121,23 @@ public class SilentGoFilter implements Filter {
 
     @Override
     public void destroy() {
-        globalConfig.getReleasers().forEach(release -> release.relase(appContext));
+        globalConfig.getFactoryMap()
+                .forEach((k, v) -> {
+                    try {
+                        v.destroy(appContext);
+                    } catch (AppReleaseException e) {
+                        e.printStackTrace();
+                    }
+                });
     }
 
-    private void buildRelease(AnnotationManager manager, SilentGoConfig config) {
-        //add realser
-        SilentGoConfig finalConfig = config;
-        manager.getClasses(Releaser.class).forEach(aClass -> {
-            try {
-                if (SilentGoReleaser.class.isAssignableFrom(aClass)) {
-                    finalConfig.getReleasers().add((SilentGoReleaser) aClass.newInstance());
-                } else {
-                    LOGGER.debug("SilentGoReleaser Class {} is invalid, it should be extend {}", aClass.getClass().getName(), SilentGoReleaser.class.getName());
-                }
-            } catch (InstantiationException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        });
-
-        config.getReleasers().sort((o1, o2) -> {
-            int x = o1.priority();
-            int y = o2.priority();
-            return (x < y) ? -1 : ((x == y) ? 0 : 1);
-        });
-
-    }
-
-    private void build(AnnotationManager manager, SilentGoConfig config) {
+    private void build(AnnotationManager manager, SilentGoConfig config, SilentGo me) {
         //add builder
-        SilentGoConfig finalConfig = config;
-        manager.getClasses(Builder.class).forEach(builder -> {
-            try {
-                if (SilentGoBuilder.class.isAssignableFrom(builder)) {
-                    finalConfig.getBuilders().add((SilentGoBuilder) builder.newInstance());
-                } else {
-                    LOGGER.debug("SilentGoBuilder Class {} is invalid, it should be extend {}", builder.getClass().getName(), SilentGoBuilder.class.getName());
-                }
-            } catch (InstantiationException | IllegalAccessException e) {
-                e.printStackTrace();
+        manager.getClasses(Factory.class).forEach(factory -> {
+            if (!factory.isInterface() && BaseFactory.class.isAssignableFrom(factory)) {
+                me.getFactory(factory);
             }
         });
-
-        config.getBuilders().sort((o1, o2) -> {
-            int x = o1.priority();
-            int y = o2.priority();
-            return (x < y) ? -1 : ((x == y) ? 0 : 1);
-        });
-
-        //Init
-        try {
-            for (SilentGoBuilder silentGoBuilder : config.getBuilders()) {
-                if (!silentGoBuilder.build(appContext)) {
-                    LOGGER.warn("Builder {} build progress failed", silentGoBuilder.getClass().getName());
-                }
-            }
-        } catch (AppBuildException e) {
-
-        }
-
-
     }
 
     private Config getConfig(String className) throws ServletException {

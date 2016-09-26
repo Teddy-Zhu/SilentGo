@@ -69,7 +69,7 @@ public class SilentGo {
     }
 
     public <T extends BaseFactory> T getFactory(Class<T> t) {
-        return config.getFactory(t);
+        return config.getFactory(t, getInstance());
     }
 
 

@@ -4,9 +4,10 @@ import com.silentgo.core.SilentGo;
 import com.silentgo.core.action.ActionChain;
 import com.silentgo.core.action.RouteAction;
 import com.silentgo.core.action.annotation.Action;
-import com.silentgo.core.build.SilentGoBuilder;
-import com.silentgo.core.build.annotation.Builder;
+import com.silentgo.core.build.Factory;
 import com.silentgo.core.exception.AppBuildException;
+import com.silentgo.core.exception.AppReleaseException;
+import com.silentgo.core.support.BaseFactory;
 import com.silentgo.utils.CollectionKit;
 
 import java.util.ArrayList;
@@ -19,20 +20,13 @@ import java.util.List;
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>
- *         Created by teddyzhu on 16/7/26.
+ *         Created by teddyzhu on 16/9/26.
  */
-@Builder
-public class ActionBuilder extends SilentGoBuilder {
-
-
-    @Override
-    public Integer priority() {
-        return 5;
-    }
+@Factory
+public class ActionFactory extends BaseFactory {
 
     @Override
-    public boolean build(SilentGo me) throws AppBuildException {
-
+    public boolean initialize(SilentGo me) throws AppBuildException {
         List<ActionChain> actionChains = new ArrayList<>();
         me.getAnnotationManager().getClasses(Action.class).forEach(action -> {
             try {
@@ -64,5 +58,10 @@ public class ActionBuilder extends SilentGoBuilder {
 
         me.getConfig().setActionChain(result);
         return true;
+    }
+
+    @Override
+    public boolean destroy(SilentGo me) throws AppReleaseException {
+        return false;
     }
 }

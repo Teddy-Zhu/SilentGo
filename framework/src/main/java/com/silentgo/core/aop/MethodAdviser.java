@@ -12,8 +12,8 @@ import java.util.Optional;
  * Project : silentgo
  * com.silentgo.core.aop
  *
- * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>
+ * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         Created by teddyzhu on 16/7/27.
  */
 public class MethodAdviser {
@@ -26,7 +26,7 @@ public class MethodAdviser {
 
     private MethodParam[] params;
 
-    private List<Class<? extends Annotation>> anTypes;
+    private List<Class<? extends Annotation>> anTypes = new ArrayList<>();
 
     private List<Annotation> annotations = new ArrayList<>();
 

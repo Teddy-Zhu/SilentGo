@@ -9,10 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <properties>
-        <utils-version>0.0.1</utils-version>
-    </properties>
-
+    <version>0.0.2</version>
     <artifactId>utils</artifactId>
 
     <dependencies>

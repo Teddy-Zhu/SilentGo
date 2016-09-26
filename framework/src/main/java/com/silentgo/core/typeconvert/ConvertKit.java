@@ -1,6 +1,12 @@
 package com.silentgo.core.typeconvert;
 
 
+import com.silentgo.core.SilentGo;
+import com.silentgo.core.build.Factory;
+import com.silentgo.core.exception.AppBuildException;
+import com.silentgo.core.exception.AppReleaseException;
+import com.silentgo.core.support.BaseFactory;
+import com.silentgo.core.typeconvert.annotation.Convertor;
 import com.silentgo.core.typeconvert.support.CommonConvertor;
 import com.silentgo.utils.ClassKit;
 import com.silentgo.utils.TypeConvertKit;
@@ -17,7 +23,8 @@ import java.util.Map;
  *         <p>
  *         Created by teddyzhu on 16/7/26.
  */
-public class ConvertKit {
+@Factory
+public class ConvertKit extends BaseFactory {
 
 
     static Map<Class<?>, Map<Class<?>, ITypeConvertor>> convertMap = new HashMap<>();
@@ -65,6 +72,24 @@ public class ConvertKit {
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
+        return false;
+    }
+
+    @Override
+    public boolean initialize(SilentGo me) throws AppBuildException {
+        ConvertKit convertKit = new ConvertKit();
+        me.getAnnotationManager().getClasses(Convertor.class)
+                .forEach(aClass -> {
+                    if (ITypeConvertor.class.isAssignableFrom(aClass))
+                        convertKit.addConvert(aClass);
+                });
+
+        me.getConfig().addFactory(convertKit);
+        return true;
+    }
+
+    @Override
+    public boolean destroy(SilentGo me) throws AppReleaseException {
         return false;
     }
 }

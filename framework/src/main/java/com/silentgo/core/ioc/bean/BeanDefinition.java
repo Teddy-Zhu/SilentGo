@@ -131,7 +131,7 @@ public class BeanDefinition extends BeanWrapper {
             } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
             }
-            BeanFactory beanFactory = SilentGo.getInstance().getFactory(BeanFactory.class);
+            BeanFactory beanFactory = SilentGo.getInstance().getFactory(SilentGoBean.class);
 
             if (needInject)
                 proxyTarget = CGLibKit.Proxy(target);

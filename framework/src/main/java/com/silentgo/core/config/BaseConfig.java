@@ -2,8 +2,8 @@ package com.silentgo.core.config;
 
 import com.silentgo.core.aop.annotationintercept.support.AnnotationInterceptor;
 import com.silentgo.core.aop.validator.support.ValidatorInterceptor;
-import com.silentgo.core.build.SilentGoBuilder;
-import com.silentgo.core.build.SilentGoReleaser;
+import com.silentgo.core.ioc.bean.BeanFactory;
+import com.silentgo.core.ioc.bean.SilentGoBean;
 import com.silentgo.core.route.RoutePaser;
 import com.silentgo.core.route.support.routeparse.DefaultRouteParser;
 import com.silentgo.utils.ClassKit;
@@ -30,6 +30,7 @@ public class BaseConfig extends InterConfig {
         put(Const.FileUploadConfig, new FileUploadConfig(ClassKit.getWebRootPath() + "/UploadFile", -1, 10240, true));
     }};
 
+    private Class<? extends BeanFactory> beanClass = SilentGoBean.class;
 
     private JsonPaser jsonPaser = new FastJsonPaser();
 
@@ -37,10 +38,6 @@ public class BaseConfig extends InterConfig {
 
     private String dbType;
     private String BaseView = Const.BaseView;
-
-    private final List<SilentGoBuilder> builders = new ArrayList<>();
-
-    private final List<SilentGoReleaser> releasers = new ArrayList<>();
 
     private List<String> staticFolder = new ArrayList<>();
 
@@ -82,14 +79,6 @@ public class BaseConfig extends InterConfig {
 
     public void setBaseView(String baseView) {
         BaseView = baseView;
-    }
-
-    public List<SilentGoBuilder> getBuilders() {
-        return builders;
-    }
-
-    public List<SilentGoReleaser> getReleasers() {
-        return releasers;
     }
 
     public List<String> getStaticFolder() {
@@ -162,5 +151,13 @@ public class BaseConfig extends InterConfig {
 
     public void setDbType(String dbType) {
         this.dbType = dbType;
+    }
+
+    public Class<? extends BeanFactory> getBeanClass() {
+        return beanClass;
+    }
+
+    public void setBeanClass(Class<? extends BeanFactory> beanClass) {
+        this.beanClass = beanClass;
     }
 }

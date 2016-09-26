@@ -1,7 +1,12 @@
 package com.silentgo.core.route.support.annotationResolver;
 
+import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.MethodAdviser;
+import com.silentgo.core.build.Factory;
+import com.silentgo.core.exception.AppBuildException;
 import com.silentgo.core.exception.AppException;
+import com.silentgo.core.exception.AppReleaseException;
+import com.silentgo.core.route.support.annotationResolver.annotation.ParamAnResolver;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
@@ -19,6 +24,7 @@ import java.util.HashMap;
  *         <p>
  *         Created by teddyzhu on 16/8/30.
  */
+@Factory
 public class ParamAnFactory extends BaseFactory {
 
     private HashMap<Class<? extends Annotation>, ParamAnnotationResolver> resolvers = new HashMap<>();
@@ -43,5 +49,27 @@ public class ParamAnFactory extends BaseFactory {
             }
         }
         return true;
+    }
+
+    @Override
+    public boolean initialize(SilentGo me) throws AppBuildException {
+        ParamAnFactory paramAnFactory = new ParamAnFactory();
+        me.getConfig().addFactory(paramAnFactory);
+
+        me.getAnnotationManager().getClasses(ParamAnResolver.class).forEach(aClass -> {
+            if (ParamAnnotationResolver.class.isAssignableFrom(aClass)) {
+                try {
+                    paramAnFactory.addResolver((ParamAnnotationResolver) aClass.newInstance());
+                } catch (InstantiationException | IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        return true;
+    }
+
+    @Override
+    public boolean destroy(SilentGo me) throws AppReleaseException {
+        return false;
     }
 }

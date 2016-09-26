@@ -1,13 +1,18 @@
 package com.silentgo.core.route.support.paramdispatcher;
 
+import com.silentgo.core.SilentGo;
 import com.silentgo.core.action.ActionParam;
+import com.silentgo.core.build.Factory;
+import com.silentgo.core.exception.AppBuildException;
 import com.silentgo.core.exception.AppParameterPaserException;
 import com.silentgo.core.exception.AppParameterResolverException;
+import com.silentgo.core.exception.AppReleaseException;
 import com.silentgo.core.route.ParameterDispatcher;
 import com.silentgo.core.route.Route;
 import com.silentgo.core.route.support.paramvalueresolve.ParameterResolveFactory;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.utils.CollectionKit;
+import org.apache.commons.io.FileCleaningTracker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +25,10 @@ import java.util.List;
  *         <p>
  *         Created by teddyzhu on 16/8/22.
  */
+@Factory
 public class ParamDispatchFactory extends BaseFactory {
+    public static final String FILE_CLEANING_TRACKER_ATTRIBUTE
+            = MultiPartDispatch.class.getName() + ".FileCleaningTracker";
 
     private List<ParameterDispatcher> dispatchers = new ArrayList<>();
 
@@ -54,5 +62,17 @@ public class ParamDispatchFactory extends BaseFactory {
 
     public void release(ActionParam param) {
         dispatchers.forEach(dispatcher -> dispatcher.release(param));
+    }
+
+    @Override
+    public boolean initialize(SilentGo me) throws AppBuildException {
+        me.getContext().setAttribute(FILE_CLEANING_TRACKER_ATTRIBUTE, new FileCleaningTracker());
+        return true;
+    }
+
+    @Override
+    public boolean destroy(SilentGo me) throws AppReleaseException {
+        ((FileCleaningTracker) me.getContext().getAttribute(FILE_CLEANING_TRACKER_ATTRIBUTE)).exitWhenFinished();
+        return true;
     }
 }

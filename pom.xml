@@ -11,6 +11,7 @@
         <module>framework</module>
         <module>utils</module>
         <module>orm</module>
+        <module>test</module>
     </modules>
     <packaging>pom</packaging>
 

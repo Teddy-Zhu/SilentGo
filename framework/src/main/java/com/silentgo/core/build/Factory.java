@@ -1,4 +1,4 @@
-package com.silentgo.core.build.annotation;
+package com.silentgo.core.build;
 
 import java.lang.annotation.*;
 
@@ -8,11 +8,11 @@ import java.lang.annotation.*;
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>
- *         Created by teddyzhu on 16/9/2.
+ *         Created by teddyzhu on 16/9/26.
  */
 @Documented
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-public @interface Releaser {
+public @interface Factory {
 }

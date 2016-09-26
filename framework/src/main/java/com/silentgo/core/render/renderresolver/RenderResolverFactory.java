@@ -1,9 +1,18 @@
 package com.silentgo.core.render.renderresolver;
 
+import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.MethodAdviser;
+import com.silentgo.core.aop.support.MethodAOPFactory;
+import com.silentgo.core.build.Factory;
+import com.silentgo.core.exception.AppBuildException;
+import com.silentgo.core.exception.AppReleaseException;
 import com.silentgo.core.exception.AppRenderException;
+import com.silentgo.core.exception.annotaion.ExceptionHandler;
 import com.silentgo.core.render.RenderModel;
+import com.silentgo.core.render.renderresolver.annotation.RenderResolve;
 import com.silentgo.core.render.support.RenderFactory;
+import com.silentgo.core.route.annotation.Controller;
+import com.silentgo.core.route.annotation.Route;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
@@ -22,6 +31,7 @@ import java.util.List;
  *         <p>
  *         Created by teddyzhu on 16/8/30.
  */
+@Factory
 public class RenderResolverFactory extends BaseFactory {
 
     private List<RenderResolver> renderResolvers = new ArrayList<>();
@@ -66,6 +76,38 @@ public class RenderResolverFactory extends BaseFactory {
                 return true;
             }
         }
+        return false;
+    }
+
+    @Override
+    public boolean initialize(SilentGo me) throws AppBuildException {
+        RenderResolverFactory renderResolverFactory = new RenderResolverFactory();
+        me.getConfig().addFactory(renderResolverFactory);
+
+        MethodAOPFactory methodAOPFactory = me.getFactory(MethodAOPFactory.class);
+        me.getAnnotationManager().getClasses(RenderResolve.class).forEach(aClass -> {
+            if (RenderResolver.class.isAssignableFrom(aClass)) {
+                try {
+                    renderResolverFactory.addRenderResolver((RenderResolver) aClass.newInstance());
+                } catch (InstantiationException | IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        renderResolverFactory.resortRenderResolver();
+        me.getAnnotationManager().getClasses(Controller.class).forEach(aClass -> {
+
+            for (Method method : aClass.getDeclaredMethods()) {
+                if (method.getAnnotation(Route.class) != null || method.getAnnotation(ExceptionHandler.class) != null) {
+                    renderResolverFactory.addRenderResolver(methodAOPFactory.getMethodAdviser(method));
+                }
+            }
+        });
+        return true;
+    }
+
+    @Override
+    public boolean destroy(SilentGo me) throws AppReleaseException {
         return false;
     }
 }

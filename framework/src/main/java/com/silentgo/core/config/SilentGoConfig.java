@@ -1,5 +1,7 @@
 package com.silentgo.core.config;
 
+import com.silentgo.core.SilentGo;
+import com.silentgo.core.exception.AppBuildException;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.servlet.SilentGoContext;
 import com.silentgo.servlet.http.Request;
@@ -47,8 +49,18 @@ public class SilentGoConfig extends BaseConfig {
         return false;
     }
 
-    public <T extends BaseFactory> T getFactory(Class<T> name) {
-        return (T) getFactoryMap().get(name);
+    public <T extends BaseFactory> T getFactory(Class<T> name, SilentGo me) {
+        BaseFactory factory = getFactoryMap().get(name);
+        if (factory == null) {
+            try {
+                factory = name.newInstance();
+                factory.initialize(me);
+                addFactory(factory);
+            } catch (InstantiationException | IllegalAccessException | AppBuildException e) {
+                e.printStackTrace();
+            }
+        }
+        return (T) factory;
     }
 
     public boolean addStatic(String name) {
