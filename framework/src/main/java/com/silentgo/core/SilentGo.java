@@ -1,8 +1,10 @@
 package com.silentgo.core;
 
 import com.silentgo.core.config.SilentGoConfig;
+import com.silentgo.core.plugin.db.DBConfig;
 import com.silentgo.core.support.AnnotationManager;
 import com.silentgo.core.support.BaseFactory;
+import com.silentgo.orm.base.DBConnect;
 
 import javax.servlet.ServletContext;
 
@@ -38,6 +40,14 @@ public class SilentGo {
 
     public SilentGoConfig getConfig() {
         return config;
+    }
+
+    public DBConnect getConnect(String name) {
+        return config.getConnect(config.getDbType(), name);
+    }
+
+    public DBConnect getConnect() {
+        return getConnect("DataBase");
     }
 
     public boolean isDevMode() {

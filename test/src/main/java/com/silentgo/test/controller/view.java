@@ -33,4 +33,5 @@ public class view {
         LOGGER.info("msg:{}", string);
         return string;
     }
+
 }

@@ -10,6 +10,18 @@ package com.silentgo.utils;
  */
 public class Assert {
 
+    public static void hasLength(String text, String message) {
+        if (text == null || text.length() == 0) {
+            throw new RuntimeException(message);
+        }
+    }
+
+    public static void notNull(Object object, String message) {
+        if (object == null) {
+            throw new RuntimeException(message);
+        }
+    }
+
     public static void isTrue(boolean result, String message) {
         if (!result) {
             throw new RuntimeException(message);
@@ -18,6 +30,12 @@ public class Assert {
 
     public static void isNotTrue(boolean result, String message) {
         if (result) {
+            throw new RuntimeException(message);
+        }
+    }
+
+    public static void notEmpty(Object[] array, String message) {
+        if (array == null || array.length == 0) {
             throw new RuntimeException(message);
         }
     }

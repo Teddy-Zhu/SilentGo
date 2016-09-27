@@ -1,7 +1,6 @@
-package com.silentgo.core.plugin.db.bridge.mysql;
+package com.silentgo.core.plugin.db;
 
-import com.silentgo.core.plugin.db.bridge.BaseTableInfo;
-import com.silentgo.core.plugin.db.bridge.TableModel;
+import com.silentgo.core.plugin.db.bridge.mysql.SQLTool;
 
 import java.util.List;
 
@@ -13,7 +12,7 @@ import java.util.List;
  *         <p>
  *         Created by teddyzhu on 16/9/22.
  */
-public interface IBaseDao {
+public interface BaseDaoDialect {
     //QUERY
     public SQLTool queryByPrimaryKey(BaseTableInfo table, Object id);
 

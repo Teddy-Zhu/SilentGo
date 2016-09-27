@@ -2,6 +2,7 @@ package com.silentgo.core.config;
 
 import com.silentgo.core.action.ActionChain;
 import com.silentgo.core.support.BaseFactory;
+import com.silentgo.orm.base.DBConnect;
 import com.silentgo.servlet.SilentGoContext;
 import com.silentgo.utils.PropKit;
 
@@ -21,10 +22,11 @@ public class InterConfig {
     private final Map<Class<? extends BaseFactory>, BaseFactory> factoryMap = new HashMap<>();
 
     private final ThreadLocal<SilentGoContext> ctx = new ThreadLocal<>();
-
     private ActionChain actionChain;
 
     private PropKit propKit;
+
+    private PropKit userProp;
 
     public Map<Class<? extends BaseFactory>, BaseFactory> getFactoryMap() {
         return factoryMap;
@@ -42,11 +44,19 @@ public class InterConfig {
         this.actionChain = actionChain;
     }
 
-    public PropKit getPropKit() {
+    public PropKit getInnerPropKit() {
         return propKit;
     }
 
-    public void setPropKit(PropKit propKit) {
+    public void setInnerPropKit(PropKit propKit) {
         this.propKit = propKit;
+    }
+
+    public PropKit getUserProp() {
+        return userProp;
+    }
+
+    public void setUserProp(PropKit userProp) {
+        this.userProp = userProp;
     }
 }

@@ -14,9 +14,7 @@ import com.silentgo.utils.PropKit;
  */
 public class configKit {
 
-    public static DBConfig getConfig(String name) {
-        PropKit propKit = new PropKit(name);
-
+    public static DBConfig getConfig(PropKit propKit) {
         DBConfig dbConfig = new DBConfig();
 
         dbConfig.setDriver(propKit.getValue(Const.driver));
@@ -30,5 +28,10 @@ public class configKit {
 
         dbConfig.setMaxIdle(100000);
         return dbConfig;
+    }
+
+    public static DBConfig getConfig(String name) {
+        PropKit propKit = new PropKit(name);
+        return getConfig(propKit);
     }
 }

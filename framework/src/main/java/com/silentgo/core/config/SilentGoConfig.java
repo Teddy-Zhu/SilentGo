@@ -2,12 +2,16 @@ package com.silentgo.core.config;
 
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.exception.AppBuildException;
+import com.silentgo.core.plugin.db.DBConfig;
+import com.silentgo.core.plugin.db.DBType;
 import com.silentgo.core.support.BaseFactory;
+import com.silentgo.orm.base.DBConnect;
 import com.silentgo.servlet.SilentGoContext;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
 import com.silentgo.utils.CollectionKit;
 import com.silentgo.utils.PropKit;
+import com.silentgo.utils.StringKit;
 import com.silentgo.utils.logger.Logger;
 import com.silentgo.utils.logger.LoggerFactory;
 
@@ -32,9 +36,12 @@ public class SilentGoConfig extends BaseConfig {
         setDevMode(devMode);
         setEncoding(encoding);
         setContextPathLength(contextPathLength);
-        setPropKit(new PropKit(fileName, encoding));
-        scanJars.add(Const.ApplicationName + "-" + Const.Version + ".jar");
+        setInnerPropKit(new PropKit(fileName, encoding));
+        scanJars.add(Const.ApplicationName + "-" + getInnerPropKit().getValue(Const.Version) + ".jar");
         setScanJars(scanJars);
+        if (StringKit.isNotBlank(getPropfile())) {
+            setUserProp(new PropKit(getPropfile(), encoding));
+        }
     }
 
     private boolean addFactory(BaseFactory baseFactory) {
@@ -71,5 +78,27 @@ public class SilentGoConfig extends BaseConfig {
     public boolean setCtx(Request request, Response response) {
         getCtx().set(new SilentGoContext(response, request));
         return true;
+    }
+
+    public DBConnect getConnect(String type, String name) {
+        ThreadLocal<DBConnect> connectThreadLocal = getThreadConnect();
+        DBConnect connect = connectThreadLocal.get();
+        if (connect == null) {
+            DBConfig config = (DBConfig) getConfig(type);
+            connect = config.getManager().getConnect(name);
+            connectThreadLocal.set(connect);
+        }
+        return connect;
+    }
+
+    public DBConnect getConnect(DBType type, String name) {
+        ThreadLocal<DBConnect> connectThreadLocal = getThreadConnect();
+        DBConnect connect = connectThreadLocal.get();
+        if (connect == null) {
+            DBConfig config = (DBConfig) getConfig(type);
+            connect = config.getManager().getConnect(name);
+            connectThreadLocal.set(connect);
+        }
+        return connect;
     }
 }

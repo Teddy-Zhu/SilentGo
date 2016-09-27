@@ -4,6 +4,7 @@ import com.silentgo.core.config.AbstractConfig;
 import com.silentgo.orm.base.DBManager;
 import com.silentgo.orm.jdbc.JDBCManager;
 import com.silentgo.orm.kit.configKit;
+import com.silentgo.utils.PropKit;
 
 /**
  * Project : silentgo
@@ -14,16 +15,31 @@ import com.silentgo.orm.kit.configKit;
  *         Created by teddyzhu on 16/9/22.
  */
 public class DBConfig extends AbstractConfig {
-    private static String name = "DataBase";
+    private String name = "DataBase";
 
     private DBManager manager;
 
+    public DBConfig(String dbType, PropKit propKit) {
+        if (DBType.MYSQL.equals(dbType.toLowerCase())) {
+            manager = JDBCManager.getInstance();
+            com.silentgo.orm.base.DBConfig config = configKit.getConfig(propKit);
+            manager.initial(config);
+        }
+    }
     public DBConfig(String dbType, String fileName) {
         if (DBType.MYSQL.equals(dbType.toLowerCase())) {
             manager = JDBCManager.getInstance();
             com.silentgo.orm.base.DBConfig config = configKit.getConfig("config.properties");
             manager.initial(config);
         }
+    }
+
+    public DBManager getManager() {
+        return manager;
+    }
+
+    public void setManager(DBManager manager) {
+        this.manager = manager;
     }
 
     @Override

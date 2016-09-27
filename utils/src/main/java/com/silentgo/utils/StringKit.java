@@ -13,10 +13,16 @@ import java.util.Iterator;
  */
 public class StringKit {
 
-    public static String FirstToUpper(String field) {
+
+    public static String firstToUpper(String field) {
         if (isBlank(field)) return field;
         return field.substring(0, 1).toUpperCase() + field.toLowerCase().substring(1);
     }
+    public static String firstToLower(String field) {
+        if (isBlank(field)) return field;
+        return field.substring(0, 1).toLowerCase() + field.toLowerCase().substring(1);
+    }
+
     public static boolean isNotBlank(String str) {
         return !isNull(str) && str.length() != 0 && "".equals(str.trim());
     }

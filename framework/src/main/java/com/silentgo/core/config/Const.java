@@ -47,7 +47,7 @@ public final class Const {
     }};
 
 
-    public static final String Version = "0.0.10";
+    public static final String Version = "version";
 
     public static final String configName = "application.properties";
 

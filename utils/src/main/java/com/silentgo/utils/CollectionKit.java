@@ -15,6 +15,10 @@ import java.util.Map;
  */
 public class CollectionKit {
 
+    public static boolean isEmpty(Collection<?> collection) {
+        return collection == null || collection.isEmpty();
+    }
+
     public static <K, V> List<V> ListMapAdd(Map<K, List<V>> map, K key, V value) {
         if (key == null) return new ArrayList<>();
         List<V> list = map.get(key);

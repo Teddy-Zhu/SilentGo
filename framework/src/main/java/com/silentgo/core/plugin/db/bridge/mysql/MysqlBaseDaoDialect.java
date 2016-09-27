@@ -1,7 +1,8 @@
 package com.silentgo.core.plugin.db.bridge.mysql;
 
-import com.silentgo.core.plugin.db.bridge.BaseTableInfo;
-import com.silentgo.core.plugin.db.bridge.TableModel;
+import com.silentgo.core.plugin.db.BaseDaoDialect;
+import com.silentgo.core.plugin.db.BaseTableInfo;
+import com.silentgo.core.plugin.db.TableModel;
 import com.silentgo.utils.StringKit;
 import com.silentgo.utils.logger.Logger;
 import com.silentgo.utils.logger.LoggerFactory;
@@ -24,9 +25,9 @@ import java.util.concurrent.ConcurrentHashMap;
  *         <p>
  *         Created by teddyzhu on 16/9/22.
  */
-public class BaseDaoImpl implements IBaseDao {
+public class MysqlBaseDaoDialect implements BaseDaoDialect {
 
-    private static final Logger LOGGER = LoggerFactory.getLog(BaseDaoImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLog(MysqlBaseDaoDialect.class);
 
     private static final Map<Class<? extends TableModel>, BeanInfo> beanMap = new ConcurrentHashMap<>();
 

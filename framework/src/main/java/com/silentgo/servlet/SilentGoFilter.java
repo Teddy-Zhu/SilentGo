@@ -44,7 +44,7 @@ public class SilentGoFilter implements Filter {
         if (!appContext.isLoaded()) {
             SilentGoConfig config = null;
             long startTime = System.currentTimeMillis();
-            LOGGER.info("start SilentGoConfig initial ...");
+            LOGGER.info("SilentGoConfig filter initialize");
 
             ServletContext context = filterConfig.getServletContext();
 
@@ -106,15 +106,15 @@ public class SilentGoFilter implements Filter {
         ActionParam param = new ActionParam(false, request, response, requestPath);
         globalConfig.getCtx().set(new SilentGoContext(response, request));
         try {
-            LOGGER.info("start action");
+            long start = System.currentTimeMillis();
+            LOGGER.debug("action start");
             globalConfig.getActionChain().doAction(param);
-            LOGGER.info("end action");
+            LOGGER.debug("action end : {} ms", System.currentTimeMillis() - start);
         } catch (Throwable throwable) {
             new ErrorRener().render(request, response, HttpStatus.Code.INTERNAL_SERVER_ERROR, throwable, appContext.isDevMode());
             return;
         } finally {
             globalConfig.getCtx().remove();
-            LOGGER.info("final action");
         }
 
         if (!param.isHandled())

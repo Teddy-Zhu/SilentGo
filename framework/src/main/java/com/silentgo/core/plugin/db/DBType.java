@@ -16,6 +16,10 @@ public enum DBType {
         this.name = name;
     }
 
+    public String getName() {
+        return this.name;
+    }
+
     public boolean equals(String name) {
         return this.name.equals(name);
     }

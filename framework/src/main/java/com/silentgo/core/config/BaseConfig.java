@@ -4,8 +4,11 @@ import com.silentgo.core.aop.annotationintercept.support.AnnotationInterceptor;
 import com.silentgo.core.aop.validator.support.ValidatorInterceptor;
 import com.silentgo.core.ioc.bean.BeanFactory;
 import com.silentgo.core.ioc.bean.SilentGoBean;
+import com.silentgo.core.plugin.db.DBType;
+import com.silentgo.core.plugin.db.SqlFactory;
 import com.silentgo.core.route.RoutePaser;
 import com.silentgo.core.route.support.routeparse.DefaultRouteParser;
+import com.silentgo.orm.base.DBConnect;
 import com.silentgo.utils.ClassKit;
 import com.silentgo.utils.CollectionKit;
 import com.silentgo.utils.json.FastJsonPaser;
@@ -30,7 +33,10 @@ public class BaseConfig extends InterConfig {
         put(Const.FileUploadConfig, new FileUploadConfig(ClassKit.getWebRootPath() + "/UploadFile", -1, 10240, true));
     }};
 
+    private String propfile;
     private Class<? extends BeanFactory> beanClass = SilentGoBean.class;
+
+    private final ThreadLocal<DBConnect> threadConnect = new ThreadLocal<>();
 
     private JsonPaser jsonPaser = new FastJsonPaser();
 
@@ -141,8 +147,12 @@ public class BaseConfig extends InterConfig {
         return CollectionKit.MapAdd(abstractConfigMap, config.name(), config);
     }
 
-    public AbstractConfig getConfig(String name) {
-        return abstractConfigMap.get(name);
+    public AbstractConfig getConfig(String type) {
+        return abstractConfigMap.get(type);
+    }
+
+    public AbstractConfig getConfig(DBType type) {
+        return abstractConfigMap.get(type.getName());
     }
 
     public String getDbType() {
@@ -159,5 +169,17 @@ public class BaseConfig extends InterConfig {
 
     public void setBeanClass(Class<? extends BeanFactory> beanClass) {
         this.beanClass = beanClass;
+    }
+
+    public ThreadLocal<DBConnect> getThreadConnect() {
+        return threadConnect;
+    }
+
+    public String getPropfile() {
+        return propfile;
+    }
+
+    public void setPropfile(String propfile) {
+        this.propfile = propfile;
     }
 }

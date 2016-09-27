@@ -7,8 +7,8 @@ import com.silentgo.core.exception.AppReleaseException;
 import com.silentgo.core.exception.annotaion.ExceptionHandler;
 import com.silentgo.core.ioc.annotation.Component;
 import com.silentgo.core.ioc.annotation.Service;
-import com.silentgo.core.plugin.db.bridge.BaseDao;
-import com.silentgo.core.plugin.db.bridge.DaoInterceptor;
+import com.silentgo.core.plugin.db.BaseDao;
+import com.silentgo.core.plugin.db.DaoInterceptor;
 import com.silentgo.core.route.annotation.Controller;
 import com.silentgo.utils.CollectionKit;
 import com.silentgo.utils.StringKit;
@@ -104,8 +104,8 @@ public class SilentGoBean extends BeanFactory<BeanDefinition> {
             try {
                 PropertyDescriptor pd = new PropertyDescriptor(field.getName(),
                         beanDefinition.getSourceClass(),
-                        "get" + StringKit.FirstToUpper(field.getName()),
-                        "set" + StringKit.FirstToUpper(field.getName())
+                        "get" + StringKit.firstToUpper(field.getName()),
+                        "set" + StringKit.firstToUpper(field.getName())
                 );
 
                 Method method = pd.getWriteMethod();

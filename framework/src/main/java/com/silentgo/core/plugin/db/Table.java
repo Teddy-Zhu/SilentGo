@@ -1,4 +1,4 @@
-package com.silentgo.core.plugin.db.bridge.annotation;
+package com.silentgo.core.plugin.db;
 
 import com.silentgo.core.config.Const;
 

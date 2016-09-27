@@ -1,4 +1,4 @@
-package com.silentgo.core.plugin.db.bridge;
+package com.silentgo.core.plugin.db;
 
 import java.util.List;
 

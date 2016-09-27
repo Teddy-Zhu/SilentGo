@@ -1,4 +1,4 @@
-package com.silentgo.core.plugin.db.bridge;
+package com.silentgo.core.plugin.db;
 
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;

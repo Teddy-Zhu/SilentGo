@@ -2,13 +2,14 @@ package com.silentgo.core.plugin.db;
 
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.build.Factory;
+import com.silentgo.core.config.SilentGoConfig;
 import com.silentgo.core.exception.AppReleaseException;
-import com.silentgo.core.plugin.db.bridge.BaseTableInfo;
-import com.silentgo.core.plugin.db.bridge.TableModel;
 import com.silentgo.core.support.BaseFactory;
+import com.silentgo.orm.base.DBManager;
 import com.silentgo.utils.CollectionKit;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,6 +22,7 @@ import java.util.Map;
  */
 @Factory
 public class SqlFactory extends BaseFactory {
+
     private Map<Class<? extends TableModel>, BaseTableInfo> tableInfo = new HashMap<>();
 
     public BaseTableInfo getTableInfo(Class<? extends TableModel> clz) {
@@ -33,8 +35,14 @@ public class SqlFactory extends BaseFactory {
 
     @Override
     public boolean initialize(SilentGo me) {
-        if (me.getConfig().getDbType() == null) return true;
-        me.getConfig().addAbstractConfig(new DBConfig(me.getConfig().getDbType(), "application.properties"));
+        SilentGoConfig config = me.getConfig();
+
+        if (config.getDbType() == null) return true;
+        if (config.getUserProp() != null) {
+            config.addAbstractConfig(new DBConfig(config.getDbType(), config.getUserProp()));
+        } else {
+            config.addAbstractConfig(new DBConfig(config.getDbType(), "config.properties"));
+        }
 
         return true;
     }
@@ -43,4 +51,6 @@ public class SqlFactory extends BaseFactory {
     public boolean destroy(SilentGo me) throws AppReleaseException {
         return false;
     }
+
+
 }
