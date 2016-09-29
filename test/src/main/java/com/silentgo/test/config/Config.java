@@ -1,7 +1,7 @@
 package com.silentgo.test.config;
 
 import com.silentgo.core.config.SilentGoConfig;
-import com.silentgo.core.plugin.db.DBType;
+import com.silentgo.core.db.DBType;
 
 /**
  * Project : parent

@@ -2,10 +2,9 @@ package com.silentgo.core.config;
 
 import com.silentgo.core.aop.annotationintercept.support.AnnotationInterceptor;
 import com.silentgo.core.aop.validator.support.ValidatorInterceptor;
+import com.silentgo.core.db.DBType;
 import com.silentgo.core.ioc.bean.BeanFactory;
-import com.silentgo.core.ioc.bean.SilentGoBean;
-import com.silentgo.core.plugin.db.DBType;
-import com.silentgo.core.plugin.db.SqlFactory;
+import com.silentgo.core.ioc.bean.SilentGoBeanFactory;
 import com.silentgo.core.route.RoutePaser;
 import com.silentgo.core.route.support.routeparse.DefaultRouteParser;
 import com.silentgo.orm.base.DBConnect;
@@ -34,7 +33,7 @@ public class BaseConfig extends InterConfig {
     }};
 
     private String propfile;
-    private Class<? extends BeanFactory> beanClass = SilentGoBean.class;
+    private Class<? extends BeanFactory> beanClass = SilentGoBeanFactory.class;
 
     private final ThreadLocal<DBConnect> threadConnect = new ThreadLocal<>();
 

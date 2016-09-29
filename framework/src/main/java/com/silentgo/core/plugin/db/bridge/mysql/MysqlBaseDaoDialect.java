@@ -1,8 +1,8 @@
 package com.silentgo.core.plugin.db.bridge.mysql;
 
-import com.silentgo.core.plugin.db.BaseDaoDialect;
-import com.silentgo.core.plugin.db.BaseTableInfo;
-import com.silentgo.core.plugin.db.TableModel;
+import com.silentgo.core.db.BaseDaoDialect;
+import com.silentgo.core.db.BaseTableInfo;
+import com.silentgo.core.db.TableModel;
 import com.silentgo.utils.StringKit;
 import com.silentgo.utils.logger.Logger;
 import com.silentgo.utils.logger.LoggerFactory;
@@ -12,7 +12,7 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,7 +31,7 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
 
     private static final Map<Class<? extends TableModel>, BeanInfo> beanMap = new ConcurrentHashMap<>();
 
-    private static final Map<Class<? extends TableModel>, List<PropertyDescriptor>> cachedPropMap = new ConcurrentHashMap<>();
+    private static final Map<Class<? extends TableModel>, Map<String, PropertyDescriptor>> cachedPropMap = new ConcurrentHashMap<>();
 
     @Override
     public SQLTool queryByPrimaryKey(BaseTableInfo table, Object id) {
@@ -67,7 +67,7 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
         sqlTool.select(table.getTableName(), table.getFullColumns().values());
 
 
-        getCachedProps(t.getClass(), table).forEach(propertyDescriptor -> {
+        getCachedProps(table).forEach((k, propertyDescriptor) -> {
             Object target = null;
             try {
                 target = propertyDescriptor.getReadMethod().invoke(t);
@@ -81,7 +81,7 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
             if (target instanceof String && StringKit.isBlank(target.toString())) {
                 return;
             }
-            sqlTool.whereEquals(table.getFullColumns().get(propertyDescriptor.getName())).appendParam(target);
+            sqlTool.whereEquals(table.getFullColumns().get(k)).appendParam(target);
         });
 
         return sqlTool;
@@ -92,14 +92,14 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
 
         SQLTool sqlTool = new SQLTool().insert(table.getTableName());
 
-        getCachedProps(t.getClass(), table).forEach(propertyDescriptor -> {
+        getCachedProps(table).forEach((k, propertyDescriptor) -> {
             Object target = null;
             try {
                 target = propertyDescriptor.getReadMethod().invoke(t);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }
-            sqlTool.insert(propertyDescriptor.getName()).appendParam(target);
+            sqlTool.insert(k).appendParam(target);
         });
         return sqlTool;
     }
@@ -112,7 +112,7 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
 
         for (int i = 1; i < t.size(); i++) {
             T cur = t.get(i);
-            getCachedProps(cur.getClass(), table).forEach(propertyDescriptor -> {
+            getCachedProps(table).forEach((k, propertyDescriptor) -> {
                 Object target = null;
                 try {
                     target = propertyDescriptor.getReadMethod().invoke(cur);
@@ -126,12 +126,50 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
     }
 
     @Override
-    public <T extends TableModel> SQLTool updateByPrimaryKey(BaseTableInfo table, T t, String... columns) {
-        SQLTool sqlTool = new SQLTool();
-        sqlTool.select(table.getTableName(), table.getFullColumns().values());
+    public <T extends TableModel> SQLTool updateByPrimaryKey(BaseTableInfo table, T t) {
+        Map<String, PropertyDescriptor> propsMap = getCachedProps(table);
+        SQLTool sqlTool = getUpdateByPrimerySQLTool(table, t, propsMap);
+
+        propsMap.forEach((k, propertyDescriptor) -> {
+            Object target = null;
+            try {
+                target = propertyDescriptor.getReadMethod().invoke(t);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+                target = null;
+            }
+            sqlTool.set(k).appendParam(target);
+        });
+        return sqlTool;
+    }
+
+    @Override
+    public <T extends TableModel> SQLTool updateByPrimaryKeyOptional(BaseTableInfo table, T t, List<String> columns) {
+        Map<String, PropertyDescriptor> propsMap = getCachedProps(table);
+        SQLTool sqlTool = getUpdateByPrimerySQLTool(table, t, propsMap);
+
+        propsMap.forEach((k, propertyDescriptor) -> {
+            if (!columns.contains(k)) return;
+            Object target = null;
+            try {
+                target = propertyDescriptor.getReadMethod().invoke(t);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+                target = null;
+            }
+            sqlTool.set(k).appendParam(target);
+        });
+        return sqlTool;
+    }
 
 
-        getCachedProps(t.getClass(), table).forEach(propertyDescriptor -> {
+    @Override
+    public <T extends TableModel> SQLTool updateByPrimaryKeySelective(BaseTableInfo table, T t) {
+
+        Map<String, PropertyDescriptor> propsMap = getCachedProps(table);
+        SQLTool sqlTool = getUpdateByPrimerySQLTool(table, t, propsMap);
+
+        propsMap.forEach((k, propertyDescriptor) -> {
             Object target = null;
             try {
                 target = propertyDescriptor.getReadMethod().invoke(t);
@@ -145,14 +183,46 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
             if (target instanceof String && StringKit.isBlank(target.toString())) {
                 return;
             }
-            sqlTool.whereEquals(table.getFullColumns().get(propertyDescriptor.getName())).appendParam(target);
+            sqlTool.set(k).appendParam(target);
         });
-        return null;
+        return sqlTool;
     }
 
     @Override
-    public <T extends TableModel> SQLTool updateByPrimaryKeySelective(BaseTableInfo table, T t) {
-        return null;
+    public SQLTool deleteByPrimaryKey(BaseTableInfo table, Object id) {
+        SQLTool sqlTool = new SQLTool();
+        if (table.getPrimaryKeys().size() == 0) return sqlTool;
+        sqlTool.delete(table.getTableName()).whereEquals(table.getPrimaryKeys().get(0)).appendParam(id);
+        return sqlTool;
+    }
+
+    @Override
+    public SQLTool deleteByPrimaryKeys(BaseTableInfo table, List<Object> ids) {
+        SQLTool sqlTool = new SQLTool();
+        if (table.getPrimaryKeys().size() == 0) return sqlTool;
+        sqlTool.delete(table.getTableName())
+                .whereIn(table.getPrimaryKeys().get(0), ids.size());
+        ids.forEach(sqlTool::appendParam);
+        return sqlTool;
+    }
+
+
+    private <T extends TableModel> SQLTool getUpdateByPrimerySQLTool(BaseTableInfo table, T t, Map<String, PropertyDescriptor> propsMap) {
+        SQLTool sqlTool = new SQLTool();
+        sqlTool.update(table.getTableName());
+
+        table.getPrimaryKeys().forEach(key -> {
+
+            PropertyDescriptor propertyDescriptor = propsMap.get(key);
+            Object target;
+            try {
+                target = propertyDescriptor.getReadMethod().invoke(t);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                target = null;
+            }
+            sqlTool.whereEquals(key).appendParam(target);
+        });
+        return sqlTool;
     }
 
 
@@ -172,13 +242,14 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
         return beanInfo;
     }
 
-    private List<PropertyDescriptor> getCachedProps(Class<? extends TableModel> clz, BaseTableInfo tableInfo) {
-        BeanInfo beanInfo = getBeanInfo(clz);
-        if (cachedPropMap.containsKey(clz)) {
-            return cachedPropMap.get(clz);
+
+    private Map<String, PropertyDescriptor> getCachedProps(BaseTableInfo tableInfo) {
+        BeanInfo beanInfo = getBeanInfo(tableInfo.getClazz());
+        if (cachedPropMap.containsKey(tableInfo.getClazz())) {
+            return cachedPropMap.get(tableInfo.getClazz());
         } else {
-            List<PropertyDescriptor> propertyDescriptors = getProps(beanInfo, tableInfo);
-            cachedPropMap.put(clz, propertyDescriptors);
+            Map<String, PropertyDescriptor> propertyDescriptors = getProps(beanInfo, tableInfo);
+            cachedPropMap.put(tableInfo.getClazz(), propertyDescriptors);
             return propertyDescriptors;
         }
     }
@@ -190,13 +261,13 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
      * @param tableInfo
      * @return
      */
-    private List<PropertyDescriptor> getProps(BeanInfo beanInfo, BaseTableInfo tableInfo) {
-        List<PropertyDescriptor> props = new ArrayList<>();
+    private Map<String, PropertyDescriptor> getProps(BeanInfo beanInfo, BaseTableInfo tableInfo) {
+        Map<String, PropertyDescriptor> propsMap = new HashMap<>();
         for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
             if (tableInfo.getColumnsMap().containsKey(propertyDescriptor.getName())) {
-                props.add(propertyDescriptor);
+                propsMap.put(propertyDescriptor.getName(), propertyDescriptor);
             }
         }
-        return props;
+        return propsMap;
     }
 }

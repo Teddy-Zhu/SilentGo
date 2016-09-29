@@ -1,4 +1,4 @@
-package com.silentgo.core.plugin.db;
+package com.silentgo.core.db;
 
 import java.util.List;
 
@@ -14,17 +14,20 @@ public interface BaseDao<T extends TableModel> {
 
     //QUERY
     public T queryByPrimaryKey(Object id);
+
     public List<T> queryByPrimaryKeys(List<Object> ids);
 
     public List<T> queryByModelSelective(T t);
 
     //ADD
-    public int addByRow(T t);
+    public int insertByRow(T t);
 
-    public int addByRows(List<T> t);
+    public int insertByRows(List<T> t);
 
     //UPDATE
-    public int updateByPrimaryKey(T t, String... columns);
+    public int updateByPrimaryKey(T t);
+
+    public int updateByPrimaryKeyOptional(T t, List<String> columns);
 
     public int updateByPrimaryKeySelective(T t);
 

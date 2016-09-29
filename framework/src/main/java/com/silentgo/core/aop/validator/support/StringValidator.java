@@ -2,6 +2,7 @@ package com.silentgo.core.aop.validator.support;
 
 import com.silentgo.core.aop.validator.IValidator;
 import com.silentgo.core.aop.validator.annotation.RequestString;
+import com.silentgo.core.aop.validator.annotation.Validator;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
 
@@ -13,6 +14,7 @@ import com.silentgo.servlet.http.Response;
  *         <p>
  *         Created by  on 16/7/18.
  */
+@Validator
 public class StringValidator implements IValidator<RequestString> {
 
     @Override

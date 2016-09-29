@@ -18,7 +18,7 @@ public class GenerateConfig {
 
     public String outPath;
 
-    public String basePath;
+    public String packagePath;
 
     public String getDbName() {
         return dbName;
@@ -28,12 +28,12 @@ public class GenerateConfig {
         this.dbName = dbName;
     }
 
-    public String getBasePath() {
-        return basePath;
+    public String getPackagePath() {
+        return packagePath;
     }
 
-    public void setBasePath(String basePath) {
-        this.basePath = basePath;
+    public void setPackagePath(String packagePath) {
+        this.packagePath = packagePath;
     }
 
     public String getOutPath() {

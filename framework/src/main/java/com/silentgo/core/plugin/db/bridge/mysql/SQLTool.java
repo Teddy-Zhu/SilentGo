@@ -25,15 +25,11 @@ public class SQLTool {
 
     private List<String> insertList = new ArrayList<>();
 
-    private int insertCount = 1;
-
     private StringBuilder exceptSelectSQL = new StringBuilder();
 
     private List<String> selectList = new ArrayList<>();
 
     private List<String> updateList = new ArrayList<>();
-
-    private List<String> updateWhereList = new ArrayList<>();
 
     private List<String> joinList = new ArrayList<>();
 
@@ -62,7 +58,7 @@ public class SQLTool {
 
     public String getExceptSQL() {
 
-        return " from " + tableName + getWhereSQL() + getGroupSQL() + getOrderSQL() + getLimit();
+        return " from " + tableName + getJoinSQL() + getWhereSQL() + getGroupSQL() + getOrderSQL() + getLimit();
     }
 
     public String getSQL() {
@@ -79,10 +75,10 @@ public class SQLTool {
     private String getSql(SQLType type) {
         switch (type) {
             case DELETE: {
-                break;
+                return getDeleteSQL() + getWhereSQL();
             }
             case UPDATE: {
-                break;
+                return getUpdateSQL() + getWhereSQL();
             }
             case INSERT: {
                 return getInsertSQL();
@@ -100,8 +96,23 @@ public class SQLTool {
         return sql + getListSQL(this.insertList.size(), value, "", ",", EmptySplit);
     }
 
+    public String getUpdateSQL() {
+        if (updateList.size() == 0) {
+            return "";
+        }
+        return "update " + tableName + getJoinSQL() + " set " + getListSQL(updateList, " ", " = ? ", " = ? ,", " ");
+    }
+
+    public String getDeleteSQL() {
+        return "delete from" + tableName + getJoinSQL();
+    }
+
     public String getWhereSQL() {
         return getListSQL(whereList, " where ( ", " ) ", " AND ", EmptySplit);
+    }
+
+    public String getJoinSQL() {
+        return getListSQL(joinList, " ", " ", " ", EmptySplit);
     }
 
     public String getGroupSQL() {
@@ -117,7 +128,7 @@ public class SQLTool {
     }
 
     private String getListSQL(List<String> list, String prefix, String suffix, String split, String empty) {
-        return list.size() > 0 ? prefix + StringKit.join(list, split) + suffix : empty;
+        return list.size() > 0 ? (prefix + StringKit.join(list, split) + suffix) : empty;
     }
 
     private String getListSQL(int len, String prefix, String suffix, String split, String empty) {
@@ -144,37 +155,26 @@ public class SQLTool {
         return this;
     }
 
-    //update
+    //region update
     public SQLTool update(String tableName) {
         this.type = SQLType.UPDATE;
         this.tableName = tableName;
         return this;
     }
 
-    public SQLTool update(String tableName, Collection<String> columns) {
-        this.type = SQLType.UPDATE;
-        this.tableName = tableName;
-        this.updateWhereList.addAll(columns);
+    public SQLTool set(String... columns) {
+        Collections.addAll(updateList, columns);
         return this;
     }
 
-
-    public SQLTool update(String tableName, String... columns) {
-        this.type = SQLType.UPDATE;
-        this.tableName = tableName;
-        Collections.addAll(this.updateWhereList, columns);
+    public SQLTool set(Collection<String> columns) {
+        this.updateList.addAll(columns);
         return this;
     }
 
-    public SQLTool update(String... columns) {
-        Collections.addAll(this.updateWhereList, columns);
-        return this;
-    }
+    //endregion
 
-
-    //end update
-
-    // select start
+    //region select
 
     public SQLTool select(String tableName, Collection<String> columns) {
         this.type = SQLType.QUERY;
@@ -190,9 +190,17 @@ public class SQLTool {
         return this;
     }
 
-    //end select
+    //endregion select
 
-    //insert start
+    //region delete
+    public SQLTool delete(String tableName) {
+        this.type = SQLType.DELETE;
+        this.tableName = tableName;
+        return this;
+    }
+
+    //endregion
+    //region start
     public SQLTool insert(String tableName) {
         this.type = SQLType.INSERT;
         this.tableName = tableName;
@@ -217,12 +225,7 @@ public class SQLTool {
         Collections.addAll(this.insertList, columns);
         return this;
     }
-    //insert end
-
-    public SQLTool value(int count) {
-        this.insertCount = count;
-        return this;
-    }
+    //endregion
 
 
     public SQLTool from(String tableName) {

@@ -2,13 +2,14 @@ package com.silentgo.core.ioc.bean;
 
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.annotation.Aspect;
+import com.silentgo.core.build.Factory;
 import com.silentgo.core.config.SilentGoConfig;
 import com.silentgo.core.exception.AppReleaseException;
 import com.silentgo.core.exception.annotaion.ExceptionHandler;
 import com.silentgo.core.ioc.annotation.Component;
 import com.silentgo.core.ioc.annotation.Service;
-import com.silentgo.core.plugin.db.BaseDao;
-import com.silentgo.core.plugin.db.DaoInterceptor;
+import com.silentgo.core.ioc.bean.support.BeanBuildKit;
+import com.silentgo.core.ioc.bean.support.BeanHandleFactory;
 import com.silentgo.core.route.annotation.Controller;
 import com.silentgo.utils.CollectionKit;
 import com.silentgo.utils.StringKit;
@@ -31,13 +32,14 @@ import java.util.*;
  *         <p>
  *         Created by teddyzhu on 16/7/22.
  */
-public class SilentGoBean extends BeanFactory<BeanDefinition> {
+@Factory
+public class SilentGoBeanFactory extends BeanFactory<BeanDefinition> {
 
-    private static final Logger LOGGER = LoggerFactory.getLog(SilentGoBean.class);
+    private static final Logger LOGGER = LoggerFactory.getLog(SilentGoBeanFactory.class);
 
     private Map<String, BeanDefinition> beansMap = new HashMap<>();
 
-    public SilentGoBean() {
+    public SilentGoBeanFactory() {
 
     }
 
@@ -128,58 +130,35 @@ public class SilentGoBean extends BeanFactory<BeanDefinition> {
         beanDefinition.setInjectComplete(true);
     }
 
+    private static ArrayList<Class<? extends Annotation>> anList = new ArrayList() {{
+        add(Service.class);
+        add(Component.class);
+        add(Controller.class);
+        add(Aspect.class);
+        add(ExceptionHandler.class);
+    }};
+
     @Override
     public boolean initialize(SilentGo me) {
         List<BeanDefinition> beanDefinitions = new ArrayList<>();
 
+        me.getFactory(BeanHandleFactory.class);
 
-        commonBuild(me, beanDefinitions, Service.class);
+        anList.forEach(an -> me.getAnnotationManager().getClasses(an).forEach(aClass -> BeanBuildKit.getBeanHandlers().forEach(beanHandler -> {
+            Annotation annotation = aClass.getAnnotation(an);
+            if (beanHandler.hasHandle(annotation, aClass)) {
+                beanHandler.handle(annotation, aClass, beanDefinitions);
+            }
+        })));
 
-        commonBuild(me, beanDefinitions, Component.class);
-
-        commonBuild(me, beanDefinitions, Controller.class);
-
-        commonBuild(me, beanDefinitions, Aspect.class, false);
-
-
-        me.getAnnotationManager().getClasses(ExceptionHandler.class).forEach(aClass -> {
-            if (aClass.isInterface()) return;
-            beanDefinitions.add(new BeanDefinition(aClass.getName(), aClass, false));
-        });
         build(beanDefinitions, me.getConfig());
+
         return true;
     }
 
     @Override
     public boolean destroy(SilentGo me) throws AppReleaseException {
-        return false;
+        return true;
     }
 
-    private void buildInterface(List<BeanDefinition> beanDefinitions, Class<?> clz) {
-        if (BaseDao.class.isAssignableFrom(clz)) {
-            beanDefinitions.add(new BeanDefinition(clz, DaoInterceptor.proxy(clz), false, true));
-        }
-    }
-
-    private <T extends Annotation> void commonBuild(SilentGo me, List<BeanDefinition> beanDefinitions, Class<T> t) {
-        commonBuild(me, beanDefinitions, t, true);
-    }
-
-    private <T extends Annotation> void commonBuild(SilentGo me, List<BeanDefinition> beanDefinitions, Class<T> t, boolean inject) {
-        me.getAnnotationManager().getClasses(t).forEach(aClass -> {
-            if (aClass.isInterface()) {
-                buildInterface(beanDefinitions, aClass);
-                return;
-            }
-            T annotation = (T) aClass.getAnnotation(aClass);
-            try {
-                Method method = aClass.getDeclaredMethod("value");
-                beanDefinitions.add(new BeanDefinition(method.invoke(annotation).toString(), aClass, inject));
-            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-                LOGGER.debug("no value , ignored");
-            }
-            beanDefinitions.add(new BeanDefinition(aClass, inject));
-        });
-
-    }
 }

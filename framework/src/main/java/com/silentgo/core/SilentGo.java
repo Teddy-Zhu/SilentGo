@@ -1,7 +1,6 @@
 package com.silentgo.core;
 
 import com.silentgo.core.config.SilentGoConfig;
-import com.silentgo.core.plugin.db.DBConfig;
 import com.silentgo.core.support.AnnotationManager;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.orm.base.DBConnect;

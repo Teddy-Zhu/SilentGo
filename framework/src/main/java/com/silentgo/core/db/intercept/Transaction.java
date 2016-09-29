@@ -1,4 +1,4 @@
-package com.silentgo.core.plugin.db.intercept;
+package com.silentgo.core.db.intercept;
 
 import java.lang.annotation.*;
 

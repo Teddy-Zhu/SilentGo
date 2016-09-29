@@ -18,9 +18,12 @@ public class ClassConst {
     public static final String _package = "package $s;$n$n";
     public static final String _annotaion = "@$s$n";
     public static final String _classbody = "public class $s {$n$n$s$n}$n$n";
-    public static final String _field_null = "$tpublic $s $s;";
-
-    public static final String _field = "$tpublic $s $s = $s ;";
+    public static final String _interfaceclassbody_extend = "public interface $s extends $s {$n$n$s$n}$n$n";
+    public static final String _interfaceclassbody_extend_t = "public interface $s extends $s<$s> {$n$n$s$n}$n$n";
+    public static final String _classbody_extend = "public class $s extends $s {$n$n$s$n}$n$n";
+    public static final String _classbody_implements = "public class $s implements $s {$n$n$s$n}$n$n";
+    public static final String _field_null = "$tpublic $s $s;$n$n";
+    public static final String _field = "$tpublic $s $s = $s ;$n$n";
 
     public static final String _field_string = "$tpublic $s $s = \"$s\" ;";
 

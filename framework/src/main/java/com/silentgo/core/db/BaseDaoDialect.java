@@ -1,4 +1,4 @@
-package com.silentgo.core.plugin.db;
+package com.silentgo.core.db;
 
 import com.silentgo.core.plugin.db.bridge.mysql.SQLTool;
 
@@ -26,13 +26,15 @@ public interface BaseDaoDialect {
     public <T extends TableModel> SQLTool insertByRows(BaseTableInfo table, List<T> t);
 
     //UPDATE
-    public <T extends TableModel> SQLTool updateByPrimaryKey(BaseTableInfo table, T t, String... columns);
+    public <T extends TableModel> SQLTool updateByPrimaryKey(BaseTableInfo table, T t);
+
+    public <T extends TableModel> SQLTool updateByPrimaryKeyOptional(BaseTableInfo table, T t, List<String> columns);
 
     public <T extends TableModel> SQLTool updateByPrimaryKeySelective(BaseTableInfo table, T t);
 
-//    //DELETE
-//    public SQLTool deleteByPrimaryKey(BaseTableInfo table);
-//
-//    public SQLTool deleteByPrimaryKeys(BaseTableInfo table);
+    //DELETE
+    public SQLTool deleteByPrimaryKey(BaseTableInfo table, Object id);
+
+    public SQLTool deleteByPrimaryKeys(BaseTableInfo table, List<Object> ids);
 
 }

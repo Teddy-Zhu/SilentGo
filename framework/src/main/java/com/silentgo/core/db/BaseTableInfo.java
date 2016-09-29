@@ -1,4 +1,4 @@
-package com.silentgo.core.plugin.db;
+package com.silentgo.core.db;
 
 import java.util.List;
 import java.util.Map;
@@ -13,11 +13,29 @@ import java.util.Map;
  */
 public abstract class BaseTableInfo {
 
+    public DBType type;
+    public Class<? extends TableModel> clazz;
     public String tableName;
     public List<String> primaryKeys;
     public Map<String, Class<?>> columnsMap;
 
-    public Map<String,String> fullColumns;
+    public Map<String, String> fullColumns;
+
+    public Class<? extends TableModel> getClazz() {
+        return clazz;
+    }
+
+    public DBType getType() {
+        return type;
+    }
+
+    public void setType(DBType type) {
+        this.type = type;
+    }
+
+    public void setClazz(Class<? extends TableModel> clazz) {
+        this.clazz = clazz;
+    }
 
     public Map<String, String> getFullColumns() {
         return fullColumns;

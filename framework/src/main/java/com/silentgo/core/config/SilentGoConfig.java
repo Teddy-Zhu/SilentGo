@@ -1,9 +1,9 @@
 package com.silentgo.core.config;
 
 import com.silentgo.core.SilentGo;
+import com.silentgo.core.db.DBConfig;
+import com.silentgo.core.db.DBType;
 import com.silentgo.core.exception.AppBuildException;
-import com.silentgo.core.plugin.db.DBConfig;
-import com.silentgo.core.plugin.db.DBType;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.orm.base.DBConnect;
 import com.silentgo.servlet.SilentGoContext;

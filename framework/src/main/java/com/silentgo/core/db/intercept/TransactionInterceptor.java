@@ -1,4 +1,4 @@
-package com.silentgo.core.plugin.db.intercept;
+package com.silentgo.core.db.intercept;
 
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.annotationintercept.IAnnotation;

@@ -1,15 +1,13 @@
-package com.silentgo.core.plugin.db;
+package com.silentgo.core.db;
 
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.build.Factory;
 import com.silentgo.core.config.SilentGoConfig;
 import com.silentgo.core.exception.AppReleaseException;
 import com.silentgo.core.support.BaseFactory;
-import com.silentgo.orm.base.DBManager;
 import com.silentgo.utils.CollectionKit;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
