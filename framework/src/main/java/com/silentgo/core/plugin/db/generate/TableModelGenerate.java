@@ -56,7 +56,7 @@ public class TableModelGenerate {
         }
         builder.append(format(ClassConst._annotaion, Table.class.getSimpleName() + an));
 
-        builder.append(format(ClassConst._classbody_extend, table.getName(), TableModel.class.getSimpleName(), body.toString()));
+        builder.append(format(ClassConst._classbody_extend, StringKit.firstToUpper(table.getName()), TableModel.class.getSimpleName(), body.toString()));
         return builder.toString();
     }
 

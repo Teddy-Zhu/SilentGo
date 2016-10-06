@@ -3,6 +3,7 @@ import com.silentgo.orm.base.DBConfig;
 import com.silentgo.orm.jdbc.JDBCManager;
 import com.silentgo.orm.kit.configKit;
 
+import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,30 +19,20 @@ import java.util.List;
 public class testJDBC {
 
 
-    public static void main(String[] args) throws SQLException, InterruptedException {
-        DBConfig config = configKit.getConfig("config.properties");
-        config.setName("jdbc");
-        JDBCManager.getInstance().initial(config);
+    public String gett() {
+        return "";
+    }
 
-        int o = 100;
-        List<Thread> threads = new ArrayList<>();
-        for (int i = 0; i < o; i++) {
-            Thread thread = new Thread(() -> {
-                List<Menu> menus = null;
-                try {
-                    menus = SilentGoOrm.queryList(JDBCManager.getInstance().getConnect("jdbc"), "select * from sys_menu", Menu.class);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-                System.out.println(menus.toString());
-                System.out.println("end thread");
-            });
-            thread.start();
-            threads.add(thread);
-        }
-        for (Thread thread : threads) {
-            thread.join();
-        }
-        JDBCManager.getInstance().destory();
+    public Integer[] aaaa() {
+        return new Integer[]{0};
+    }
+
+    public List<String> getss() {
+        return new ArrayList<>();
+    }
+
+    public static void main(String[] args) throws SQLException, InterruptedException, NoSuchMethodException {
+        List<EE> a  = new ArrayList<>();
+        System.out.println(Menu.class.isAssignableFrom(a.getClass()));
     }
 }

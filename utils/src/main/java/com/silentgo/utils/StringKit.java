@@ -16,11 +16,12 @@ public class StringKit {
 
     public static String firstToUpper(String field) {
         if (isBlank(field)) return field;
-        return field.substring(0, 1).toUpperCase() + field.toLowerCase().substring(1);
+        return field.substring(0, 1).toUpperCase() + field.substring(1);
     }
+
     public static String firstToLower(String field) {
         if (isBlank(field)) return field;
-        return field.substring(0, 1).toLowerCase() + field.toLowerCase().substring(1);
+        return field.substring(0, 1).toLowerCase() + field.substring(1);
     }
 
     public static boolean isNotBlank(String str) {
@@ -46,31 +47,32 @@ public class StringKit {
     public static boolean equals(String source, String target, boolean caseSensitive) {
         return !(source == null || target == null) && (caseSensitive ? source.equals(target) : source.toLowerCase().equals(target.toLowerCase()));
     }
+
     public static String join(Object[] array, String separator) {
-        return array == null?null:join(array, separator, 0, array.length);
+        return array == null ? null : join(array, separator, 0, array.length);
     }
 
     public static String join(Object[] array, String separator, int startIndex, int endIndex) {
-        if(array == null) {
+        if (array == null) {
             return null;
         } else {
-            if(separator == null) {
+            if (separator == null) {
                 separator = "";
             }
 
             int bufSize = endIndex - startIndex;
-            if(bufSize <= 0) {
+            if (bufSize <= 0) {
                 return "";
             } else {
-                bufSize *= (array[startIndex] == null?16:array[startIndex].toString().length()) + separator.length();
+                bufSize *= (array[startIndex] == null ? 16 : array[startIndex].toString().length()) + separator.length();
                 StringBuilder buf = new StringBuilder(bufSize);
 
-                for(int i = startIndex; i < endIndex; ++i) {
-                    if(i > startIndex) {
+                for (int i = startIndex; i < endIndex; ++i) {
+                    if (i > startIndex) {
                         buf.append(separator);
                     }
 
-                    if(array[i] != null) {
+                    if (array[i] != null) {
                         buf.append(array[i]);
                     }
                 }

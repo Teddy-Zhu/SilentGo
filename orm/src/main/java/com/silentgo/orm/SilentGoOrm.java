@@ -111,6 +111,89 @@ public class SilentGoOrm {
     }
 
 
+    public static <T> T[] queryArray(DBConnect conn, String sql, Class<T> clz, Object... params) throws SQLException {
+        if (conn == null) {
+            throw new SQLException("Null connection");
+        }
+
+        if (sql == null) {
+            conn.release();
+            throw new SQLException("Null SQL statement");
+        }
+        IRSResolver resolver = getResolver(clz, false);
+        if (clz == null || resolver == null) {
+            conn.release();
+            throw new SQLException("Null Class");
+        }
+
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        T[] result = null;
+
+        try {
+            stmt = conn.getConnect().prepareStatement(sql);
+            fillStatement(stmt, params);
+            rs = stmt.executeQuery();
+            result = (T[]) resolver.resolve(rs);
+
+        } catch (SQLException e) {
+
+        } finally {
+            try {
+                if (rs != null)
+                    rs.close();
+            } finally {
+                if (stmt != null)
+                    stmt.close();
+                conn.release();
+            }
+        }
+
+        return result;
+    }
+
+    public static <T> List<T[]> queryArrayList(DBConnect conn, String sql, Class<T> clz, Object... params) throws SQLException {
+        if (conn == null) {
+            throw new SQLException("Null connection");
+        }
+
+        if (sql == null) {
+            conn.release();
+            throw new SQLException("Null SQL statement");
+        }
+        IRSResolver resolver = getResolver(clz, true);
+        if (clz == null || resolver == null) {
+            conn.release();
+            throw new SQLException("Null Class");
+        }
+
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        List<T[]> result = null;
+
+        try {
+            stmt = conn.getConnect().prepareStatement(sql);
+            fillStatement(stmt, params);
+            rs = stmt.executeQuery();
+            result = (List<T[]>) resolver.resolve(rs);
+
+        } catch (SQLException e) {
+
+        } finally {
+            try {
+                if (rs != null)
+                    rs.close();
+            } finally {
+                if (stmt != null)
+                    stmt.close();
+                conn.release();
+            }
+        }
+
+        return result;
+    }
+
+
     private static IRSResolver getResolver(Class<?> clz, boolean isList) {
         if (TypeConvertKit.isSqlBaseType(clz)) {
             return isList ? new ListCompatibleRSResolver(clz) : new CompatibleRSResolver(clz);

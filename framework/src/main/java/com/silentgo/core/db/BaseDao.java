@@ -13,7 +13,7 @@ import java.util.List;
 public interface BaseDao<T extends TableModel> {
 
     //QUERY
-    public <S extends T> S queryByPrimaryKey(Object id);
+    public <S extends T> T queryByPrimaryKey(Object id);
 
     public <S extends T> List<S> queryByPrimaryKeys(List<Object> ids);
 

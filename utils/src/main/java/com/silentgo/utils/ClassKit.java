@@ -238,6 +238,15 @@ public class ClassKit {
         return getGenericClass(object.getClass(), index);
     }
 
+    public static Class<?> getActualType(Type clz) {
+        return getActualType(clz, 0);
+    }
+
+    public static Class<?> getActualType(Type clz, int index) {
+        ParameterizedType type = (ParameterizedType) clz;
+        return (Class<?>) type.getActualTypeArguments()[index];
+    }
+
     public static Type[] getGenericClass(Class<?> clz) {
         ParameterizedType type = (ParameterizedType) clz.getGenericInterfaces()[0];
         return type.getActualTypeArguments();

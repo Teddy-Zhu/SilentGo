@@ -11,6 +11,8 @@ import com.silentgo.test.dao.sysMenuDao;
 import com.silentgo.utils.logger.Logger;
 import com.silentgo.utils.logger.LoggerFactory;
 
+import java.util.List;
+
 /**
  * Project : silentgo
  * com.silentgo.test.controller
@@ -37,7 +39,8 @@ public class view {
     @ResponseBody
     public String test(@PathVariable String string) {
         LOGGER.info("msg:{}", string);
-        sysMenu menu = sysMenuDao.queryByPrimaryKey("1");
+        sysMenu menus = sysMenuDao.queryByPrimaryKey("1");
+        LOGGER.info("menu:{}", menus);
         return string;
     }
 

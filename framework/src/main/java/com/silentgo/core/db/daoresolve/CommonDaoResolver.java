@@ -43,9 +43,6 @@ public class CommonDaoResolver implements DaoResolver {
     @Override
     public <T extends TableModel> SQLTool processSQL(String methodName, Class<?> returnType, Object[] objects, List<String> parsedMethod, BaseTableInfo tableInfo, SQLTool sqlTool, boolean[] isHandled) throws AppSQLException {
         BaseDaoDialect daoDialect = SilentGo.getInstance().getFactory(DialectFactory.class).getDialect(tableInfo.getType());
-        if (objects.length == 0) {
-            throw new AppSQLException("lack parameters");
-        }
         isHandled[0] = true;
         switch (methodName) {
             case "queryByPrimaryKey": {
@@ -78,6 +75,12 @@ public class CommonDaoResolver implements DaoResolver {
             }
             case "deleteByPrimaryKeys": {
                 return daoDialect.deleteByPrimaryKeys(tableInfo, (List<Object>) objects[0]);
+            }
+            case "queryAll": {
+                return daoDialect.queryAll(tableInfo);
+            }
+            case "deleteAll": {
+                return daoDialect.deleteAll(tableInfo);
             }
         }
         isHandled[0] = false;
