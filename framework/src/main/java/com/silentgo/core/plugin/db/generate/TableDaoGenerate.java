@@ -23,7 +23,7 @@ public class TableDaoGenerate {
         }
         builder.append(format(ClassConst._importOne, Service.class.getName()));
         builder.append(format(ClassConst._annotaion, Service.class.getSimpleName()));
-        builder.append(format(ClassConst._interfaceclassbody_extend_t, tableMeta.getName() + "Dao", BaseDao.class.getSimpleName(), "", tableMeta.getName()));
+        builder.append(format(ClassConst._interfaceclassbody_extend_t, tableMeta.getName() + "Dao", BaseDao.class.getSimpleName(), tableMeta.getName(), ""));
 
         return builder.toString();
     }

@@ -21,16 +21,6 @@ import java.util.Map;
 @Factory
 public class SqlFactory extends BaseFactory {
 
-    private Map<Class<? extends TableModel>, BaseTableInfo> tableInfo = new HashMap<>();
-
-    public BaseTableInfo getTableInfo(Class<? extends TableModel> clz) {
-        return tableInfo.get(clz);
-    }
-
-    public void addTableInfo(Class<? extends TableModel> clz, BaseTableInfo info) {
-        CollectionKit.MapAdd(tableInfo, clz, info);
-    }
-
     @Override
     public boolean initialize(SilentGo me) {
         SilentGoConfig config = me.getConfig();

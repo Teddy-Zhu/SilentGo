@@ -18,9 +18,10 @@ import com.silentgo.core.support.BaseFactory;
 public class BeanHandleFactory extends BaseFactory {
     @Override
     public boolean initialize(SilentGo me) throws AppBuildException {
-        BeanBuildKit.addBeanHander(new CommonBeanHandler());
         BeanBuildKit.addBeanHander(new DaoBeanHandler());
         BeanBuildKit.addBeanHander(new NoInjectBeanHandler());
+        BeanBuildKit.addBeanHander(new CommonBeanHandler());
+
 
         return false;
     }

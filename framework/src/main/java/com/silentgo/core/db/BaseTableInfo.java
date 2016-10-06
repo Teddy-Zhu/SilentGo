@@ -11,7 +11,7 @@ import java.util.Map;
  *         <p>
  *         Created by teddyzhu on 16/9/22.
  */
-public abstract class BaseTableInfo {
+public class BaseTableInfo {
 
     public DBType type;
     public Class<? extends TableModel> clazz;

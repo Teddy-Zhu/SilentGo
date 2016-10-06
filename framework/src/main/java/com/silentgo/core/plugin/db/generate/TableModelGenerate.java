@@ -4,6 +4,7 @@ import com.silentgo.core.db.Table;
 import com.silentgo.core.db.TableModel;
 import com.silentgo.utils.StringKit;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,6 +30,8 @@ public class TableModelGenerate {
         for (Column column : table.getColumns()) {
             if (column.getTypeName().equals("Date")) {
                 imports.add(java.util.Date.class.getName());
+            } else if (column.getTypeName().equals("BigDecimal")) {
+                imports.add(BigDecimal.class.getName());
             }
             body.append(getField(column));
             body.append(getGetFunction(column));
@@ -44,10 +47,10 @@ public class TableModelGenerate {
         if (table.getPrimaryKeys().size() == 0) {
             an = "(\"" + table.getName() + "\")";
         } else if (table.getPrimaryKeys().size() == 1) {
-            an = "(value=\"" + table.getName() +
+            an = "(value=\"" + table.getTableName() +
                     "\",  primaryKey = \"" + table.getPrimaryKeys().get(0) + "\")";
         } else {
-            an = "(value=\"" + table.getName() +
+            an = "(value=\"" + table.getTableName() +
                     "\",  primaryKey = {\"" +
                     StringKit.join(table.getPrimaryKeys(), "\",\"") + "\"})";
         }

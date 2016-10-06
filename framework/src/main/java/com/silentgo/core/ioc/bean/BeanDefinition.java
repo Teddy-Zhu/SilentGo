@@ -78,7 +78,7 @@ public class BeanDefinition extends BeanWrapper {
         this.clz = clz;
         this.target = target;
         fastClass = FastClass.create(clz);
-        interfaceClass = clz.getInterfaces().length > 0 ? clz.getInterfaces()[0] : clz;
+        interfaceClass = clz.isInterface() ? clz : clz.getInterfaces().length > 0 ? clz.getInterfaces()[0] : clz;
         if (needInject)
             proxyTarget = CGLibKit.Proxy(target);
         else

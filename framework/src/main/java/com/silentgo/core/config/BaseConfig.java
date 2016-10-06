@@ -44,7 +44,8 @@ public class BaseConfig extends InterConfig {
     private String dbType;
     private String BaseView = Const.BaseView;
 
-    private List<String> staticFolder = new ArrayList<>();
+    private List<String> staticEndWith = new ArrayList<>();
+    private List<String> staticStartWith = new ArrayList<>();
 
     private List<String> scanPackages = new ArrayList<>();
 
@@ -86,12 +87,16 @@ public class BaseConfig extends InterConfig {
         BaseView = baseView;
     }
 
-    public List<String> getStaticFolder() {
-        return staticFolder;
+    public List<String> getStaticStartWith() {
+        return staticStartWith;
     }
 
-    public void setStaticFolder(List<String> staticFolder) {
-        this.staticFolder = staticFolder;
+    public List<String> getStaticEndWith() {
+        return staticEndWith;
+    }
+
+    public void setStaticStartWith(List<String> staticStartWith) {
+        this.staticStartWith = staticStartWith;
     }
 
     public List<String> getScanPackages() {

@@ -24,8 +24,10 @@ public class ETagAction extends ActionChain {
 
     @Override
     public void doAction(ActionParam param) throws Throwable {
-        if (SilentGo.getInstance().getConfig().getStaticFolder()
-                .stream().anyMatch(url -> param.getRequestURL().startsWith(url))) {
+        SilentGo instance = SilentGo.getInstance();
+        if (instance.getConfig().getStaticStartWith()
+                .stream().anyMatch(url -> param.getRequestURL().startsWith(url)) ||
+                instance.getConfig().getStaticEndWith().stream().allMatch(url -> param.getRequestURL().endsWith(url))) {
             long ims = param.getRequest().getDateHeader("If-Modified-Since");
             long now = 0L;
             now = System.currentTimeMillis();

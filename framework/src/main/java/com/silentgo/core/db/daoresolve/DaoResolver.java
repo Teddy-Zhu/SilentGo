@@ -5,6 +5,8 @@ import com.silentgo.core.db.TableModel;
 import com.silentgo.core.exception.AppSQLException;
 import com.silentgo.core.plugin.db.bridge.mysql.SQLTool;
 
+import java.util.List;
+
 /**
  * Project : parent
  * Package : com.silentgo.core.db.daoresolve
@@ -15,7 +17,7 @@ import com.silentgo.core.plugin.db.bridge.mysql.SQLTool;
  */
 public interface DaoResolver {
 
-    public boolean handle(String methodName);
+    public boolean handle(String methodName, List<String> parsedMethod);
 
-    public <T extends TableModel> SQLTool processSQL(String methodName, Object[] objects, BaseTableInfo tableInfo) throws AppSQLException;
+    public <T extends TableModel> SQLTool processSQL(String methodName, Class<?> returnType, Object[] objects, List<String> parsedMethod, BaseTableInfo tableInfo, SQLTool sqlTool, boolean[] isHandled) throws AppSQLException;
 }

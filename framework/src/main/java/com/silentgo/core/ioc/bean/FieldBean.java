@@ -38,6 +38,7 @@ public class FieldBean {
         return true;
     }
 
+
     public FieldBean(Field field) {
         this.field = field;
     }

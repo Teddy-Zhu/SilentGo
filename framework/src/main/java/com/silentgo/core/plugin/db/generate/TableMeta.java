@@ -14,9 +14,19 @@ public class TableMeta {
 
     public String name;
 
+    public String tableName;
+
     public List<String> primaryKeys;
 
     public List<Column> columns;
+
+    public String getTableName() {
+        return tableName;
+    }
+
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
+    }
 
     public String getName() {
         return name;

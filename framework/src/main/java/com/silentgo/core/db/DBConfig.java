@@ -15,7 +15,7 @@ import com.silentgo.utils.PropKit;
  *         Created by teddyzhu on 16/9/22.
  */
 public class DBConfig extends AbstractConfig {
-    private String name = "DataBase";
+    private String name = "mysql";
 
     private DBManager manager;
 
@@ -23,6 +23,7 @@ public class DBConfig extends AbstractConfig {
         if (DBType.MYSQL.equals(dbType.toLowerCase())) {
             manager = JDBCManager.getInstance();
             com.silentgo.orm.base.DBConfig config = configKit.getConfig(propKit);
+            config.setName(name);
             manager.initial(config);
         }
     }
@@ -30,6 +31,7 @@ public class DBConfig extends AbstractConfig {
         if (DBType.MYSQL.equals(dbType.toLowerCase())) {
             manager = JDBCManager.getInstance();
             com.silentgo.orm.base.DBConfig config = configKit.getConfig("config.properties");
+            config.setName(name);
             manager.initial(config);
         }
     }

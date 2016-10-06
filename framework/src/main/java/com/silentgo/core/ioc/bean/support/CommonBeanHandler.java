@@ -27,7 +27,7 @@ public class CommonBeanHandler implements BeanHandler {
 
     @Override
     public <T extends Annotation> boolean hasHandle(T t, Class<?> clz) {
-        return anList.contains(t.annotationType());
+        return anList.contains(t.annotationType()) && !clz.isInterface();
     }
 
     @Override

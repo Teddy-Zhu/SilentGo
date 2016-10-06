@@ -46,7 +46,7 @@ public class SilentGo {
     }
 
     public DBConnect getConnect() {
-        return getConnect("DataBase");
+        return getConnect("mysql");
     }
 
     public boolean isDevMode() {

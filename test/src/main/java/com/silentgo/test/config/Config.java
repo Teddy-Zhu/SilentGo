@@ -2,6 +2,7 @@ package com.silentgo.test.config;
 
 import com.silentgo.core.config.SilentGoConfig;
 import com.silentgo.core.db.DBType;
+import com.silentgo.utils.PropKit;
 
 /**
  * Project : parent
@@ -18,7 +19,8 @@ public class Config implements com.silentgo.core.config.Config {
         config.setDbType(DBType.MYSQL.getName());
 
         config.setPropfile("app.properties");
-
+        config.setUserProp(new PropKit("app.properties"));
+        config.addEndStatic(".ico");
     }
 
     @Override

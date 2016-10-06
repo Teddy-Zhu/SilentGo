@@ -71,8 +71,12 @@ public class SilentGoConfig extends BaseConfig {
         return (T) factory;
     }
 
-    public boolean addStatic(String name) {
-        return CollectionKit.ListAdd(getStaticFolder(), name);
+    public boolean addEndStatic(String name) {
+        return CollectionKit.ListAdd(getStaticEndWith(), name);
+    }
+
+    public boolean addStartStatic(String name) {
+        return CollectionKit.ListAdd(getStaticStartWith(), name);
     }
 
     public boolean setCtx(Request request, Response response) {

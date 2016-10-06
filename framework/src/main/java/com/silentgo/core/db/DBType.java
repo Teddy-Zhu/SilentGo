@@ -24,7 +24,12 @@ public enum DBType {
         return this.name.equals(name);
     }
 
-    public DBType parse(String name) {
-        return Enum.valueOf(DBType.class, name);
+    public static DBType parse(String name) {
+
+        try {
+            return Enum.valueOf(DBType.class, name.toUpperCase());
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

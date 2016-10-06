@@ -37,4 +37,7 @@ public interface BaseDaoDialect {
 
     public SQLTool deleteByPrimaryKeys(BaseTableInfo table, List<Object> ids);
 
+    public SQLTool queryAll(BaseTableInfo tableInfo);
+
+    public SQLTool deleteAll(BaseTableInfo tableInfo);
 }

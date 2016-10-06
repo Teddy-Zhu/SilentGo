@@ -31,19 +31,22 @@ public class CommonDaoResolver implements DaoResolver {
         add("updateByPrimaryKeySelective");
         add("deleteByPrimaryKey");
         add("deleteByPrimaryKeys");
+        add("queryAll");
+        add("deleteAll");
     }};
 
     @Override
-    public boolean handle(String methodName) {
+    public boolean handle(String methodName, List<String> parsedMethod) {
         return methodNames.contains(methodName);
     }
 
     @Override
-    public <T extends TableModel> SQLTool processSQL(String methodName, Object[] objects, BaseTableInfo tableInfo) throws AppSQLException {
+    public <T extends TableModel> SQLTool processSQL(String methodName, Class<?> returnType, Object[] objects, List<String> parsedMethod, BaseTableInfo tableInfo, SQLTool sqlTool, boolean[] isHandled) throws AppSQLException {
         BaseDaoDialect daoDialect = SilentGo.getInstance().getFactory(DialectFactory.class).getDialect(tableInfo.getType());
         if (objects.length == 0) {
             throw new AppSQLException("lack parameters");
         }
+        isHandled[0] = true;
         switch (methodName) {
             case "queryByPrimaryKey": {
                 return daoDialect.queryByPrimaryKey(tableInfo, objects[0]);
@@ -77,7 +80,8 @@ public class CommonDaoResolver implements DaoResolver {
                 return daoDialect.deleteByPrimaryKeys(tableInfo, (List<Object>) objects[0]);
             }
         }
-        return new SQLTool();
+        isHandled[0] = false;
+        return sqlTool;
     }
 
 }

@@ -23,7 +23,7 @@ public class Generate {
         this.config = config;
     }
 
-    public void GenerateModel() throws SQLException, ClassNotFoundException, IOException {
+    public void GenerateModelAndDao() throws SQLException, ClassNotFoundException, IOException {
         List<TableMeta> tables = new TableMetaGenerate().getTables(config);
 
         if (tables.size() > 0) {
@@ -68,6 +68,7 @@ public class Generate {
         config.setUser("root");
         config.setDbName("lc4e");
         config.setUrl("jdbc:mysql://localhost:3306/lc4e?useUnicode=true&characterEncoding=utf-8&useSSL=true");
-        new Generate(config).GenerateModel();
+        new Generate(config).GenerateModelAndDao();
+
     }
 }

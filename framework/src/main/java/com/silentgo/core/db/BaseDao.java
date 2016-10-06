@@ -13,21 +13,21 @@ import java.util.List;
 public interface BaseDao<T extends TableModel> {
 
     //QUERY
-    public T queryByPrimaryKey(Object id);
+    public <S extends T> S queryByPrimaryKey(Object id);
 
-    public List<T> queryByPrimaryKeys(List<Object> ids);
+    public <S extends T> List<S> queryByPrimaryKeys(List<Object> ids);
 
-    public List<T> queryByModelSelective(T t);
+    public <S extends T> List<S> queryByModelSelective(S t);
 
     //ADD
-    public int insertByRow(T t);
+    public <S extends T> int insertByRow(S t);
 
-    public int insertByRows(List<T> t);
+    public <S extends T> int insertByRows(List<S> t);
 
     //UPDATE
-    public int updateByPrimaryKey(T t);
+    public <S extends T> int updateByPrimaryKey(S t);
 
-    public int updateByPrimaryKeyOptional(T t, List<String> columns);
+    public <S extends T> int updateByPrimaryKeyOptional(S t, List<String> columns);
 
     public int updateByPrimaryKeySelective(T t);
 
@@ -37,4 +37,9 @@ public interface BaseDao<T extends TableModel> {
     public int deleteByPrimaryKeys(List<Object> t);
 
 
+    //Query All
+    public <S extends T> List<S> queryAll();
+
+    //Delete All
+    public <S extends T> List<S> deleteAll();
 }

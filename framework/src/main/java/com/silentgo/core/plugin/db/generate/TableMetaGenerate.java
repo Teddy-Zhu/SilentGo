@@ -27,6 +27,14 @@ public class TableMetaGenerate implements TableMetaGenerator {
 
         connection = DriverManager.getConnection(config.getUrl(), config.getUser(), config.getPass());
 
+        List<TableMeta> tableMetas = getTables(connection);
+
+        connection.close();
+        return tableMetas;
+    }
+
+    public List<TableMeta> getTables(Connection connection) throws SQLException, ClassNotFoundException {
+
         DatabaseMetaData dbMetData = connection.getMetaData();
 
         List<TableMeta> tables = new ArrayList<>();
@@ -37,6 +45,7 @@ public class TableMetaGenerate implements TableMetaGenerator {
             TableMeta tableMeta = new TableMeta();
             String tableName = rs.getString(3).toLowerCase();
             tableMeta.setName(format(tableName));
+            tableMeta.setTableName(rs.getString(3));
             ResultSet colRet = dbMetData.getColumns(connection.getCatalog(), "%", tableName,
                     "%");
             ResultSet primaryKeyResultSet = dbMetData.getPrimaryKeys(connection.getCatalog(), null, tableName);
@@ -52,6 +61,7 @@ public class TableMetaGenerate implements TableMetaGenerator {
                 int nullable = colRet.getInt("NULLABLE");
                 Column column = new Column();
                 column.setName(format(columnName));
+                column.setColName(columnName);
                 //column.setType(Class.forName(TypeMapping.getType(columnType)));
                 //column.setTypeString(TypeMapping.getType(columnType));
                 column.setNullAble(nullable == 1);
@@ -91,7 +101,6 @@ public class TableMetaGenerate implements TableMetaGenerator {
             tables.add(tableMeta);
         }
         rs.close();
-        connection.close();
         return tables;
     }
 

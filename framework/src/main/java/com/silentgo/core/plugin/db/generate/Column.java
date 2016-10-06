@@ -11,10 +11,23 @@ package com.silentgo.core.plugin.db.generate;
 public class Column {
 
     public String name;
+    public String colName;
     public String typeString;
     public boolean nullAble;
     public String description;
     public String typeName;
+
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
+    }
+
+    public String getColName() {
+        return colName;
+    }
+
+    public void setColName(String colName) {
+        this.colName = colName;
+    }
 
     public String getTypeName() {
         return typeName;

@@ -40,7 +40,7 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
             throw new RuntimeException("the table did not has primary key");
         }
         SQLTool sqlTool = new SQLTool();
-        sqlTool.select(table.getTableName(), table.getFullColumns().values())
+        sqlTool.select(table.getTableName(), table.getFullColumns().get("*"))
                 .whereEquals(table.getFullColumns().get(table.getPrimaryKeys().get(0)))
                 .appendParam(id);
         return sqlTool;
@@ -54,7 +54,7 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
         }
 
         SQLTool sqlTool = new SQLTool();
-        sqlTool.select(table.getTableName(), table.getFullColumns().values())
+        sqlTool.select(table.getTableName(), table.getFullColumns().get("*"))
                 .whereIn(table.getFullColumns().get(table.getPrimaryKeys().get(0)), ids.size());
         ids.forEach(sqlTool::appendParam);
         return sqlTool;
@@ -64,7 +64,7 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
     public <T extends TableModel> SQLTool queryByModelSelective(BaseTableInfo table, T t) {
 
         SQLTool sqlTool = new SQLTool();
-        sqlTool.select(table.getTableName(), table.getFullColumns().values());
+        sqlTool.select(table.getTableName(), table.getFullColumns().get("*"));
 
 
         getCachedProps(table).forEach((k, propertyDescriptor) -> {
@@ -204,6 +204,16 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
                 .whereIn(table.getPrimaryKeys().get(0), ids.size());
         ids.forEach(sqlTool::appendParam);
         return sqlTool;
+    }
+
+    @Override
+    public SQLTool queryAll(BaseTableInfo tableInfo) {
+        return new SQLTool().select(tableInfo.getTableName(), tableInfo.getTableName() + ".*");
+    }
+
+    @Override
+    public SQLTool deleteAll(BaseTableInfo tableInfo) {
+        return new SQLTool().delete(tableInfo.tableName);
     }
 
 

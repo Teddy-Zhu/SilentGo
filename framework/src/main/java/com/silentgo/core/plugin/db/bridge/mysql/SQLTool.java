@@ -305,6 +305,16 @@ public class SQLTool {
         return this;
     }
 
+    public SQLTool limit() {
+        this.limit = " limit ?,? ";
+        return this;
+    }
+
+    public SQLTool limitClear() {
+        this.limit = "";
+        return this;
+    }
+
     public SQLTool limit(int size, int page) {
         this.limit = " limit " + (page - 1) * size + "," + size;
         return this;
