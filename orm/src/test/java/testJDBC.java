@@ -32,7 +32,6 @@ public class testJDBC {
     }
 
     public static void main(String[] args) throws SQLException, InterruptedException, NoSuchMethodException {
-        List<EE> a  = new ArrayList<>();
-        System.out.println(Menu.class.isAssignableFrom(a.getClass()));
+
     }
 }

@@ -1,5 +1,7 @@
 package com.silentgo.core.plugin.db.generate;
 
+import com.silentgo.utils.StringKit;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -34,7 +36,7 @@ public class Generate {
         for (TableMeta table : tables) {
             String a = new TableModelGenerate().getModelString(table, config.getPackagePath());
             a = a.replace(ClassConst.newline, "\n").replace(ClassConst.tab, "\t");
-            File tb = new File(config.getOutPath() + "/" + table.getName() + ".java");
+            File tb = new File(config.getOutPath() + "/" + StringKit.firstToUpper(table.getName()) + ".java");
             if (tb.exists()) {
                 tb.delete();
             }
@@ -45,7 +47,7 @@ public class Generate {
 
             String m = new TableDaoGenerate().run(table, config.getPackagePath(), config.getPackagePath());
             m = m.replace(ClassConst.newline, "\n").replace(ClassConst.tab, "\t");
-            File file = new File(config.getOutPath() + "/" + table.getName() + "Dao.java");
+            File file = new File(config.getOutPath() + "/" + StringKit.firstToUpper(table.getName()) + "Dao.java");
             if (file.exists()) {
                 file.delete();
             }
