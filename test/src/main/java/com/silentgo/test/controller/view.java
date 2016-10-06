@@ -6,12 +6,10 @@ import com.silentgo.core.route.annotation.Controller;
 import com.silentgo.core.route.annotation.PathVariable;
 import com.silentgo.core.route.annotation.ResponseBody;
 import com.silentgo.core.route.annotation.Route;
-import com.silentgo.test.dao.sysMenu;
-import com.silentgo.test.dao.sysMenuDao;
+import com.silentgo.test.dao.SysMenu;
+import com.silentgo.test.dao.SysMenuDao;
 import com.silentgo.utils.logger.Logger;
 import com.silentgo.utils.logger.LoggerFactory;
-
-import java.util.List;
 
 /**
  * Project : silentgo
@@ -28,7 +26,7 @@ public class view {
     private static final Logger LOGGER = LoggerFactory.getLog(view.class);
 
     @Inject
-    public sysMenuDao sysMenuDao;
+    public SysMenuDao sysMenuDao;
 
     @Route("/")
     public String index() {
@@ -39,7 +37,7 @@ public class view {
     @ResponseBody
     public String test(@PathVariable String string) {
         LOGGER.info("msg:{}", string);
-        sysMenu menus = sysMenuDao.queryByPrimaryKey("1");
+        SysMenu menus = sysMenuDao.queryOneById("1");
         LOGGER.info("menu:{}", menus);
         return string;
     }

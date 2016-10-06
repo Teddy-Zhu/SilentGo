@@ -26,9 +26,10 @@ public class DeleteDaoResolver implements DaoResolver {
     @Override
     public <T extends TableModel> SQLTool processSQL(String methodName, Class<?> returnType, Object[] objects, List<String> parsedMethod, BaseTableInfo tableInfo, SQLTool sqlTool, boolean[] isHandled) throws AppSQLException {
         if (isHandled[0]) return sqlTool;
+        isHandled[0] = true;
         int index = parsedMethod.indexOf(DaoKeyWord.Order.innername);
         String two = parsedMethod.get(index + 1);
-        if (two.equals(DaoKeyWord.By.innername)) {
+        if (DaoKeyWord.By.equals(two)) {
             String field = parsedMethod.get(index + 2);
             String f = tableInfo.getFullColumns().get(field);
             if (StringKit.isNotBlank(f)) {

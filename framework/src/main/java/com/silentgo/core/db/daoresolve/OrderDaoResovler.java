@@ -27,7 +27,7 @@ public class OrderDaoResovler implements DaoResolver {
     public <T extends TableModel> SQLTool processSQL(String methodName, Class<?> returnType, Object[] objects, List<String> parsedMethod, BaseTableInfo tableInfo, SQLTool sqlTool, boolean[] isHandled) throws AppSQLException {
         int index = parsedMethod.indexOf(DaoKeyWord.Order.innername);
         String two = parsedMethod.get(index + 1);
-        if (two.equals(DaoKeyWord.By.innername)) {
+        if (DaoKeyWord.By.equals(two)) {
             String field = parsedMethod.get(index + 2);
             String sort = parsedMethod.get(index + 3);
             String f = tableInfo.getFullColumns().get(field);

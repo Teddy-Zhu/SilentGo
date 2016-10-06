@@ -9,11 +9,11 @@ package com.silentgo.core.db.funcanalyse;
  *         Created by teddyzhu on 16/9/30.
  */
 public enum DaoKeyWord {
-    Delete("Delete"),
-    Update("Update"),
-    Insert("Insert"),
+    Delete("delete"),
+    Update("update"),
+    Insert("insert"),
     Order("Order"),
-    Query("Query"),
+    Query("query"),
     Group("Group"),
     Limit("Limit"),
     By("By"),
@@ -38,5 +38,9 @@ public enum DaoKeyWord {
             vals[i] = DaoKeyWord.values()[i].innername;
         }
         return vals;
+    }
+
+    public boolean equals(String m) {
+        return innername.equals(m);
     }
 }

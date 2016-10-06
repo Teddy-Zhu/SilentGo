@@ -71,6 +71,7 @@ public class MethodAOPFactory extends BaseFactory {
 
 
         beansMap.forEach((k, v) -> {
+            if (v.getSourceClass().isInterface()) return;
             List<Annotation> annotations = Arrays.asList(v.getSourceClass().getAnnotations());
             annotations = filterAnnotation(annotations);
             Method[] methods = v.getSourceClass().getDeclaredMethods();
