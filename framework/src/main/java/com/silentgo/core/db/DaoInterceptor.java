@@ -10,7 +10,6 @@ import com.silentgo.orm.SilentGoOrm;
 import com.silentgo.utils.ClassKit;
 import com.silentgo.utils.logger.Logger;
 import com.silentgo.utils.logger.LoggerFactory;
-import com.sun.xml.internal.rngom.parse.host.Base;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;

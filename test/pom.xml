@@ -30,7 +30,7 @@
         <dependency>
             <groupId>com.silentgo</groupId>
             <artifactId>framework</artifactId>
-            <version>0.0.11</version>
+            <version>0.0.12</version>
         </dependency>
     </dependencies>
     <build>

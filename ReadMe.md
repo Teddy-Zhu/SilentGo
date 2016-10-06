@@ -6,7 +6,7 @@ add maven dependency
 <dependency>
     <groupId>com.silentgo</groupId>
     <artifactId>framework</artifactId>
-    <version>0.0.8</version>
+    <version>0.0.12</version>
 </dependency>
 ```
 
@@ -48,3 +48,33 @@ validate parameters
 	you can custom validator for parameters yourself
 
 
+#### dao
+
+generate dao and db model by tools in framework
+
+how to use
+
+dao class
+```java
+@Service
+public interface SysMenuDao extends BaseDao<SysMenu> {
+
+    SysMenu queryOneById(String id);
+}
+```
+use 
+
+```java
+
+    @Inject
+    public SysMenuDao sysMenuDao;
+
+    public String functodo() {
+        //function name with rules
+        //you can use directly without code;
+        SysMenu menuone = sysMenuDao.queryOneById("1");
+        
+        //for baseDao
+        List<SysMenu> menu = sysMenuDao.queryAll();
+    }
+```
