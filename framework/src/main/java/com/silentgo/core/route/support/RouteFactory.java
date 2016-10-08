@@ -72,6 +72,28 @@ public class RouteFactory extends BaseFactory {
         return null;
     }
 
+    /**
+     * match all
+     *
+     * @param url
+     * @return
+     */
+    public List<Route> matchRoutes(String url) {
+        List<Route> routes = new ArrayList<>();
+
+        if (hashRoute.containsKey(url)) {
+            routes.add(new Route(hashRoute.get(url), null));
+        }
+
+        for (RegexRoute route : regexRoute) {
+            Matcher matcher = route.getPattern().matcher(url);
+            if (matcher.matches()) {
+                routes.add(new Route(route, matcher));
+            }
+        }
+        return routes;
+    }
+
     @Override
     public boolean initialize(SilentGo me) {
 

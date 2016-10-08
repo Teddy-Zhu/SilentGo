@@ -51,7 +51,7 @@ public class RouteAction extends ActionChain {
         RouteFactory routeFactory = me.getFactory(RouteFactory.class);
 
         Route ret = me.getConfig().getRoutePaser().praseRoute(routeFactory, param);
-        param.setHandled(true);
+
         if (ret == null) {
             LOGGER.debug("can not match url {}", param.getRequestURL());
             new ErrorRener().render(request, response, HttpStatus.Code.NOT_FOUND, null, isDev);

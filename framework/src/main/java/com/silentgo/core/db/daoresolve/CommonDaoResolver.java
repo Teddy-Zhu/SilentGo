@@ -8,6 +8,7 @@ import com.silentgo.core.db.TableModel;
 import com.silentgo.core.exception.AppSQLException;
 import com.silentgo.core.plugin.db.bridge.mysql.SQLTool;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,12 +37,12 @@ public class CommonDaoResolver implements DaoResolver {
     }};
 
     @Override
-    public boolean handle(String methodName, List<String> parsedMethod) {
+    public boolean handle(String methodName, List<String> parsedMethod, List<Annotation> annotations) {
         return methodNames.contains(methodName);
     }
 
     @Override
-    public <T extends TableModel> SQLTool processSQL(String methodName, Class<?> returnType, Object[] objects, List<String> parsedMethod, BaseTableInfo tableInfo, SQLTool sqlTool, boolean[] isHandled) throws AppSQLException {
+    public <T extends TableModel> SQLTool processSQL(String methodName, Class<?> returnType, Object[] objects, List<String> parsedMethod, BaseTableInfo tableInfo, SQLTool sqlTool, List<Annotation> annotations, boolean[] isHandled) throws AppSQLException {
         BaseDaoDialect daoDialect = SilentGo.getInstance().getFactory(DialectFactory.class).getDialect(tableInfo.getType());
         isHandled[0] = true;
         switch (methodName) {

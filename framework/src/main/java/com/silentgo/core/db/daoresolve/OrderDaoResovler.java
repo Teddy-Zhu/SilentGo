@@ -6,6 +6,7 @@ import com.silentgo.core.db.funcanalyse.DaoKeyWord;
 import com.silentgo.core.exception.AppSQLException;
 import com.silentgo.core.plugin.db.bridge.mysql.SQLTool;
 
+import java.lang.annotation.Annotation;
 import java.util.List;
 
 /**
@@ -18,12 +19,12 @@ import java.util.List;
  */
 public class OrderDaoResovler implements DaoResolver {
     @Override
-    public boolean handle(String methodName, List<String> parsedMethod) {
+    public boolean handle(String methodName, List<String> parsedMethod, List<Annotation> annotations) {
         return parsedMethod.contains(DaoKeyWord.Order.innername);
     }
 
     @Override
-    public <T extends TableModel> SQLTool processSQL(String methodName, Class<?> returnType, Object[] objects, List<String> parsedMethod, BaseTableInfo tableInfo, SQLTool sqlTool, boolean[] isHandled) throws AppSQLException {
+    public <T extends TableModel> SQLTool processSQL(String methodName, Class<?> returnType, Object[] objects, List<String> parsedMethod, BaseTableInfo tableInfo, SQLTool sqlTool, List<Annotation> annotations, boolean[] isHandled) throws AppSQLException {
         int index = parsedMethod.indexOf(DaoKeyWord.Order.innername);
         String two = parsedMethod.get(index + 1);
         if (DaoKeyWord.By.equals(two)) {

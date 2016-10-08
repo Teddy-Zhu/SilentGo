@@ -44,7 +44,9 @@ public class BaseConfig extends InterConfig {
     private RoutePaser routePaser = new DefaultRouteParser();
 
     private String dbType;
-    private String BaseView = Const.BaseView;
+    private String BaseViewPath = Const.BaseView;
+
+    private Map<String, String> staticMapping = new HashMap<>();
 
     private Class<? extends CacheManager> cacheClz = EhCache.class;
 
@@ -75,6 +77,10 @@ public class BaseConfig extends InterConfig {
         add(new ValidatorInterceptor());
     }};
 
+    public Map<String, String> getStaticMapping() {
+        return staticMapping;
+    }
+
     public JsonPaser getJsonPaser() {
         return jsonPaser;
     }
@@ -91,12 +97,12 @@ public class BaseConfig extends InterConfig {
         this.routePaser = routePaser;
     }
 
-    public String getBaseView() {
-        return BaseView;
+    public String getBaseViewPath() {
+        return BaseViewPath;
     }
 
-    public void setBaseView(String baseView) {
-        BaseView = baseView;
+    public void setBaseViewPath(String baseViewPath) {
+        BaseViewPath = baseViewPath;
     }
 
     public List<String> getStaticStartWith() {

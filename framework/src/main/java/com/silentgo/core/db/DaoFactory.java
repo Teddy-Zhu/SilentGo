@@ -10,6 +10,8 @@ import com.silentgo.core.plugin.db.generate.TableMetaGenerate;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.orm.base.DBConnect;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -33,6 +35,8 @@ public class DaoFactory extends BaseFactory {
     //Dao - model
     private Map<Class<? extends BaseDao>, Class<? extends TableModel>> reflectMap;
 
+    private Map<Method, List<Annotation>> methodListMap;
+
     private static final String Dot = ".";
 
     @Override
@@ -41,6 +45,7 @@ public class DaoFactory extends BaseFactory {
         tableInfoMap = new HashMap<>();
         classTableInfoMap = new HashMap<>();
         reflectMap = new HashMap<>();
+        methodListMap = new HashMap<>();
 
         me.getFactory(SqlFactory.class);
 
@@ -97,6 +102,10 @@ public class DaoFactory extends BaseFactory {
     @Override
     public boolean destroy(SilentGo me) throws AppReleaseException {
         return true;
+    }
+
+    public Map<Method, List<Annotation>> getMethodListMap() {
+        return methodListMap;
     }
 
     public Map<Class<? extends TableModel>, BaseTableInfo> getTableInfoMap() {

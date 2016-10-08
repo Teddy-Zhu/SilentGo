@@ -16,6 +16,7 @@ import com.silentgo.core.route.support.RouteFactory;
 public class DefaultRouteParser implements RoutePaser {
     @Override
     public Route praseRoute(RouteFactory routeFactory, ActionParam actionParam) {
+        //List<Route> routes = routeFactory.matchRoutes(actionParam.getRequestURL());
 
         return routeFactory.matchRoute(actionParam.getRequestURL());
     }

@@ -5,6 +5,7 @@ import com.silentgo.core.db.TableModel;
 import com.silentgo.core.exception.AppSQLException;
 import com.silentgo.core.plugin.db.bridge.mysql.SQLTool;
 
+import java.lang.annotation.Annotation;
 import java.util.List;
 
 /**
@@ -17,12 +18,13 @@ import java.util.List;
  */
 public interface DaoResolver {
 
-    public boolean handle(String methodName, List<String> parsedMethod);
+    public boolean handle(String methodName, List<String> parsedMethod, List<Annotation> annotations);
 
     public <T extends TableModel> SQLTool processSQL(String methodName,
                                                      Class<?> returnType, Object[] objects,
                                                      List<String> parsedMethod,
                                                      BaseTableInfo tableInfo,
                                                      SQLTool sqlTool,
+                                                     List<Annotation> annotations,
                                                      boolean[] isHandled) throws AppSQLException;
 }

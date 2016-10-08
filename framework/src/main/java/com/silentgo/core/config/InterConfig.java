@@ -24,6 +24,8 @@ public class InterConfig {
     private final ThreadLocal<SilentGoContext> ctx = new ThreadLocal<>();
     private ActionChain actionChain;
 
+    private ActionChain routeAction;
+
     private PropKit propKit;
 
     private PropKit userProp;
@@ -64,5 +66,13 @@ public class InterConfig {
 
     public void setUserProp(PropKit userProp) {
         this.userProp = userProp;
+    }
+
+    public ActionChain getRouteAction() {
+        return routeAction;
+    }
+
+    public void setRouteAction(ActionChain routeAction) {
+        this.routeAction = routeAction;
     }
 }

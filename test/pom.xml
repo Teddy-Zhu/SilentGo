@@ -8,10 +8,12 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>test</artifactId>
     <packaging>war</packaging>
-    <name>test-web</name>
+    <name>test</name>
     <url>http://maven.apache.org</url>
     <properties>
         <servlet.version>3.1.0</servlet.version>
+        <slf4j.version>1.7.12</slf4j.version>
+        <log4j.version>1.2.17</log4j.version>
     </properties>
     <dependencies>
         <dependency>
@@ -27,11 +29,30 @@
             <scope>provided</scope>
         </dependency>
 
+
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>2.10.1</version>
+        </dependency>
         <dependency>
             <groupId>com.silentgo</groupId>
             <artifactId>framework</artifactId>
             <version>0.0.13</version>
         </dependency>
+
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+
+
     </dependencies>
     <build>
         <finalName>test</finalName>

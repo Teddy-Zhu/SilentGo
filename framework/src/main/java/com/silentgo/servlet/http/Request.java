@@ -1,6 +1,8 @@
 package com.silentgo.servlet.http;
 
 
+import com.silentgo.core.SilentGo;
+
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.util.HashMap;
 import java.util.Map;
@@ -87,5 +89,15 @@ public class Request extends HttpServletRequestWrapper {
 
     public Map<String, Object> getResolvedMap() {
         return resolvedMap;
+    }
+
+    /**
+     * forward to another controller
+     * @param controllerName
+     * @throws Throwable
+     */
+    public void forward(String controllerName) throws Throwable {
+        SilentGo instance = SilentGo.getInstance();
+        instance.getConfig().getRouteAction().doAction(SilentGo.getInstance().getConfig().getCtx().get().getActionParam());
     }
 }

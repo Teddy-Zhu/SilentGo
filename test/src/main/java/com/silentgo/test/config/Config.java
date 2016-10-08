@@ -21,6 +21,8 @@ public class Config implements com.silentgo.core.config.Config {
         config.setPropfile("app.properties");
         config.setUserProp(new PropKit("app.properties"));
         config.addEndStatic(".ico");
+        config.addEndStatic(".js");
+        config.addStaticMapping("/js/", "/");
     }
 
     @Override

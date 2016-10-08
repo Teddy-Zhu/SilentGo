@@ -100,7 +100,6 @@ public class MultiPartDispatch implements ParameterDispatcher {
             });
             if (files.size() > 0) {
                 param.setRequest(new MultiPartRequest(request, files));
-                SilentGo.getInstance().getConfig().getCtx().get().setRequest(param.getRequest());
             }
         } catch (FileUploadException e) {
             e.printStackTrace();

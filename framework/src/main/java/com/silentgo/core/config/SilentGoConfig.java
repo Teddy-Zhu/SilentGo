@@ -7,9 +7,6 @@ import com.silentgo.core.db.DBType;
 import com.silentgo.core.exception.AppBuildException;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.orm.base.DBConnect;
-import com.silentgo.servlet.SilentGoContext;
-import com.silentgo.servlet.http.Request;
-import com.silentgo.servlet.http.Response;
 import com.silentgo.utils.CollectionKit;
 import com.silentgo.utils.PropKit;
 import com.silentgo.utils.StringKit;
@@ -84,8 +81,8 @@ public class SilentGoConfig extends BaseConfig {
         return CollectionKit.ListAdd(getStaticStartWith(), name);
     }
 
-    public boolean setCtx(Request request, Response response) {
-        getCtx().set(new SilentGoContext(response, request));
+    public boolean addStaticMapping(String prefix, String replacement) {
+        CollectionKit.MapAdd(getStaticMapping(), prefix, replacement);
         return true;
     }
 

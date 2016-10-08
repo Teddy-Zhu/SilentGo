@@ -2,6 +2,7 @@ package com.silentgo.servlet;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.silentgo.core.action.ActionParam;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
 
@@ -15,9 +16,7 @@ import com.silentgo.servlet.http.Response;
  */
 public class SilentGoContext {
 
-    Response response;
-
-    Request request;
+    ActionParam actionParam;
 
 
     //origin
@@ -32,9 +31,8 @@ public class SilentGoContext {
 
     private String jsonString;
 
-    public SilentGoContext(Response response, Request request) {
-        this.response = response;
-        this.request = request;
+    public SilentGoContext(ActionParam param) {
+        this.actionParam = param;
     }
 
     public JSONObject getJsonObject() {
@@ -54,19 +52,19 @@ public class SilentGoContext {
     }
 
     public Response getResponse() {
-        return response;
+        return actionParam.getResponse();
     }
 
     public void setResponse(Response response) {
-        this.response = response;
+        this.actionParam.setResponse(response);
     }
 
     public Request getRequest() {
-        return request;
+        return actionParam.getRequest();
     }
 
     public void setRequest(Request request) {
-        this.request = request;
+        actionParam.setRequest(request);
     }
 
     public JSONObject getParameterJson() {
@@ -91,5 +89,9 @@ public class SilentGoContext {
 
     public void setJsonString(String jsonString) {
         this.jsonString = jsonString;
+    }
+
+    public ActionParam getActionParam() {
+        return actionParam;
     }
 }

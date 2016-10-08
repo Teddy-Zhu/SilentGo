@@ -46,6 +46,7 @@ public class ActionFactory extends BaseFactory {
 
         ActionChain result = actionChains.get(actionChains.size() - 1);
 
+        me.getConfig().setRouteAction(result);
         if (result instanceof RouteAction) {
             for (int i = actionChains.size() - 1; i >= 0; i--) {
                 ActionChain temp = actionChains.get(i);

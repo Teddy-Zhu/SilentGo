@@ -3,6 +3,8 @@ package com.silentgo.core.action;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
 
+import javax.servlet.FilterChain;
+
 /**
  * Project : silentgo
  * com.silentgo.core.action
@@ -13,27 +15,18 @@ import com.silentgo.servlet.http.Response;
  */
 public class ActionParam {
 
-    private boolean isHandled;
-
     private Request request;
     private Response response;
 
     private String requestURL;
 
+    private FilterChain filterChain;
 
-    public ActionParam(boolean isHandled, Request request, Response response, String requestURL) {
-        this.isHandled = isHandled;
+    public ActionParam(Request request, Response response, String requestURL, FilterChain filterChain) {
         this.request = request;
         this.response = response;
         this.requestURL = requestURL;
-    }
-
-    public boolean isHandled() {
-        return isHandled;
-    }
-
-    public void setHandled(boolean handled) {
-        isHandled = handled;
+        this.filterChain = filterChain;
     }
 
     public Request getRequest() {
@@ -51,4 +44,13 @@ public class ActionParam {
     public void setRequest(Request request) {
         this.request = request;
     }
+
+    public void setResponse(Response response) {
+        this.response = response;
+    }
+
+    public FilterChain getFilterChain() {
+        return filterChain;
+    }
+
 }

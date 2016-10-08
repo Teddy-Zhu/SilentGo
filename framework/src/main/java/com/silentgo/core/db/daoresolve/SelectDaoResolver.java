@@ -2,11 +2,12 @@ package com.silentgo.core.db.daoresolve;
 
 import com.silentgo.core.db.BaseTableInfo;
 import com.silentgo.core.db.TableModel;
-import com.silentgo.core.db.funcanalyse.DaoKeyWord;
+import com.silentgo.core.db.annotation.Select;
 import com.silentgo.core.exception.AppSQLException;
 import com.silentgo.core.plugin.db.bridge.mysql.SQLTool;
 
 import java.lang.annotation.Annotation;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -15,24 +16,18 @@ import java.util.List;
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>
- *         Created by teddyzhu on 16/9/30.
+ *         Created by teddyzhu on 2016/10/8.
  */
-public class GroupDaoResovler implements DaoResolver {
+public class SelectDaoResolver implements DaoResolver {
     @Override
     public boolean handle(String methodName, List<String> parsedMethod, List<Annotation> annotations) {
-        return parsedMethod.contains(DaoKeyWord.Order.innername);
+        return annotations.stream().anyMatch(annotation -> Select.class.equals(annotation.annotationType()));
     }
 
     @Override
     public <T extends TableModel> SQLTool processSQL(String methodName, Class<?> returnType, Object[] objects, List<String> parsedMethod, BaseTableInfo tableInfo, SQLTool sqlTool, List<Annotation> annotations, boolean[] isHandled) throws AppSQLException {
-        int index = parsedMethod.indexOf(DaoKeyWord.Order.innername);
-        String two = parsedMethod.get(index + 1);
-        if (DaoKeyWord.By.equals(two)) {
-            String f = DaoResolveKit.getField(parsedMethod, tableInfo, index + 2);
-            sqlTool.whereEquals(f);
-        } else {
-            throw new AppSQLException("error syntax : after Order : " + two);
-        }
-        return null;
+        isHandled[0] = true;
+        Select select = (Select) annotations.stream().filter(annotation -> Select.class.equals(annotation.annotationType())).findFirst().get();
+        return new SQLTool(select.value(), Arrays.asList(objects));
     }
 }

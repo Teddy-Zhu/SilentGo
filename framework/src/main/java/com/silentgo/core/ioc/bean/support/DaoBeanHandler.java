@@ -6,10 +6,11 @@ import com.silentgo.core.db.BaseTableInfo;
 import com.silentgo.core.db.DaoFactory;
 import com.silentgo.core.db.TableModel;
 import com.silentgo.core.ioc.bean.BeanDefinition;
-import com.silentgo.core.kit.CGLibKit;
 import com.silentgo.utils.ClassKit;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -40,5 +41,11 @@ public class DaoBeanHandler implements BeanHandler {
         }
 
         BeanBuildKit.buildBaseDaoInterface(beanDefinitions, clz);
+
+        for (Method method : clz.getDeclaredMethods()) {
+            Annotation[] ans = method.getAnnotations();
+            daoFactory.getMethodListMap().put(method, Arrays.asList(ans));
+        }
+
     }
 }

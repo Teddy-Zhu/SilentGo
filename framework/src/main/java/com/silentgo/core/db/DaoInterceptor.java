@@ -14,6 +14,7 @@ import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -54,11 +55,12 @@ public class DaoInterceptor implements MethodInterceptor {
 
         Class<?> methodRetType = method.getReturnType();
         boolean[] isHandled = new boolean[]{false};
+        List<Annotation> annotations = daoFactory.getMethodListMap().get(method);
         for (DaoResolver daoResolver : daoResolveFactory.getResolverList()) {
-            if (daoResolver.handle(methodName, parsedString) && !isHandled[0]) {
+            if (daoResolver.handle(methodName, parsedString, annotations) && !isHandled[0]) {
                 try {
                     sqlTool = daoResolver.processSQL(methodName, methodRetType, objects, parsedString,
-                            tableInfo, sqlTool, isHandled);
+                            tableInfo, sqlTool, annotations, isHandled);
                 } catch (AppSQLException e) {
                     e.printStackTrace();
                 }

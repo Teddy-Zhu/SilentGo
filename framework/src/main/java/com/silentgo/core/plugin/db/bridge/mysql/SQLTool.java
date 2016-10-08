@@ -48,6 +48,7 @@ public class SQLTool {
     }
 
     public SQLTool(String sql, List<Object> paras) {
+        this.cached = true;
         this.sql = sql;
         this.params = paras;
     }

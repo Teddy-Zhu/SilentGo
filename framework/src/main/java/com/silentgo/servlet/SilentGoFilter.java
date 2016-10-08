@@ -103,8 +103,8 @@ public class SilentGoFilter implements Filter {
         requestPath = requestPath.endsWith("/") ? requestPath.substring(0, requestPath.length() - 1) : requestPath;
         requestPath = requestPath.length() == 0 ? Const.Slash : requestPath;
 
-        ActionParam param = new ActionParam(false, request, response, requestPath);
-        globalConfig.getCtx().set(new SilentGoContext(response, request));
+        ActionParam param = new ActionParam(request, response, requestPath, filterChain);
+        globalConfig.getCtx().set(new SilentGoContext(param));
         try {
             long start = System.currentTimeMillis();
             LOGGER.debug("action start");
@@ -116,9 +116,6 @@ public class SilentGoFilter implements Filter {
         } finally {
             globalConfig.getCtx().remove();
         }
-
-        if (!param.isHandled())
-            filterChain.doFilter(request, response);
     }
 
 
