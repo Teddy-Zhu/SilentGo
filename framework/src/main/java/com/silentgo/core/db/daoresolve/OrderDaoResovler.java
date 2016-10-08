@@ -5,7 +5,6 @@ import com.silentgo.core.db.TableModel;
 import com.silentgo.core.db.funcanalyse.DaoKeyWord;
 import com.silentgo.core.exception.AppSQLException;
 import com.silentgo.core.plugin.db.bridge.mysql.SQLTool;
-import com.silentgo.utils.StringKit;
 
 import java.util.List;
 
@@ -28,18 +27,14 @@ public class OrderDaoResovler implements DaoResolver {
         int index = parsedMethod.indexOf(DaoKeyWord.Order.innername);
         String two = parsedMethod.get(index + 1);
         if (DaoKeyWord.By.equals(two)) {
-            String field = parsedMethod.get(index + 2);
+            String f = DaoResolveKit.getField(parsedMethod, tableInfo, index + 2);
             String sort = parsedMethod.get(index + 3);
-            String f = tableInfo.getFullColumns().get(field);
-            if (StringKit.isNotBlank(f)) {
-                if ("desc".equals(sort.toLowerCase())) {
-                    sqlTool.orderByDesc(f);
-                } else {
-                    sqlTool.orderByAsc(f);
-                }
+            if (DaoKeyWord.Desc.equals(sort)) {
+                sqlTool.orderByDesc(f);
             } else {
-                throw new AppSQLException("the table [" + tableInfo.getTableName() + "] do not contains column [" + field + "]");
+                sqlTool.orderByAsc(f);
             }
+
         } else {
             throw new AppSQLException("error syntax : after Order : " + two);
         }

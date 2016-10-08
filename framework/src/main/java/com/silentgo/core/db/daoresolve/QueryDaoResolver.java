@@ -6,7 +6,6 @@ import com.silentgo.core.db.funcanalyse.DaoKeyWord;
 import com.silentgo.core.exception.AppSQLException;
 import com.silentgo.core.plugin.db.bridge.mysql.SQLTool;
 import com.silentgo.utils.Assert;
-import com.silentgo.utils.StringKit;
 
 import java.util.Collection;
 import java.util.List;
@@ -22,7 +21,7 @@ import java.util.List;
 public class QueryDaoResolver implements DaoResolver {
     @Override
     public boolean handle(String methodName, List<String> parsedMethod) {
-        return DaoKeyWord.Query.match(parsedMethod.get(0));
+        return DaoKeyWord.Query.equals(parsedMethod.get(0));
     }
 
     @Override
@@ -31,13 +30,8 @@ public class QueryDaoResolver implements DaoResolver {
         isHandled[0] = true;
         String two = parsedMethod.get(1);
         if (DaoKeyWord.By.equals(two)) {
-            String field = parsedMethod.get(2);
-            String f = tableInfo.getFullColumns().get(field);
-            if (StringKit.isNotBlank(f)) {
-                sqlTool.whereEquals(f);
-            } else {
-                throw new AppSQLException("the table [" + tableInfo.getTableName() + "] do not contains column [" + field + "]");
-            }
+            String f = DaoResolveKit.getField(parsedMethod, tableInfo, 2);
+            sqlTool.whereEquals(f);
         } else if (DaoKeyWord.One.equals(two)) {
             sqlTool.limit(1, 1);
         } else if (DaoKeyWord.List.equals(two)) {

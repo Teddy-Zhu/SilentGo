@@ -1,6 +1,7 @@
 package com.silentgo.core.config;
 
 import com.silentgo.core.SilentGo;
+import com.silentgo.core.cache.CacheManager;
 import com.silentgo.core.db.DBConfig;
 import com.silentgo.core.db.DBType;
 import com.silentgo.core.exception.AppBuildException;
@@ -69,6 +70,10 @@ public class SilentGoConfig extends BaseConfig {
             }
         }
         return (T) factory;
+    }
+
+    public <T extends CacheManager> T getCacheManager(Class<T> name) {
+        return (T) getCacheManagerMap().get(name);
     }
 
     public boolean addEndStatic(String name) {

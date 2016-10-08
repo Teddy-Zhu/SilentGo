@@ -5,10 +5,6 @@ import com.silentgo.core.build.Factory;
 import com.silentgo.core.config.SilentGoConfig;
 import com.silentgo.core.exception.AppReleaseException;
 import com.silentgo.core.support.BaseFactory;
-import com.silentgo.utils.CollectionKit;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Project : silentgo
@@ -37,7 +33,7 @@ public class SqlFactory extends BaseFactory {
 
     @Override
     public boolean destroy(SilentGo me) throws AppReleaseException {
-        return false;
+        return true;
     }
 
 

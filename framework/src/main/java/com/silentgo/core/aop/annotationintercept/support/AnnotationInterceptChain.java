@@ -24,6 +24,10 @@ public class AnnotationInterceptChain {
 
     private int size = 0;
 
+    public AOPPoint getPoint() {
+        return point;
+    }
+
     public AnnotationInterceptChain(AOPPoint point, List<Map.Entry<Annotation, IAnnotation>> interceptors) {
         this.point = point;
         this.interceptors = interceptors;

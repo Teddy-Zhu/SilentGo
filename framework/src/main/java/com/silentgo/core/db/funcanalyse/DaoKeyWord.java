@@ -16,7 +16,9 @@ public enum DaoKeyWord {
     Query("query"),
     Group("Group"),
     Limit("Limit"),
+    And("And"),
     By("By"),
+    Set("Set"),
     One("One"),
     Desc("desc"),
     Asc("asc"),
@@ -26,10 +28,6 @@ public enum DaoKeyWord {
 
     DaoKeyWord(String innername) {
         this.innername = innername;
-    }
-
-    public boolean match(String m) {
-        return this.innername.equals(m);
     }
 
     public static String[] getValues() {

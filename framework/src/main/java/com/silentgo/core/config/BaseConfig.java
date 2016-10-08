@@ -2,6 +2,8 @@ package com.silentgo.core.config;
 
 import com.silentgo.core.aop.annotationintercept.support.AnnotationInterceptor;
 import com.silentgo.core.aop.validator.support.ValidatorInterceptor;
+import com.silentgo.core.cache.CacheManager;
+import com.silentgo.core.cache.Ehcache;
 import com.silentgo.core.db.DBType;
 import com.silentgo.core.ioc.bean.BeanFactory;
 import com.silentgo.core.ioc.bean.SilentGoBeanFactory;
@@ -44,6 +46,8 @@ public class BaseConfig extends InterConfig {
     private String dbType;
     private String BaseView = Const.BaseView;
 
+    private Class<? extends CacheManager> cacheClz = Ehcache.class;
+
     private List<String> staticEndWith = new ArrayList<>();
     private List<String> staticStartWith = new ArrayList<>();
 
@@ -56,6 +60,14 @@ public class BaseConfig extends InterConfig {
     private String encoding = "utf-8";
 
     private int contextPathLength;
+
+    public Class<? extends CacheManager> getCacheClz() {
+        return cacheClz;
+    }
+
+    public void setCacheClz(Class<? extends CacheManager> cacheClz) {
+        this.cacheClz = cacheClz;
+    }
 
     @SuppressWarnings("unchecked")
     private ArrayList interceptors = new ArrayList() {{
