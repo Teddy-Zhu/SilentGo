@@ -3,7 +3,7 @@ package com.silentgo.core.config;
 import com.silentgo.core.aop.annotationintercept.support.AnnotationInterceptor;
 import com.silentgo.core.aop.validator.support.ValidatorInterceptor;
 import com.silentgo.core.cache.CacheManager;
-import com.silentgo.core.cache.Ehcache;
+import com.silentgo.core.cache.EhCache;
 import com.silentgo.core.db.DBType;
 import com.silentgo.core.ioc.bean.BeanFactory;
 import com.silentgo.core.ioc.bean.SilentGoBeanFactory;
@@ -46,7 +46,7 @@ public class BaseConfig extends InterConfig {
     private String dbType;
     private String BaseView = Const.BaseView;
 
-    private Class<? extends CacheManager> cacheClz = Ehcache.class;
+    private Class<? extends CacheManager> cacheClz = EhCache.class;
 
     private List<String> staticEndWith = new ArrayList<>();
     private List<String> staticStartWith = new ArrayList<>();
