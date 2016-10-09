@@ -8,10 +8,10 @@ import com.silentgo.core.route.support.RouteFactory;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.RequestMethod;
 import com.silentgo.servlet.http.Response;
-import com.silentgo.utils.CollectionKit;
 import com.silentgo.utils.StringKit;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Project : silentgo
@@ -31,11 +31,19 @@ public class DefaultRouteParser implements RoutePaser {
 
         Iterator<Route> routes = routeMap.keySet().iterator();
 
+        Route parsed = null;
+        Double preCount = 0.0;
         for (; routes.hasNext(); ) {
             Route now = routes.next();
             Double[] matchCount = new Double[]{routeMap.get(now)};
             RouteMatch routeMatch = now.getRoute().getAdviser().getAnnotation(RouteMatch.class);
-            if (routeMatch == null) continue;
+            if (routeMatch == null) {
+                if (preCount < matchCount[0]) {
+                    parsed = now;
+                }
+                preCount = matchCount[0];
+                continue;
+            }
 
             Request request = actionParam.getRequest();
 
@@ -62,22 +70,15 @@ public class DefaultRouteParser implements RoutePaser {
             }
             if (!validateConsumes(routeMatch.consumes(), request, matchCount)) {
                 routes.remove();
-            } else {
-                CollectionKit.MapAdd(routeMap, now, matchCount[0]);
+                continue;
             }
+            if (preCount < matchCount[0]) {
+                parsed = now;
+            }
+            preCount = matchCount[0];
         }
 
-        if (routeMap.isEmpty()) {
-            return null;
-        }
-        List<Map.Entry<Route, Double>> list = new ArrayList(routeMap.entrySet());
-        Collections.sort(list, (o1, o2) -> {
-            double x = o1.getValue();
-            double y = o2.getValue();
-            return (x < y) ? 1 : ((x == y) ? 0 : -1);
-        });
-
-        return list.get(0).getKey();
+        return parsed;
     }
 
     private boolean validateConsumes(String[] consumes, Request request, Double[] count) {
@@ -160,6 +161,5 @@ public class DefaultRouteParser implements RoutePaser {
         }
         return false;
     }
-
 
 }
