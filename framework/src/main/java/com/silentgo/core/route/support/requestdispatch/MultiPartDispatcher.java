@@ -1,15 +1,10 @@
-package com.silentgo.core.route.support.dispatcher;
+package com.silentgo.core.route.support.requestdispatch;
 
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.action.ActionParam;
 import com.silentgo.core.config.Const;
 import com.silentgo.core.config.FileUploadConfig;
-import com.silentgo.core.exception.AppParameterPaserException;
-import com.silentgo.core.exception.AppParameterResolverException;
-import com.silentgo.core.route.ParameterDispatcher;
-import com.silentgo.core.route.Route;
-import com.silentgo.core.route.annotation.ParamDispatcher;
-import com.silentgo.core.route.support.paramresolver.ParameterResolveFactory;
+import com.silentgo.core.route.support.requestdispatch.annotation.RequestDispatch;
 import com.silentgo.servlet.http.MultiFile;
 import com.silentgo.servlet.http.MultiPartRequest;
 import com.silentgo.servlet.http.Request;
@@ -27,17 +22,18 @@ import java.util.List;
 
 /**
  * Project : silentgo
- * com.silentgo.core.route.support.dispatcher
+ * com.silentgo.core.route.support.paramdispatcher
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>
  *         Created by teddyzhu on 16/9/1.
  */
-@ParamDispatcher
-public class MultiPartDispatch implements ParameterDispatcher {
+@RequestDispatch
+public class MultiPartDispatcher implements RequestDispatcher {
 
     private static final String FILE_CLEANING_TRACKER_ATTRIBUTE
-            = MultiPartDispatch.class.getName() + ".FileCleaningTracker";
+            = MultiPartDispatcher.class.getName() + ".FileCleaningTracker";
+
 
     @Override
     public void release(ActionParam param) {
@@ -51,12 +47,7 @@ public class MultiPartDispatch implements ParameterDispatcher {
     }
 
     @Override
-    public Integer priority() {
-        return 20;
-    }
-
-    @Override
-    public void dispatch(ParameterResolveFactory parameterResolveFactory, ActionParam param, Route route, Object[] args) throws AppParameterResolverException, AppParameterPaserException {
+    public void dispatch(ActionParam param) {
         Request request = param.getRequest();
 
         ServletFileUpload servletFileUpload = new ServletFileUpload();
@@ -78,26 +69,30 @@ public class MultiPartDispatch implements ParameterDispatcher {
             List<FileItem> items = servletFileUpload.parseRequest(request);
 
             List<MultiFile> files = new ArrayList<>();
-            items.stream().filter(item -> !item.isFormField()).forEach(item -> {
-                String fileName = item.getName();
-                String ext = fileName.substring(fileName.lastIndexOf(".") + 1);
-                String name = item.getFieldName();
-                String contentType = item.getContentType();
-                long size = item.getSize();
-                File file = null;
-                InputStream inputStream = null;
-                try {
-                    if (config.isAutoSave()) {
-                        file = new File(config.getUploadPath() + "/Saved/" + name + new Date().getTime() + "." + ext);
-                        item.write(file);
-                    } else {
-                        inputStream = item.getInputStream();
+            for (FileItem item : items) {
+                if (item.isFormField()) {
+                    request.addParameter(item.getFieldName(), new String(item.get()));
+                } else {
+                    String fileName = item.getName();
+                    String ext = fileName.substring(fileName.lastIndexOf(".") + 1);
+                    String name = item.getFieldName();
+                    String contentType = item.getContentType();
+                    long size = item.getSize();
+                    File file = null;
+                    InputStream inputStream = null;
+                    try {
+                        if (config.isAutoSave()) {
+                            file = new File(config.getUploadPath() + "/Saved/" + name + new Date().getTime() + "." + ext);
+                            item.write(file);
+                        } else {
+                            inputStream = item.getInputStream();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    files.add(new MultiFile(name, fileName, contentType, ext, size, inputStream, file));
                 }
-                files.add(new MultiFile(name, fileName, contentType, ext, size, inputStream, file));
-            });
+            }
             if (files.size() > 0) {
                 param.setRequest(new MultiPartRequest(request, files));
             }

@@ -1,4 +1,4 @@
-package com.silentgo.core.route.annotation;
+package com.silentgo.core.route.support.paramdispatcher.annotation;
 
 import java.lang.annotation.*;
 

@@ -18,7 +18,6 @@ public class Config implements com.silentgo.core.config.Config {
 
         config.setDbType(DBType.MYSQL.getName());
 
-        config.setPropfile("app.properties");
         config.setUserProp(new PropKit("app.properties"));
         config.addEndStatic(".ico");
         config.addEndStatic(".js");

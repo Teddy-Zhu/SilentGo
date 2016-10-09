@@ -58,7 +58,7 @@ public class StaticFileAction extends ActionChain {
 
 
             if (!forward)
-                param.getFilterChain().doFilter(param.getRequest(), param.getResponse());
+                param.doFilter(param.getRequest(), param.getResponse());
             return;
         }
         nextAction.doAction(param);

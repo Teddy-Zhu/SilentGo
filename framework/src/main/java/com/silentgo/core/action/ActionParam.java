@@ -4,6 +4,8 @@ import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
 
 import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import java.io.IOException;
 
 /**
  * Project : silentgo
@@ -49,8 +51,8 @@ public class ActionParam {
         this.response = response;
     }
 
-    public FilterChain getFilterChain() {
-        return filterChain;
+    public void doFilter(Request request, Response response) throws IOException, ServletException {
+        filterChain.doFilter(request, response);
     }
 
 }

@@ -36,6 +36,15 @@ public class StringKit {
         return str == null;
     }
 
+    public static String[] getLeftRight(String source, String split) {
+        String[] ret = new String[]{"", ""};
+        int index = source.indexOf(split);
+        if (index == -1) return ret;
+        ret[0] = source.substring(0, index);
+        ret[1] = source.substring(index + split.length());
+        return ret;
+    }
+
     public static String getLeft(String source, String split) {
         return source.substring(0, source.indexOf(split));
     }

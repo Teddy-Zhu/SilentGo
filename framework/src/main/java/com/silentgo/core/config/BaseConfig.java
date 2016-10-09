@@ -34,7 +34,8 @@ public class BaseConfig extends InterConfig {
         put(Const.FileUploadConfig, new FileUploadConfig(ClassKit.getWebRootPath() + "/UploadFile", -1, 10240, true));
     }};
 
-    private String propfile;
+    private String propfile = "application.properties";
+
     private Class<? extends BeanFactory> beanClass = SilentGoBeanFactory.class;
 
     private final ThreadLocal<DBConnect> threadConnect = new ThreadLocal<>();

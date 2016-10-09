@@ -16,7 +16,5 @@ import com.silentgo.core.route.support.paramresolver.ParameterResolveFactory;
  */
 public interface ParameterDispatcher extends Priority {
 
-    default void release(ActionParam param){}
-
     public void dispatch(ParameterResolveFactory parameterResolveFactory, ActionParam param, Route route, Object[] args) throws AppParameterResolverException, AppParameterPaserException;
 }

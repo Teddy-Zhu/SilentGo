@@ -20,4 +20,8 @@ public enum RequestMethod {
         }
         return RequestMethod.GET;
     }
+
+    public boolean equals(String method) {
+        return this.method.equals(method);
+    }
 }

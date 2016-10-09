@@ -43,12 +43,8 @@ public class CollectionKit {
 
     public static <K, V> boolean MapAdd(Map<K, V> map, K key, V value, boolean allowValueNull) {
         if (key == null || (!allowValueNull && value == null)) return false;
-        if (map.containsKey(key)) {
-            return false;
-        } else {
-            map.put(key, value);
-        }
-        return false;
+        map.put(key, value);
+        return true;
     }
 
     public static <K, V> boolean MapAdd(Map<K, V> map, K key, V value) {

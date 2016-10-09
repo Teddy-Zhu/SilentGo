@@ -22,6 +22,8 @@ public @interface RouteMatch {
 
     String[] params() default {};
 
+    String[] pathParams() default {};
+
     String[] headers() default {};
 
     String[] consumes() default {};

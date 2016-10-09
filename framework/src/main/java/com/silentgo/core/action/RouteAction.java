@@ -12,8 +12,9 @@ import com.silentgo.core.render.support.RenderFactory;
 import com.silentgo.core.route.Route;
 import com.silentgo.core.route.support.RouteFactory;
 import com.silentgo.core.route.support.annotationresolver.RouteAnFactory;
-import com.silentgo.core.route.support.dispatcher.ParamDispatchFactory;
+import com.silentgo.core.route.support.paramdispatcher.ParamDispatchFactory;
 import com.silentgo.core.route.support.paramresolver.ParameterResolveFactory;
+import com.silentgo.core.route.support.requestdispatch.RequestDispatchFactory;
 import com.silentgo.servlet.http.HttpStatus;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
@@ -49,6 +50,10 @@ public class RouteAction extends ActionChain {
         boolean isDev = me.isDevMode();
 
         RouteFactory routeFactory = me.getFactory(RouteFactory.class);
+
+        RequestDispatchFactory requestDispatchFactory = me.getFactory(RequestDispatchFactory.class);
+
+        requestDispatchFactory.dispatch(param);
 
         Route ret = me.getConfig().getRoutePaser().praseRoute(routeFactory, param);
 
@@ -100,7 +105,7 @@ public class RouteAction extends ActionChain {
                 exceptionFactory.handle(renderResolverFactory, renderFactory, beanFactory, adviser, request, response, ex);
 
             } finally {
-                paramDispatchFactory.release(param);
+                requestDispatchFactory.release(param);
             }
 
         }

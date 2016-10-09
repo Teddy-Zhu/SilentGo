@@ -78,20 +78,20 @@ public class RouteFactory extends BaseFactory {
      * @param url
      * @return
      */
-    public List<Route> matchRoutes(String url) {
-        List<Route> routes = new ArrayList<>();
+    public Map<Route, Double> matchRoutes(String url) {
+        Map<Route, Double> routeMap = new HashMap<>();
 
         if (hashRoute.containsKey(url)) {
-            routes.add(new Route(hashRoute.get(url), null));
+            routeMap.put(new Route(hashRoute.get(url), null), 1.5);
         }
 
         for (RegexRoute route : regexRoute) {
             Matcher matcher = route.getPattern().matcher(url);
             if (matcher.matches()) {
-                routes.add(new Route(route, matcher));
+                routeMap.put(new Route(route, matcher), 1.0);
             }
         }
-        return routes;
+        return routeMap;
     }
 
     @Override

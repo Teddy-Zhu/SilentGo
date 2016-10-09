@@ -1,11 +1,11 @@
-package com.silentgo.core.route.support.dispatcher;
+package com.silentgo.core.route.support.paramdispatcher;
 
 import com.silentgo.core.action.ActionParam;
 import com.silentgo.core.aop.MethodParam;
 import com.silentgo.core.exception.AppParameterPaserException;
 import com.silentgo.core.route.ParameterDispatcher;
 import com.silentgo.core.route.Route;
-import com.silentgo.core.route.annotation.ParamDispatcher;
+import com.silentgo.core.route.support.paramdispatcher.annotation.ParamDispatcher;
 import com.silentgo.core.route.support.paramresolver.ParameterResolveFactory;
 import com.silentgo.utils.CollectionKit;
 import com.silentgo.utils.logger.Logger;
