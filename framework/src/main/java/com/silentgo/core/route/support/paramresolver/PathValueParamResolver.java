@@ -1,11 +1,11 @@
-package com.silentgo.core.route.support.paramvalueresolve;
+package com.silentgo.core.route.support.paramresolver;
 
 import com.silentgo.core.aop.MethodParam;
 import com.silentgo.core.config.Const;
 import com.silentgo.core.exception.AppParameterPaserException;
 import com.silentgo.core.route.ParameterValueResolver;
 import com.silentgo.core.route.annotation.PathVariable;
-import com.silentgo.core.route.support.paramvalueresolve.annotation.ParameterResolver;
+import com.silentgo.core.route.support.paramresolver.annotation.ParameterResolver;
 import com.silentgo.core.typeconvert.ConvertKit;
 import com.silentgo.core.typeconvert.ITypeConvertor;
 import com.silentgo.servlet.http.Request;
@@ -14,7 +14,7 @@ import com.silentgo.utils.TypeConvertKit;
 
 /**
  * Project : silentgo
- * com.silentgo.core.route.support.paramvalueresolve
+ * com.silentgo.core.route.support.paramresolver
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>

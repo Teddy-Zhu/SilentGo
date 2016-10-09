@@ -1,4 +1,4 @@
-package com.silentgo.core.route.support.paramdispatcher;
+package com.silentgo.core.route.support.dispatcher;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -10,7 +10,7 @@ import com.silentgo.core.exception.AppParameterResolverException;
 import com.silentgo.core.route.ParameterDispatcher;
 import com.silentgo.core.route.Route;
 import com.silentgo.core.route.annotation.ParamDispatcher;
-import com.silentgo.core.route.support.paramvalueresolve.ParameterResolveFactory;
+import com.silentgo.core.route.support.paramresolver.ParameterResolveFactory;
 import com.silentgo.servlet.SilentGoContext;
 import com.silentgo.servlet.http.ContentType;
 import com.silentgo.servlet.http.Request;
@@ -20,7 +20,7 @@ import java.io.UnsupportedEncodingException;
 
 /**
  * Project : silentgo
- * com.silentgo.core.route.support.paramdispatcher
+ * com.silentgo.core.route.support.dispatcher
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>

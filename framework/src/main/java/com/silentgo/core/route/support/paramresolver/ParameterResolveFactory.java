@@ -1,4 +1,4 @@
-package com.silentgo.core.route.support.paramvalueresolve;
+package com.silentgo.core.route.support.paramresolver;
 
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.MethodAdviser;
@@ -11,7 +11,7 @@ import com.silentgo.core.exception.AppReleaseException;
 import com.silentgo.core.route.ParameterValueResolver;
 import com.silentgo.core.route.annotation.Controller;
 import com.silentgo.core.route.annotation.Route;
-import com.silentgo.core.route.support.paramvalueresolve.annotation.ParameterResolver;
+import com.silentgo.core.route.support.paramresolver.annotation.ParameterResolver;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
@@ -26,7 +26,7 @@ import java.util.List;
 
 /**
  * Project : silentgo
- * com.silentgo.core.route.support.paramvalueresolve
+ * com.silentgo.core.route.support.paramresolver
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>

@@ -11,9 +11,9 @@ import com.silentgo.core.render.support.ErrorRener;
 import com.silentgo.core.render.support.RenderFactory;
 import com.silentgo.core.route.Route;
 import com.silentgo.core.route.support.RouteFactory;
-import com.silentgo.core.route.support.annotationResolver.ParamAnFactory;
-import com.silentgo.core.route.support.paramdispatcher.ParamDispatchFactory;
-import com.silentgo.core.route.support.paramvalueresolve.ParameterResolveFactory;
+import com.silentgo.core.route.support.annotationresolver.RouteAnFactory;
+import com.silentgo.core.route.support.dispatcher.ParamDispatchFactory;
+import com.silentgo.core.route.support.paramresolver.ParameterResolveFactory;
 import com.silentgo.servlet.http.HttpStatus;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
@@ -63,7 +63,7 @@ public class RouteAction extends ActionChain {
 
             ParameterResolveFactory parameterResolveFactory = me.getFactory(ParameterResolveFactory.class);
 
-            ParamAnFactory paramAnFactory = me.getFactory(ParamAnFactory.class);
+            RouteAnFactory paramAnFactory = me.getFactory(RouteAnFactory.class);
             RenderResolverFactory renderResolverFactory = me.getFactory(RenderResolverFactory.class);
             RenderFactory renderFactory = me.getFactory(RenderFactory.class);
 

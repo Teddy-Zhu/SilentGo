@@ -7,7 +7,7 @@
         <groupId>com.silentgo</groupId>
         <version>0.0.1</version>
     </parent>
-    <version>0.0.4</version>
+    <version>0.0.5</version>
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
 
@@ -17,7 +17,7 @@
         <dependency>
             <groupId>com.silentgo</groupId>
             <artifactId>utils</artifactId>
-            <version>0.0.4</version>
+            <version>0.0.5</version>
         </dependency>
 
         <dependency>

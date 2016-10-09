@@ -1,4 +1,4 @@
-package com.silentgo.core.route.support.paramdispatcher;
+package com.silentgo.core.route.support.dispatcher;
 
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.action.ActionParam;
@@ -9,7 +9,7 @@ import com.silentgo.core.exception.AppParameterResolverException;
 import com.silentgo.core.route.ParameterDispatcher;
 import com.silentgo.core.route.Route;
 import com.silentgo.core.route.annotation.ParamDispatcher;
-import com.silentgo.core.route.support.paramvalueresolve.ParameterResolveFactory;
+import com.silentgo.core.route.support.paramresolver.ParameterResolveFactory;
 import com.silentgo.servlet.http.MultiFile;
 import com.silentgo.servlet.http.MultiPartRequest;
 import com.silentgo.servlet.http.Request;
@@ -27,7 +27,7 @@ import java.util.List;
 
 /**
  * Project : silentgo
- * com.silentgo.core.route.support.paramdispatcher
+ * com.silentgo.core.route.support.dispatcher
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>

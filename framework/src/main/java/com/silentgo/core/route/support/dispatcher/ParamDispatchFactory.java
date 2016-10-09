@@ -1,4 +1,4 @@
-package com.silentgo.core.route.support.paramdispatcher;
+package com.silentgo.core.route.support.dispatcher;
 
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.action.ActionParam;
@@ -10,7 +10,7 @@ import com.silentgo.core.exception.AppReleaseException;
 import com.silentgo.core.route.ParameterDispatcher;
 import com.silentgo.core.route.Route;
 import com.silentgo.core.route.annotation.ParamDispatcher;
-import com.silentgo.core.route.support.paramvalueresolve.ParameterResolveFactory;
+import com.silentgo.core.route.support.paramresolver.ParameterResolveFactory;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.utils.CollectionKit;
 import org.apache.commons.io.FileCleaningTracker;
