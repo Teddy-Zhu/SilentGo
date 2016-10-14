@@ -4,6 +4,8 @@ import com.silentgo.core.SilentGo;
 import com.silentgo.core.build.Factory;
 import com.silentgo.core.exception.AppBuildException;
 import com.silentgo.core.exception.AppReleaseException;
+import com.silentgo.core.ioc.bean.BeanDefinition;
+import com.silentgo.core.ioc.bean.BeanFactory;
 import com.silentgo.core.support.BaseFactory;
 
 /**
@@ -26,6 +28,12 @@ public class CacheFactory extends BaseFactory {
                 e.printStackTrace();
             }
         }
+
+        BeanFactory beanFactory = me.getFactory(me.getConfig().getBeanClass());
+
+        BeanDefinition beanDefinition = new BeanDefinition(CacheManager.class, me.getConfig().getCacheManager(), false, true, false);
+
+        beanFactory.addBean(beanDefinition);
         return true;
     }
 

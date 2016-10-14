@@ -17,6 +17,7 @@ public enum DaoKeyWord {
     Group("Group"),
     Limit("Limit"),
     And("And"),
+    Count("count"),
     By("By"),
     Set("Set"),
     One("One"),

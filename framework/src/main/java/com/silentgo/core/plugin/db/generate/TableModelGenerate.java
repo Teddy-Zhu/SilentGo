@@ -45,7 +45,7 @@ public class TableModelGenerate {
         builder.append(ClassConst.newline);
         String an;
         if (table.getPrimaryKeys().size() == 0) {
-            an = "(\"" + table.getName() + "\")";
+            an = "(\"" + table.getTableName() + "\")";
         } else if (table.getPrimaryKeys().size() == 1) {
             an = "(value=\"" + table.getTableName() +
                     "\",  primaryKey = \"" + table.getPrimaryKeys().get(0) + "\")";

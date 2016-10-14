@@ -27,7 +27,7 @@ public class ResponseBodyRenderResolver implements RenderResolver {
 
     @Override
     public RenderModel getRenderModel(RenderFactory renderFactory, MethodAdviser adviser, Response response, Request request, Object retVal) {
-        if (adviser.getMethod().getJavaMethod().getReturnType().equals(Void.class)) {
+        if (adviser.getMethod().getReturnType().equals(Void.class)) {
             return null;
         }
         return new RenderModel(renderFactory.getRender(RenderType.JSON), retVal, request, response);

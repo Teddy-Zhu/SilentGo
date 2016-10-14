@@ -18,7 +18,11 @@ public class DaoResolveKit {
 
     public static String getField(List<String> parsedString, BaseTableInfo baseTableInfo, int index) throws AppSQLException {
         String field = parsedString.get(index);
-        String f = baseTableInfo.getFullColumns().get(field);
+        return getField(field, baseTableInfo);
+    }
+
+    public static String getField(String field, BaseTableInfo baseTableInfo) throws AppSQLException {
+        String f = baseTableInfo.getFullColumns().get(StringKit.firstToLower(field));
         if (StringKit.isNotBlank(f)) {
             return f;
         } else {

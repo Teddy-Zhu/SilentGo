@@ -21,7 +21,7 @@ public class BeanHandleFactory extends BaseFactory {
         BeanBuildKit.addBeanHander(new DaoBeanHandler());
         BeanBuildKit.addBeanHander(new NoInjectBeanHandler());
         BeanBuildKit.addBeanHander(new CommonBeanHandler());
-
+        BeanBuildKit.addBeanHander(new NoValueBeanHandler());
 
         return false;
     }

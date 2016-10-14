@@ -57,6 +57,10 @@ public class SQLTool {
         return " select " + StringKit.join(selectList, ",");
     }
 
+    public String getCountRight() {
+        return " from " + tableName + getJoinSQL() + getWhereSQL() + getGroupSQL();
+    }
+
     public String getExceptSQL() {
 
         return " from " + tableName + getJoinSQL() + getWhereSQL() + getGroupSQL() + getOrderSQL() + getLimit();
@@ -87,8 +91,16 @@ public class SQLTool {
             case QUERY: {
                 return getSelectSQL() + getExceptSQL();
             }
+            case COUNT: {
+                return " count(1) " + getCountRight();
+            }
+
         }
         return "";
+    }
+
+    public String getCountSQL() {
+        return " count(1) " + getCountRight();
     }
 
     private String getInsertSQL() {
@@ -140,6 +152,10 @@ public class SQLTool {
         }
         builder.append(suffix).append(empty);
         return builder.toString();
+    }
+
+    public List<Object> getParamList() {
+        return params;
     }
 
     public Object[] getParams() {
@@ -228,6 +244,10 @@ public class SQLTool {
     }
     //endregion
 
+    public SQLTool count() {
+        this.type = SQLType.COUNT;
+        return this;
+    }
 
     public SQLTool from(String tableName) {
         this.tableName = tableName;
@@ -367,4 +387,7 @@ public class SQLTool {
         return column + " as " + newColumn;
     }
 
+    public SQLType getType() {
+        return type;
+    }
 }

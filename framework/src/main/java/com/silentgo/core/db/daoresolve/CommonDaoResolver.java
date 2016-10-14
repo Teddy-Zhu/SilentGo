@@ -34,6 +34,8 @@ public class CommonDaoResolver implements DaoResolver {
         add("deleteByPrimaryKeys");
         add("queryAll");
         add("deleteAll");
+        add("queryCustom");
+        add("countCustom");
     }};
 
     @Override
@@ -82,6 +84,12 @@ public class CommonDaoResolver implements DaoResolver {
             }
             case "deleteAll": {
                 return daoDialect.deleteAll(tableInfo);
+            }
+            case "queryCustom": {
+                return (SQLTool) objects[0];
+            }
+            case "countCustom": {
+                return (SQLTool) objects[0];
             }
         }
         isHandled[0] = false;

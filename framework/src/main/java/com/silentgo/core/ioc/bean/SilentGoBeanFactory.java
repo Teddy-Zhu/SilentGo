@@ -2,11 +2,14 @@ package com.silentgo.core.ioc.bean;
 
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.annotation.Aspect;
+import com.silentgo.core.aop.annotationintercept.annotation.CustomInterceptor;
+import com.silentgo.core.aop.validator.annotation.Validator;
 import com.silentgo.core.build.Factory;
 import com.silentgo.core.config.SilentGoConfig;
 import com.silentgo.core.exception.AppReleaseException;
 import com.silentgo.core.exception.annotaion.ExceptionHandler;
 import com.silentgo.core.ioc.annotation.Component;
+import com.silentgo.core.ioc.annotation.Lazy;
 import com.silentgo.core.ioc.annotation.Service;
 import com.silentgo.core.ioc.bean.support.BeanBuildKit;
 import com.silentgo.core.ioc.bean.support.BeanHandleFactory;
@@ -20,7 +23,6 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -64,7 +66,16 @@ public class SilentGoBeanFactory extends BeanFactory<BeanDefinition> {
 
     @Override
     public BeanDefinition addBean(Class<?> beanDefinitionClass) {
-        BeanDefinition beanDefinition = new BeanDefinition(beanDefinitionClass);
+        Lazy lazy = beanDefinitionClass.getAnnotation(Lazy.class);
+        boolean islazy = lazy != null;
+        BeanDefinition beanDefinition = new BeanDefinition(beanDefinitionClass, islazy);
+        beansMap.put(beanDefinition.getBeanName(), beanDefinition);
+        depend(beanDefinition);
+        return beanDefinition;
+    }
+
+    @Override
+    public BeanDefinition addBean(BeanDefinition beanDefinition) {
         beansMap.put(beanDefinition.getBeanName(), beanDefinition);
         depend(beanDefinition);
         return beanDefinition;
@@ -81,8 +92,8 @@ public class SilentGoBeanFactory extends BeanFactory<BeanDefinition> {
         return true;
     }
 
-    private void depend(BeanDefinition beanDefinition) {
-        if (beanDefinition.isInjectComplete()) return;
+    public void depend(BeanDefinition beanDefinition) {
+        if (beanDefinition.isInjectComplete() || beanDefinition.isLazy()) return;
         beanDefinition.getFieldBeans().forEach((k, v) -> {
             Field field = v.getField();
             Class<?> type = field.getType();
@@ -105,7 +116,7 @@ public class SilentGoBeanFactory extends BeanFactory<BeanDefinition> {
             v.setBeanName(bean.getBeanName());
             try {
                 PropertyDescriptor pd = new PropertyDescriptor(field.getName(),
-                        beanDefinition.getSourceClass(),
+                        beanDefinition.getBeanClass(),
                         "get" + StringKit.firstToUpper(field.getName()),
                         "set" + StringKit.firstToUpper(field.getName())
                 );
@@ -114,17 +125,17 @@ public class SilentGoBeanFactory extends BeanFactory<BeanDefinition> {
                 if (method != null) {
                     v.setHasSet(true);
                     v.setSetMethod(method);
-                    method.setAccessible(true);
-                    method.invoke(beanDefinition.getTarget(), bean);
+                    //method.setAccessible(true);
+                    //method.invoke(beanDefinition.getTarget(), bean);
                 }
-            } catch (IllegalAccessException | IntrospectionException | InvocationTargetException e) {
-                field.setAccessible(true);
-                try {
-                    field.set(beanDefinition.getTarget(), bean.getBean());
-                } catch (IllegalAccessException e1) {
-                    e1.printStackTrace();
-                }
-                LOGGER.debug("Field {} Can not find getter and setter in Class {}", field.getName(), bean.getSourceClass());
+            } catch (IntrospectionException e) {
+//                field.setAccessible(true);
+//                try {
+//                    field.set(beanDefinition.getTarget(), bean.getObject());
+//                } catch (IllegalAccessException e1) {
+//                    e1.printStackTrace();
+//                }
+                LOGGER.debug("Field {} Can not find getter and setter in Class {}", field.getName(), bean.getBeanClass());
             }
         });
         beanDefinition.setInjectComplete(true);
@@ -136,6 +147,8 @@ public class SilentGoBeanFactory extends BeanFactory<BeanDefinition> {
         add(Controller.class);
         add(Aspect.class);
         add(ExceptionHandler.class);
+        add(CustomInterceptor.class);
+        add(Validator.class);
     }};
 
     @Override
@@ -144,12 +157,14 @@ public class SilentGoBeanFactory extends BeanFactory<BeanDefinition> {
 
         me.getFactory(BeanHandleFactory.class);
 
-        anList.forEach(an -> me.getAnnotationManager().getClasses(an).forEach(aClass -> BeanBuildKit.getBeanHandlers().forEach(beanHandler -> {
-            Annotation annotation = aClass.getAnnotation(an);
-            if (beanHandler.hasHandle(annotation, aClass)) {
-                beanHandler.handle(annotation, aClass, beanDefinitions);
-            }
-        })));
+        anList.forEach(an ->
+                me.getAnnotationManager().getClasses(an).
+                        forEach(aClass -> BeanBuildKit.getBeanHandlers().forEach(beanHandler -> {
+                            Annotation annotation = aClass.getAnnotation(an);
+                            if (beanHandler.hasHandle(annotation, aClass)) {
+                                beanHandler.handle(annotation, aClass, beanDefinitions);
+                            }
+                        })));
 
         build(beanDefinitions, me.getConfig());
 

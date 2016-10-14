@@ -22,7 +22,7 @@ public class RenderModelRenderResolver implements RenderResolver {
 
     @Override
     public boolean match(MethodAdviser adviser) {
-        return adviser.getMethod().getJavaMethod().getReturnType().equals(RenderModel.class);
+        return adviser.getMethod().getReturnType().equals(RenderModel.class);
     }
 
     @Override

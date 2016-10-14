@@ -1,5 +1,6 @@
 package com.silentgo.core.ioc.bean.support;
 
+import com.silentgo.core.aop.validator.annotation.Validator;
 import com.silentgo.core.ioc.annotation.Component;
 import com.silentgo.core.ioc.annotation.Service;
 import com.silentgo.core.ioc.bean.BeanDefinition;
@@ -23,6 +24,7 @@ public class CommonBeanHandler implements BeanHandler {
         add(Service.class);
         add(Component.class);
         add(Controller.class);
+        add(Validator.class);
     }};
 
     @Override

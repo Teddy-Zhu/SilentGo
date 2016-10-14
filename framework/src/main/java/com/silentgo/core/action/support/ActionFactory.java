@@ -27,7 +27,7 @@ public class ActionFactory extends BaseFactory {
 
     @Override
     public boolean initialize(SilentGo me) throws AppBuildException {
-        List<ActionChain> actionChains = new ArrayList<>();
+        List<ActionChain> actionChains = new ArrayList<>(me.getConfig().getActionChains());
         me.getAnnotationManager().getClasses(Action.class).forEach(action -> {
             try {
                 if (ActionChain.class.isAssignableFrom(action)) {

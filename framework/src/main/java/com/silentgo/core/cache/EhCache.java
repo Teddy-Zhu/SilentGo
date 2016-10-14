@@ -26,8 +26,12 @@ public class EhCache implements CacheManager {
     private volatile Object locker = new Object();
     private static final Logger log = LoggerFactory.getLog(EhCache.class);
 
+    public net.sf.ehcache.CacheManager getCacheManager() {
+        return cacheManager;
+    }
+
     public EhCache() {
-        net.sf.ehcache.CacheManager.create();
+        this.cacheManager = net.sf.ehcache.CacheManager.create();
     }
 
     public EhCache(net.sf.ehcache.CacheManager cacheManager) {
@@ -35,19 +39,19 @@ public class EhCache implements CacheManager {
     }
 
     public EhCache(String configurationFileName) {
-        cacheManager = net.sf.ehcache.CacheManager.create(configurationFileName);
+        this.cacheManager = net.sf.ehcache.CacheManager.create(configurationFileName);
     }
 
     public EhCache(URL configurationFileURL) {
-        cacheManager = net.sf.ehcache.CacheManager.create(configurationFileURL);
+        this.cacheManager = net.sf.ehcache.CacheManager.create(configurationFileURL);
     }
 
     public EhCache(InputStream inputStream) {
-        cacheManager = net.sf.ehcache.CacheManager.create(inputStream);
+        this.cacheManager = net.sf.ehcache.CacheManager.create(inputStream);
     }
 
     public EhCache(Configuration configuration) {
-        cacheManager = net.sf.ehcache.CacheManager.create(configuration);
+        this.cacheManager = net.sf.ehcache.CacheManager.create(configuration);
     }
 
     Cache getOrAddCache(String name) {
@@ -69,7 +73,8 @@ public class EhCache implements CacheManager {
 
     @Override
     public Object get(Object name, Object key) {
-        return getOrAddCache(name.toString()).get(key);
+        Element element = getOrAddCache(name.toString()).get(key);
+        return element == null ? null : element.getObjectValue();
     }
 
     @Override

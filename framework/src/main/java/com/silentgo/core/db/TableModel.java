@@ -1,5 +1,7 @@
 package com.silentgo.core.db;
 
+import java.io.Serializable;
+
 /**
  * Project : silentgo
  * com.silentgo.core.plugin.db.bridge
@@ -8,6 +10,6 @@ package com.silentgo.core.db;
  *         <p>
  *         Created by teddyzhu on 16/9/23.
  */
-public class TableModel {
+public class TableModel implements Serializable {
 
 }

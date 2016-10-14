@@ -30,7 +30,7 @@ public class SilentGoFilter implements Filter {
 
     private static Logger LOGGER = LoggerFactory.getLog(SilentGoFilter.class);
 
-    private Config configInit = null;
+    private static Config configInit = null;
 
     private static SilentGo appContext = SilentGo.getInstance();
 
@@ -49,7 +49,7 @@ public class SilentGoFilter implements Filter {
             ServletContext context = filterConfig.getServletContext();
 
             String contextPath = context.getContextPath();
-            int contextPathLength = contextPath == null || "/".equals(contextPath) ? 0 : contextPath.length();
+            int contextPathLength = contextPath == null || Const.Slash.equals(contextPath) ? 0 : contextPath.length();
 
             //noinspection unchecked
             config = new SilentGoConfig(Const.BasePackages, Const.EmptyArray, true, Const.Encoding, contextPathLength, Const.configName);
@@ -65,17 +65,34 @@ public class SilentGoFilter implements Filter {
 
             appContext.setContext(context);
 
-            if (configInit != null) {
-                configInit.init(config);
-            }
-
+            //scan packages and jars
             AnnotationManager manager = new AnnotationManager(config);
             appContext.setAnnotationManager(manager);
 
-            build(manager, config);
+            if (configInit != null) {
+                LOGGER.debug("init default build");
+                configInit.initialBuild(config);
+            }
+            LOGGER.debug("init extra build");
+            for (Config extraConfig : config.getExtraConfig()) {
+                extraConfig.initialBuild(config);
+            }
+
+            //build bean first
+            LOGGER.debug("init bean factory");
+            appContext.getFactory(config.getBeanClass());
+
+            LOGGER.debug("init other factoryss");
+            buildFactory(manager, config);
 
             if (configInit != null) {
+                LOGGER.debug("after init default config");
                 configInit.afterInit(config);
+            }
+
+            LOGGER.debug("after init extra config");
+            for (Config extraConfig : config.getExtraConfig()) {
+                extraConfig.afterInit(config);
             }
 
             ConfigChecker.Check(config);
@@ -132,10 +149,16 @@ public class SilentGoFilter implements Filter {
                 });
     }
 
-    private void build(AnnotationManager manager, SilentGoConfig config) {
+    private void buildFactory(AnnotationManager manager, SilentGoConfig config) {
+
         //add builder
-        manager.getClasses(Factory.class).stream().forEach(factory -> {
+        manager.getClasses(Factory.class).forEach(factory -> {
             if (!factory.isInterface() && BaseFactory.class.isAssignableFrom(factory)) {
+                appContext.getFactory(factory);
+            }
+        });
+        config.getFactories().forEach(factory -> {
+            if (!factory.isInterface()) {
                 appContext.getFactory(factory);
             }
         });

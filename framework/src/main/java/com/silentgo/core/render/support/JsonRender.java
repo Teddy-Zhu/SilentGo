@@ -22,6 +22,10 @@ public class JsonRender implements Render {
     private String encoding;
     private String contentType = encoding;
 
+    public JsonRender() {
+        this("utf-8");
+    }
+
     public JsonRender(String encoding) {
         this.encoding = encoding;
         this.contentType = "application/json; charset=" + encoding;

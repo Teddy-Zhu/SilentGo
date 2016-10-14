@@ -17,11 +17,12 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER})
 public @interface RequestString {
-    boolean required() default false;
+    boolean required() default true;
 
     int[] range() default {0, Integer.MAX_VALUE};
 
-    String defaultValue() default Const.DEFAULT_NONE;
+    String regex() default Const.DEFAULT_NONE;
 
+    String defaultValue() default Const.DEFAULT_NONE;
 
 }

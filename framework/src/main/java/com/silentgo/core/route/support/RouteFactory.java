@@ -14,6 +14,7 @@ import com.silentgo.core.route.RegexRoute;
 import com.silentgo.core.route.Route;
 import com.silentgo.core.route.annotation.Controller;
 import com.silentgo.core.support.BaseFactory;
+import com.silentgo.utils.CollectionKit;
 import com.silentgo.utils.StringKit;
 import com.silentgo.utils.logger.Logger;
 import com.silentgo.utils.logger.LoggerFactory;
@@ -39,7 +40,7 @@ public class RouteFactory extends BaseFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLog(RouteFactory.class);
 
-    private Map<String, BasicRoute> hashRoute = new HashMap<>();
+    private Map<String, List<BasicRoute>> hashRoute = new HashMap<>();
 
     private List<RegexRoute> regexRoute = new ArrayList<>();
 
@@ -48,7 +49,7 @@ public class RouteFactory extends BaseFactory {
         if (route.getClass().equals(RegexRoute.class)) {
             regexRoute.add((RegexRoute) route);
         } else {
-            hashRoute.put(route.getPath(), route);
+            CollectionKit.ListMapAdd(hashRoute, route.getPath(), route);
         }
     }
 
@@ -57,10 +58,11 @@ public class RouteFactory extends BaseFactory {
      *
      * @param url
      * @return
+     * @deprecated
      */
     public Route matchRoute(String url) {
         if (hashRoute.containsKey(url)) {
-            return new Route(hashRoute.get(url), null);
+            return new Route(hashRoute.get(url).get(0), null);
         }
 
         for (RegexRoute route : regexRoute) {
@@ -82,7 +84,7 @@ public class RouteFactory extends BaseFactory {
         Map<Route, Double> routeMap = new HashMap<>();
 
         if (hashRoute.containsKey(url)) {
-            routeMap.put(new Route(hashRoute.get(url), null), 1.5);
+            hashRoute.get(url).forEach(hashR -> routeMap.put(new Route(hashR, null), 1.5));
         }
 
         for (RegexRoute route : regexRoute) {
@@ -122,7 +124,7 @@ public class RouteFactory extends BaseFactory {
         Pattern routePattern = Pattern.compile(Regex.RoutePath);
 
         //LOGGER.info("build route class:{}", aClass.getName());
-        for (Method method : bean.getBeanClass().getJavaClass().getDeclaredMethods()) {
+        for (Method method : bean.getBeanClass().getDeclaredMethods()) {
             MethodAdviser adviser = methodAOPFactory.getMethodAdviser(method);
             com.silentgo.core.route.annotation.Route an = adviser.getAnnotation(com.silentgo.core.route.annotation.Route.class);
             if (an == null) continue;
@@ -207,5 +209,13 @@ public class RouteFactory extends BaseFactory {
         if (path.endsWith(Const.Slash) && end) path = path.substring(0, path.length() - 1);
         if (path.startsWith(Const.Slash)) return path;
         return Const.Slash + path;
+    }
+
+    public Map<String, List<BasicRoute>> getHashRoute() {
+        return hashRoute;
+    }
+
+    public List<RegexRoute> getRegexRoute() {
+        return regexRoute;
     }
 }

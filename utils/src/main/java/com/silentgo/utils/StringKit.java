@@ -16,20 +16,22 @@ public class StringKit {
 
     public static String firstToUpper(String field) {
         if (isBlank(field)) return field;
-        return field.substring(0, 1).toUpperCase() + field.substring(1);
+        char first = field.charAt(0);
+        return Character.isUpperCase(first) ? field : (Character.toUpperCase(first) + field.substring(1));
     }
 
     public static String firstToLower(String field) {
         if (isBlank(field)) return field;
-        return field.substring(0, 1).toLowerCase() + field.substring(1);
+        char first = field.charAt(0);
+        return Character.isLowerCase(first) ? field : (Character.toLowerCase(first) + field.substring(1));
     }
 
     public static boolean isNotBlank(String str) {
-        return !isNull(str) && str.length() != 0 && "".equals(str.trim());
+        return !isNull(str) && str.trim().length() != 0;
     }
 
     public static boolean isBlank(String str) {
-        return isNull(str) || str.length() == 0 || "".equals(str.trim());
+        return isNull(str) || str.trim().length() == 0;
     }
 
     public static boolean isNull(String str) {

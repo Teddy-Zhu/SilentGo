@@ -93,11 +93,17 @@ public class Request extends HttpServletRequestWrapper {
 
     /**
      * forward to another controller
+     *
      * @param controllerName
      * @throws Throwable
      */
     public void forward(String controllerName) throws Throwable {
         SilentGo instance = SilentGo.getInstance();
         instance.getConfig().getRouteAction().doAction(SilentGo.getInstance().getConfig().getCtx().get().getActionParam());
+    }
+
+
+    public void rebuildResovedMap() {
+        resolvedMap = RequestKit.parse(paramsMap);
     }
 }

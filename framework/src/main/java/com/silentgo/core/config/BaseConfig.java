@@ -1,5 +1,7 @@
 package com.silentgo.core.config;
 
+import com.silentgo.core.action.ActionChain;
+import com.silentgo.core.aop.annotationintercept.IAnnotation;
 import com.silentgo.core.aop.annotationintercept.support.AnnotationInterceptor;
 import com.silentgo.core.aop.validator.support.ValidatorInterceptor;
 import com.silentgo.core.cache.CacheManager;
@@ -9,6 +11,7 @@ import com.silentgo.core.ioc.bean.BeanFactory;
 import com.silentgo.core.ioc.bean.SilentGoBeanFactory;
 import com.silentgo.core.route.RoutePaser;
 import com.silentgo.core.route.support.routeparse.DefaultRouteParser;
+import com.silentgo.core.support.BaseFactory;
 import com.silentgo.orm.base.DBConnect;
 import com.silentgo.utils.ClassKit;
 import com.silentgo.utils.CollectionKit;
@@ -40,12 +43,18 @@ public class BaseConfig extends InterConfig {
 
     private final ThreadLocal<DBConnect> threadConnect = new ThreadLocal<>();
 
+    private List<Class<? extends IAnnotation>> annotationIntecepters = new ArrayList<>();
+
     private JsonPaser jsonPaser = new FastJsonPaser();
 
     private RoutePaser routePaser = new DefaultRouteParser();
 
+    private List<Class<? extends BaseFactory>> factories = new ArrayList<>();
+
     private String dbType;
     private String BaseViewPath = Const.BaseView;
+
+    private List<ActionChain> actionChains = new ArrayList<>();
 
     private Map<String, String> staticMapping = new HashMap<>();
 
@@ -57,6 +66,8 @@ public class BaseConfig extends InterConfig {
     private List<String> scanPackages = new ArrayList<>();
 
     private List<String> scanJars = new ArrayList<>();
+
+    private List<Config> extraConfig = new ArrayList<>();
 
     private boolean devMode = false;
 
@@ -77,6 +88,18 @@ public class BaseConfig extends InterConfig {
         add(new AnnotationInterceptor());
         add(new ValidatorInterceptor());
     }};
+
+    public List<Class<? extends BaseFactory>> getFactories() {
+        return factories;
+    }
+
+    public List<Class<? extends IAnnotation>> getAnnotationIntecepters() {
+        return annotationIntecepters;
+    }
+
+    public List<ActionChain> getActionChains() {
+        return actionChains;
+    }
 
     public Map<String, String> getStaticMapping() {
         return staticMapping;
@@ -204,5 +227,9 @@ public class BaseConfig extends InterConfig {
 
     public void setPropfile(String propfile) {
         this.propfile = propfile;
+    }
+
+    public List<Config> getExtraConfig() {
+        return extraConfig;
     }
 }

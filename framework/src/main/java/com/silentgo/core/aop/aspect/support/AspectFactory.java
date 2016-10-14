@@ -69,8 +69,8 @@ public class AspectFactory extends BaseFactory {
                 if (annotation == null) continue;
                 addAspectMethod(new AspectMethod(annotation.value()
                         , annotation.regex()
-                        , beanDefinition.getBeanClass().getMethod(method)
-                        , beanDefinition.getBean()
+                        , method
+                        , beanDefinition.getObject()
                 ));
             }
         });
@@ -82,8 +82,8 @@ public class AspectFactory extends BaseFactory {
 
         //build aspect
         aspectMethods.forEach(aspectMethod -> {
-            if (aspectMethod.getMethod().getJavaMethod().getParameterCount() != 1) {
-                LOGGER.warn("The Method [{}] ignored .", aspectMethod.getMethod().getJavaMethod().getName());
+            if (aspectMethod.getMethod().getParameterCount() != 1) {
+                LOGGER.warn("The Method [{}] ignored .", aspectMethod.getMethod().getName());
                 return;
             }
 

@@ -8,19 +8,14 @@ import com.silentgo.core.build.Factory;
 import com.silentgo.core.config.Const;
 import com.silentgo.core.exception.AppBuildException;
 import com.silentgo.core.exception.AppReleaseException;
-import com.silentgo.core.ioc.bean.BeanDefinition;
 import com.silentgo.core.ioc.bean.BeanFactory;
-import com.silentgo.core.route.annotation.PathVariable;
+import com.silentgo.core.ioc.bean.BeanWrapper;
 import com.silentgo.core.route.annotation.RequestParam;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.utils.CollectionKit;
-import com.silentgo.utils.StringKit;
 import com.silentgo.utils.asm.LocalVariableTableParameterNameDiscoverer;
-import net.sf.cglib.reflect.FastClass;
-import net.sf.cglib.reflect.FastMethod;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
@@ -67,17 +62,16 @@ public class MethodAOPFactory extends BaseFactory {
 
 
         BeanFactory beanFactory = me.getFactory(me.getConfig().getBeanClass());
-        Map<String, BeanDefinition> beansMap = (Map<String, BeanDefinition>) beanFactory.getBeans();
+        Map<String, BeanWrapper> beansMap = (Map<String, BeanWrapper>) beanFactory.getBeans();
 
 
         beansMap.forEach((k, v) -> {
-            if (v.getSourceClass().isInterface()) return;
-            List<Annotation> annotations = Arrays.asList(v.getSourceClass().getAnnotations());
+            if (v.getBeanClass().isInterface()) return;
+            List<Annotation> annotations = Arrays.asList(v.getBeanClass().getAnnotations());
             annotations = filterAnnotation(annotations);
-            Method[] methods = v.getSourceClass().getDeclaredMethods();
-            FastClass clz = v.getBeanClass();
+            Method[] methods = v.getBeanClass().getDeclaredMethods();
             for (Method method : methods) {
-                addMethodAdviser(BuildAdviser(clz.getMethod(method), annotations));
+                addMethodAdviser(BuildAdviser(method, annotations));
             }
         });
 
@@ -141,27 +135,36 @@ public class MethodAOPFactory extends BaseFactory {
         MethodParam[] methodParams = new MethodParam[parameter.length];
         if (parameter.length == 0) return methodParams;
         if (parameter[0].isNamePresent()) {
-            for (int i = 0, len = parameter.length; i < len; i++) {
-                methodParams[i] = BuildParam(parameter[i]);
-            }
+            BuildParam(methodParams, parameter);
         } else {
             //copy from spring, had no good ideas
             LocalVariableTableParameterNameDiscoverer lvtd = new LocalVariableTableParameterNameDiscoverer();
             String[] parameterNames = lvtd.getParameterNames(method);
+            if (parameterNames == null || parameterNames.length != parameter.length) {
+                BuildParam(methodParams, parameter);
+                return methodParams;
+            }
             for (int i = 0, len = parameter.length; i < len; i++) {
                 methodParams[i] = BuildParam(parameter[i], parameterNames[i]);
             }
+
         }
 
         return methodParams;
     }
 
-    private MethodAdviser BuildAdviser(FastMethod method, List<Annotation> parentAnnotations) {
+    private void BuildParam(MethodParam[] params, Parameter[] parameters) {
+        for (int i = 0, len = parameters.length; i < len; i++) {
+            params[i] = BuildParam(parameters[i]);
+        }
+    }
+
+    private MethodAdviser BuildAdviser(Method method, List<Annotation> parentAnnotations) {
         String className = method.getDeclaringClass().getName();
         String name = className + "." + method.getName();
 
-        List<Annotation> annotations = Arrays.asList(method.getJavaMethod().getAnnotations());
-        return new MethodAdviser(className, name, method, BuildParam(method.getJavaMethod(), method.getJavaMethod().getParameters()), annotations);
+        List<Annotation> annotations = Arrays.asList(method.getAnnotations());
+        return new MethodAdviser(className, name, method, BuildParam(method, method.getParameters()), annotations);
     }
 
     private List<Annotation> filterAnnotation(List<Annotation> annotations) {

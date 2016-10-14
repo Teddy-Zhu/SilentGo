@@ -1,7 +1,5 @@
 package com.silentgo.core.ioc.bean;
 
-import net.sf.cglib.reflect.FastClass;
-
 /**
  * Project : silentgo
  * com.silentgo.core.ioc.bean
@@ -12,8 +10,8 @@ import net.sf.cglib.reflect.FastClass;
  */
 public abstract class BeanWrapper {
 
-    public abstract Object getBean();
-    public abstract FastClass getBeanClass();
+    public abstract Object getObject();
+    public abstract Class<?>  getBeanClass();
     public abstract String getBeanName();
     public abstract Class<?> getInterfaceClass();
 

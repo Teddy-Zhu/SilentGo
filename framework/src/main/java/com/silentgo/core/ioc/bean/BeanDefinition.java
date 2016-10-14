@@ -6,7 +6,8 @@ import com.silentgo.core.ioc.annotation.Component;
 import com.silentgo.core.ioc.annotation.Inject;
 import com.silentgo.core.ioc.annotation.Service;
 import com.silentgo.core.kit.CGLibKit;
-import net.sf.cglib.reflect.FastClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -22,19 +23,23 @@ import java.util.Map;
  */
 public class BeanDefinition extends BeanWrapper {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(BeanDefinition.class);
+
     String beanName;
 
     Class<?> interfaceClass;
 
     Class<?> clz;
 
-    FastClass fastClass;
+    Class<?> fastClass;
 
     Object target;
 
     Object proxyTarget;
 
     Map<String, FieldBean> fieldBeans;
+
+    boolean lazy = false;
 
     boolean injectComplete = false;
 
@@ -50,34 +55,35 @@ public class BeanDefinition extends BeanWrapper {
         this.injectComplete = injectComplete;
     }
 
-    public BeanDefinition(Class<?> clz, boolean inject) {
-        Create(clz.getName(), clz, inject);
+    public BeanDefinition(Class<?> clz, boolean inject, boolean isLazy) {
+        Create(clz.getName(), clz, inject, isLazy);
     }
 
-    public BeanDefinition(Class<?> clz, Object target, boolean inject, boolean isSingle) {
+    public BeanDefinition(Class<?> clz, Object target, boolean inject, boolean isSingle, boolean isLazy) {
         this.isSingle = isSingle;
-        Create(clz.getName(), clz, inject, target);
+        Create(clz.getName(), clz, inject, target, isLazy);
     }
 
-    public BeanDefinition(String beanName, Class<?> clz, boolean inject) {
-        Create(beanName, clz, inject);
+    public BeanDefinition(String beanName, Class<?> clz, boolean inject, boolean isLazy) {
+        Create(beanName, clz, inject, isLazy);
     }
 
 
-    public BeanDefinition(Class<?> clz) {
-        Create(clz.getName(), clz, true);
+    public BeanDefinition(Class<?> clz, boolean isLazy) {
+        Create(clz.getName(), clz, true, isLazy);
     }
 
-    public BeanDefinition(String beanName, Class<?> clz) {
-        Create(beanName, clz, true);
+    public BeanDefinition(String beanName, Class<?> clz, boolean isLazy) {
+        Create(beanName, clz, true, isLazy);
     }
 
-    private void Create(String beanName, Class<?> clz, boolean needInject, Object target) {
+    private void Create(String beanName, Class<?> clz, boolean needInject, Object target, boolean isLazy) {
         this.needInject = needInject;
         this.beanName = beanName;
         this.clz = clz;
+        this.lazy = isLazy;
         this.target = target;
-        fastClass = FastClass.create(clz);
+        this.fastClass = clz;
         interfaceClass = clz.isInterface() ? clz : clz.getInterfaces().length > 0 ? clz.getInterfaces()[0] : clz;
         if (needInject)
             proxyTarget = CGLibKit.Proxy(target);
@@ -98,14 +104,14 @@ public class BeanDefinition extends BeanWrapper {
         }
     }
 
-    private void Create(String beanName, Class<?> clz, boolean needInject) {
+    private void Create(String beanName, Class<?> clz, boolean needInject, boolean isLazy) {
         Object obj = null;
         try {
             obj = clz.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
-        Create(beanName, clz, needInject, obj);
+        Create(beanName, clz, needInject, obj, isLazy);
     }
 
     private boolean containAnnotation(Field field) {
@@ -124,14 +130,17 @@ public class BeanDefinition extends BeanWrapper {
     }
 
     @Override
-    public Object getBean() {
+    public Object getObject() {
+        SilentGoBeanFactory beanFactory = SilentGo.getInstance().getFactory(SilentGoBeanFactory.class);
+        if (!injectComplete) {
+            beanFactory.depend(this);
+        }
         if (!isSingle) {
             try {
                 target = clz.newInstance();
             } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
             }
-            BeanFactory beanFactory = SilentGo.getInstance().getFactory(SilentGoBeanFactory.class);
 
             if (needInject)
                 proxyTarget = CGLibKit.Proxy(target);
@@ -139,21 +148,19 @@ public class BeanDefinition extends BeanWrapper {
                 proxyTarget = target;
 
             fieldBeans.forEach((k, v) -> {
-                v.setValue(target, beanFactory.getBean(v.getBeanName()).getBean());
-                v.setValue(proxyTarget, beanFactory.getBean(v.getBeanName()).getBean());
-
+                LOGGER.debug("get bean class : {}", k);
+                Object object = beanFactory.getBean(v.getBeanName()).getObject();
+                v.setValue(target, object);
+                v.setValue(proxyTarget, object);
             });
         }
         return proxyTarget;
     }
 
-    @Override
-    public FastClass getBeanClass() {
-        return fastClass;
-    }
 
-    public Class<?> getSourceClass() {
-        return clz;
+    @Override
+    public Class<?> getBeanClass() {
+        return fastClass;
     }
 
     @Override
@@ -173,6 +180,10 @@ public class BeanDefinition extends BeanWrapper {
 
     public String getClassName() {
         return clz.getName();
+    }
+
+    public boolean isLazy() {
+        return lazy;
     }
 
 }

@@ -12,5 +12,6 @@ public enum SQLType {
     QUERY,
     UPDATE,
     INSERT,
-    DELETE
+    DELETE,
+    COUNT
 }

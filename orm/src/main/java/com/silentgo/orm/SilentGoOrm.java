@@ -1,6 +1,7 @@
 package com.silentgo.orm;
 
 import com.silentgo.orm.base.DBConnect;
+import com.silentgo.orm.common.Const;
 import com.silentgo.orm.rsresolver.IRSResolver;
 import com.silentgo.orm.rsresolver.support.*;
 import com.silentgo.utils.TypeConvertKit;
@@ -24,180 +25,85 @@ public class SilentGoOrm {
 
     private static boolean pmdKnownBroken = false;
 
-    public static <T> T query(DBConnect conn, String sql, Class<T> clz, Object... params)
+    public static <T> Object excute(DBConnect conn, String sql, Class<T> clz, String type, boolean isList, boolean isArray, Object[] generateKeys, Object[] params)
             throws SQLException {
         if (conn == null) {
             throw new SQLException("Null connection");
         }
 
         if (sql == null) {
-            conn.release();
             throw new SQLException("Null SQL statement");
         }
-        IRSResolver resolver = getResolver(clz, false);
+        IRSResolver resolver = getResolver(clz, isList, isArray);
         if (clz == null || resolver == null) {
-            conn.release();
             throw new SQLException("Null Class");
         }
 
         PreparedStatement stmt = null;
         ResultSet rs = null;
-        T result = null;
-
+        type = type.toLowerCase();
         try {
-            stmt = conn.getConnect().prepareStatement(sql);
-            fillStatement(stmt, params);
-            rs = stmt.executeQuery();
-            result = (T) resolver.resolve(rs);
-
-        } catch (SQLException e) {
-
-        } finally {
-            try {
-                if (rs != null)
-                    rs.close();
-            } finally {
-                if (stmt != null)
-                    stmt.close();
-                conn.release();
+            if (Const.Insert.equals(type)) {
+                stmt = conn.getConnect().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            } else {
+                stmt = conn.getConnect().prepareStatement(sql);
             }
+
+            fillStatement(stmt, params);
+
+            if (Const.Query.equals(type)) {
+                rs = stmt.executeQuery();
+            } else if (Const.Insert.equals(type)) {
+                int rows = stmt.executeUpdate();
+                rs = stmt.getGeneratedKeys();
+                if (generateKeys != null) {
+                    Object[] keys = new ArrayRSResolver().resolve(rs);
+                    for (int i = 0; i < generateKeys.length && i < keys.length; i++) {
+                        generateKeys[i] = keys[i];
+                    }
+                }
+                return rows;
+            } else {
+                return stmt.executeUpdate();
+            }
+            return resolver.resolve(rs);
+        } finally {
+            finalDo(rs, stmt, conn);
         }
 
-        return result;
     }
 
+    public static <T> int updateOrDelete(DBConnect conn, String sql, String type, Class<T> clz, Object[] params) throws SQLException {
+        return (int) excute(conn, sql, clz, type, false, false, null, params);
+    }
 
-    public static <T> List<T> queryList(DBConnect conn, String sql, Class<T> clz, Object... params)
+    public static <T> int insert(DBConnect conn, String sql, Class<T> clz, Object[] generateKeys, Object[] params) throws SQLException {
+        return (int) excute(conn, sql, clz, Const.Insert, false, false, generateKeys, params);
+    }
+
+    public static <T> T query(DBConnect conn, String sql, Class<T> clz, Object[] params) throws SQLException {
+        return (T) excute(conn, sql, clz, Const.Query, false, false, null, params);
+    }
+
+    public static <T> List<T> queryList(DBConnect conn, String sql, Class<T> clz, Object[] params)
             throws SQLException {
-        if (conn == null) {
-            throw new SQLException("Null connection");
-        }
-
-        if (sql == null) {
-            conn.release();
-            throw new SQLException("Null SQL statement");
-        }
-
-        IRSResolver resolver = getResolver(clz, true);
-        if (clz == null || resolver == null) {
-            conn.release();
-            throw new SQLException("Null Class");
-        }
-
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        List<T> result = null;
-
-        try {
-            stmt = conn.getConnect().prepareStatement(sql);
-            fillStatement(stmt, params);
-            rs = stmt.executeQuery();
-            result = (List<T>) resolver.resolve(rs);
-
-        } catch (SQLException e) {
-
-        } finally {
-            try {
-                if (rs != null)
-                    rs.close();
-            } finally {
-                if (stmt != null)
-                    stmt.close();
-                conn.release();
-            }
-        }
-
-        return result;
+        return (List<T>) excute(conn, sql, clz, Const.Query, true, false, null, params);
     }
 
 
-    public static <T> T[] queryArray(DBConnect conn, String sql, Class<T> clz, Object... params) throws SQLException {
-        if (conn == null) {
-            throw new SQLException("Null connection");
-        }
-
-        if (sql == null) {
-            conn.release();
-            throw new SQLException("Null SQL statement");
-        }
-        IRSResolver resolver = getResolver(clz, false);
-        if (clz == null || resolver == null) {
-            conn.release();
-            throw new SQLException("Null Class");
-        }
-
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        T[] result = null;
-
-        try {
-            stmt = conn.getConnect().prepareStatement(sql);
-            fillStatement(stmt, params);
-            rs = stmt.executeQuery();
-            result = (T[]) resolver.resolve(rs);
-
-        } catch (SQLException e) {
-
-        } finally {
-            try {
-                if (rs != null)
-                    rs.close();
-            } finally {
-                if (stmt != null)
-                    stmt.close();
-                conn.release();
-            }
-        }
-
-        return result;
+    public static <T> T[] queryArray(DBConnect conn, String sql, Class<T> clz, Object[] params) throws SQLException {
+        return (T[]) excute(conn, sql, clz, Const.Query, false, true, null, params);
     }
 
-    public static <T> List<T[]> queryArrayList(DBConnect conn, String sql, Class<T> clz, Object... params) throws SQLException {
-        if (conn == null) {
-            throw new SQLException("Null connection");
-        }
-
-        if (sql == null) {
-            conn.release();
-            throw new SQLException("Null SQL statement");
-        }
-        IRSResolver resolver = getResolver(clz, true);
-        if (clz == null || resolver == null) {
-            conn.release();
-            throw new SQLException("Null Class");
-        }
-
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        List<T[]> result = null;
-
-        try {
-            stmt = conn.getConnect().prepareStatement(sql);
-            fillStatement(stmt, params);
-            rs = stmt.executeQuery();
-            result = (List<T[]>) resolver.resolve(rs);
-
-        } catch (SQLException e) {
-
-        } finally {
-            try {
-                if (rs != null)
-                    rs.close();
-            } finally {
-                if (stmt != null)
-                    stmt.close();
-                conn.release();
-            }
-        }
-
-        return result;
+    public static <T> List<T[]> queryArrayList(DBConnect conn, String sql, Class<T> clz, Object[] params) throws SQLException {
+        return (List<T[]>) excute(conn, sql, clz, Const.Query, true, true, null, params);
     }
 
 
-    private static IRSResolver getResolver(Class<?> clz, boolean isList) {
+    private static IRSResolver getResolver(Class<?> clz, boolean isList, boolean isArray) {
         if (TypeConvertKit.isSqlBaseType(clz)) {
             return isList ? new ListCompatibleRSResolver(clz) : new CompatibleRSResolver(clz);
-        } else if (clz.isArray() && clz.getComponentType().equals(Object.class)) {
+        } else if (isArray) {
             return isList ? new ListArrayRSResolver() : new ArrayRSResolver();
         } else if (Map.class.isAssignableFrom(clz)) {
             return isList ? new ListMapRSResolver() : new MapRSResolver();
@@ -252,4 +158,14 @@ public class SilentGoOrm {
         }
     }
 
+
+    private static void finalDo(ResultSet rs, PreparedStatement statement, DBConnect connection) throws SQLException {
+        try {
+            if (rs != null)
+                rs.close();
+        } finally {
+            if (statement != null)
+                statement.close();
+        }
+    }
 }

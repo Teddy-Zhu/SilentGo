@@ -69,8 +69,10 @@ public class MultiPartDispatcher implements RequestDispatcher {
             List<FileItem> items = servletFileUpload.parseRequest(request);
 
             List<MultiFile> files = new ArrayList<>();
+            boolean resortParameterMap = false;
             for (FileItem item : items) {
                 if (item.isFormField()) {
+                    resortParameterMap = true;
                     request.addParameter(item.getFieldName(), new String(item.get()));
                 } else {
                     String fileName = item.getName();
@@ -92,6 +94,9 @@ public class MultiPartDispatcher implements RequestDispatcher {
                     }
                     files.add(new MultiFile(name, fileName, contentType, ext, size, inputStream, file));
                 }
+            }
+            if (resortParameterMap) {
+                request.rebuildResovedMap();
             }
             if (files.size() > 0) {
                 param.setRequest(new MultiPartRequest(request, files));

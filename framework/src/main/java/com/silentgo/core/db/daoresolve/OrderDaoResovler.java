@@ -28,17 +28,28 @@ public class OrderDaoResovler implements DaoResolver {
         int index = parsedMethod.indexOf(DaoKeyWord.Order.innername);
         String two = parsedMethod.get(index + 1);
         if (DaoKeyWord.By.equals(two)) {
-            String f = DaoResolveKit.getField(parsedMethod, tableInfo, index + 2);
-            String sort = parsedMethod.get(index + 3);
-            if (DaoKeyWord.Desc.equals(sort)) {
-                sqlTool.orderByDesc(f);
-            } else {
-                sqlTool.orderByAsc(f);
-            }
-
+            setOrder(index + 1, DaoKeyWord.And.innername, parsedMethod, tableInfo, sqlTool);
         } else {
             throw new AppSQLException("error syntax : after Order : " + two);
         }
         return null;
+    }
+
+    public void setOrder(int index, String string, List<String> parsedMethod, BaseTableInfo tableInfo, SQLTool sqlTool) throws AppSQLException {
+        if (DaoKeyWord.And.equals(string)) {
+            String f = DaoResolveKit.getField(parsedMethod, tableInfo, index + 1);
+            String sort = parsedMethod.get(index + 2);
+            if (DaoKeyWord.Desc.equals(sort)) {
+                sqlTool.orderByDesc(f);
+                index += 1;
+            } else if (DaoKeyWord.Asc.equals(sort)) {
+                sqlTool.orderByAsc(f);
+                index += 1;
+            }
+            Integer nextIndex = index + 2;
+            setOrder(nextIndex, parsedMethod.get(nextIndex), parsedMethod, tableInfo, sqlTool);
+        } else {
+            return;
+        }
     }
 }

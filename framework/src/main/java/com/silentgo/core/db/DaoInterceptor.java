@@ -6,7 +6,9 @@ import com.silentgo.core.db.daoresolve.DaoResolver;
 import com.silentgo.core.db.funcanalyse.AnalyseKit;
 import com.silentgo.core.exception.AppSQLException;
 import com.silentgo.core.plugin.db.bridge.mysql.SQLTool;
+import com.silentgo.core.plugin.db.util.PropertyTool;
 import com.silentgo.orm.SilentGoOrm;
+import com.silentgo.orm.base.DBConnect;
 import com.silentgo.utils.ClassKit;
 import com.silentgo.utils.logger.Logger;
 import com.silentgo.utils.logger.LoggerFactory;
@@ -14,11 +16,15 @@ import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
+import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Project : silentgo
@@ -66,18 +72,57 @@ public class DaoInterceptor implements MethodInterceptor {
                 }
             }
         }
-        LOGGER.info("{}", sqlTool);
-        DaoMethod daoMethod = getDaoMethod(method, daoClass, daoFactory.getReflectMap().get(daoClass));
+        DBConnect connect = null;
+        Object ret = null;
+        switch (sqlTool.getType()) {
+            case QUERY:
+            case COUNT: {
+                DaoMethod daoMethod = getDaoMethod(method, daoClass, daoFactory.getReflectMap().get(daoClass));
+                connect = instance.getConnect();
+                ret = excuteQuery(sqlTool, objects, connect, daoMethod);
+                break;
+            }
+            case DELETE:
+            case UPDATE: {
+                connect = instance.getConnect();
+                ret = SilentGoOrm.updateOrDelete(connect, sqlTool.getSQL(), sqlTool.getType().name(), int.class, objects);
+                break;
+            }
+            case INSERT: {
+                connect = instance.getConnect();
+                Object[] generateKeys = new Object[objects.length];
+                ret = SilentGoOrm.insert(connect, sqlTool.getSQL(), int.class, generateKeys, objects);
+                resolveInsertResult(tableInfo, generateKeys, objects);
+                break;
+            }
+        }
+
+        if (connect != null && connect.getConnect().getAutoCommit()) {
+            connect.release();
+        }
+        return ret;
+    }
+
+    private void resolveInsertResult(BaseTableInfo tableInfos, Object[] generateKeys, Object[] params) throws InvocationTargetException, IllegalAccessException {
+        if (tableInfos.getPrimaryKeys().size() == 0) return;
+        Map<String, PropertyDescriptor> propertyDescriptorMap = PropertyTool.getCachedProps(tableInfos);
+        PropertyDescriptor p = propertyDescriptorMap.get(tableInfos.getPrimaryKeys().get(0));
+        for (int i = 0; i < generateKeys.length; i++) {
+            p.getWriteMethod().invoke(params[i], generateKeys[i]);
+        }
+    }
+
+    private Object excuteQuery(SQLTool sqlTool, Object[] objects, DBConnect connect, DaoMethod daoMethod) throws SQLException {
         if (daoMethod.isList()) {
             if (daoMethod.isArray()) {
-                return SilentGoOrm.queryArrayList(instance.getConnect(), sqlTool.getSQL(), daoMethod.getType(), sqlTool.getParams());
+                return SilentGoOrm.queryArrayList(connect, sqlTool.getSQL(), daoMethod.getType(), objects);
             } else {
-                return SilentGoOrm.queryList(instance.getConnect(), sqlTool.getSQL(), daoMethod.getType(), sqlTool.getParams());
+                return SilentGoOrm.queryList(connect, sqlTool.getSQL(), daoMethod.getType(), objects);
             }
         } else if (daoMethod.isArray()) {
-            return SilentGoOrm.queryArray(instance.getConnect(), sqlTool.getSQL(), daoMethod.getType(), sqlTool.getParams());
+            return SilentGoOrm.queryArray(connect, sqlTool.getSQL(), daoMethod.getType(), objects);
         } else {
-            return SilentGoOrm.query(instance.getConnect(), sqlTool.getSQL(), daoMethod.getType(), sqlTool.getParams());
+            return SilentGoOrm.query(connect, sqlTool.getSQL(), daoMethod.getType(), objects);
         }
     }
 

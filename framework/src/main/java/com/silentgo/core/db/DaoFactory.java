@@ -96,7 +96,7 @@ public class DaoFactory extends BaseFactory {
                 tableInfoMap.put(tableclass, info);
             }
         });
-        return false;
+        return true;
     }
 
     @Override

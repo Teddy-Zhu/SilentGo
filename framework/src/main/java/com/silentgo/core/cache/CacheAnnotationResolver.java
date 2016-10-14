@@ -2,6 +2,7 @@ package com.silentgo.core.cache;
 
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.annotationintercept.IAnnotation;
+import com.silentgo.core.aop.annotationintercept.annotation.CustomInterceptor;
 import com.silentgo.core.aop.annotationintercept.support.AnnotationInterceptChain;
 import com.silentgo.core.cache.annotation.Cache;
 import com.silentgo.core.config.Const;
@@ -20,6 +21,7 @@ import java.util.Collection;
  *         <p>
  *         Created by teddyzhu on 2016/10/8.
  */
+@CustomInterceptor
 public class CacheAnnotationResolver implements IAnnotation<Cache> {
     @Override
     public int priority() {
@@ -32,7 +34,7 @@ public class CacheAnnotationResolver implements IAnnotation<Cache> {
         boolean useCache;
         Object cacheKey = null;
         SilentGo instance = SilentGo.getInstance();
-        CacheManager cacheManager = instance.getConfig().getCacheManager(instance.getConfig().getCacheClz());
+        CacheManager cacheManager = instance.getConfig().getCacheManager();
         Object[] objects = chain.getPoint().getObjects();
 
         cacheKey = cache.index() == -1 ? cache.key() : objects[cache.index()];

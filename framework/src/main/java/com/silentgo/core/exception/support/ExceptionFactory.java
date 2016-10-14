@@ -53,7 +53,6 @@ public class ExceptionFactory extends BaseFactory {
         return CollectionKit.ListAdd(globalExceptionHandlers, exceptionHandler);
     }
 
-
     public boolean addToExceptionHandler(Class<? extends Exception> exception, MethodAdviser adviser) {
         CollectionKit.ListMapAdd(toExcetionHandler, exception, adviser);
         return true;
@@ -67,10 +66,13 @@ public class ExceptionFactory extends BaseFactory {
     private List<MethodAdviser> getEexceptionHandler(Method name, Class<? extends Exception> eclass) {
         Map<Class<? extends Exception>, List<MethodAdviser>> map = methodHandler.get(name);
         if (map == null) {
-            return filterExceptionHandler(toExcetionHandler, eclass);
-        } else {
-            return filterExceptionHandler(map, eclass);
+            map = new HashMap<>();
         }
+        List<MethodAdviser> ret = filterExceptionHandler(toExcetionHandler, eclass);
+        if (ret.size() > 0) {
+            return ret;
+        }
+        return filterExceptionHandler(map, eclass);
     }
 
     private List<MethodAdviser> filterExceptionHandler(Map<Class<? extends Exception>, List<MethodAdviser>> map, Class<? extends Exception> eclass) {
@@ -79,7 +81,7 @@ public class ExceptionFactory extends BaseFactory {
                 return map.get(aClass);
             }
         }
-        return null;
+        return new ArrayList<>();
     }
 
     public void handle(RenderResolverFactory renderResolverFactory, RenderFactory renderFactory, BeanFactory beanFactory, MethodAdviser adviser, Request request, Response response, Exception ex) throws Exception {
@@ -97,7 +99,7 @@ public class ExceptionFactory extends BaseFactory {
         } else {
             for (MethodAdviser exceptionMethodAdviser : advisers) {
                 Object expRet = exceptionMethodAdviser.getMethod().invoke(
-                        beanFactory.getBean(exceptionMethodAdviser.getClassName()).getBean(),
+                        beanFactory.getBean(exceptionMethodAdviser.getClassName()).getObject(),
                         ExceptionKit.getArgs(exceptionMethodAdviser, e, response, request));
                 if (renderResolverFactory.render(renderFactory, exceptionMethodAdviser, request, response, expRet)) {
                     //allow only one render enables
@@ -113,8 +115,18 @@ public class ExceptionFactory extends BaseFactory {
         me.getAnnotationManager().getClasses(ExceptionHandler.class).forEach(aClass -> {
             if (IExceptionHandler.class.isAssignableFrom(aClass)) {
                 try {
-                    addGlobalExceptionHandler((IExceptionHandler) aClass.newInstance());
-                } catch (InstantiationException | IllegalAccessException e) {
+                    ExceptionHandler exceptionHandler = (ExceptionHandler) aClass.getAnnotation(ExceptionHandler.class);
+                    if (exceptionHandler.value().length > 0) {
+                        Method method = aClass.getMethod("resolve", Response.class, Request.class, Throwable.class);
+                        MethodAdviser adviser = methodAOPFactory.getMethodAdviser(method);
+                        for (Class<? extends Exception> aClass1 : exceptionHandler.value()) {
+                            addToExceptionHandler(aClass1, adviser);
+                        }
+                    } else {
+                        addGlobalExceptionHandler((IExceptionHandler) aClass.newInstance());
+                    }
+
+                } catch (InstantiationException | IllegalAccessException | NoSuchMethodException e) {
                     e.printStackTrace();
                 }
             } else {
@@ -142,12 +154,12 @@ public class ExceptionFactory extends BaseFactory {
 
         //build controller exception in controller class
         me.getAnnotationManager().getClasses(Controller.class).forEach(aClass -> {
-            String classsuffix = aClass.getName() + ".";
             List<Method> names = new ArrayList<>();
             Map<Class<? extends Exception>, List<MethodAdviser>> map = new HashMap<>();
             for (Method method : aClass.getDeclaredMethods()) {
                 if (method.getAnnotation(Route.class) != null) {
                     names.add(method);
+                    continue;
                 }
                 ExceptionHandler handler = method.getAnnotation(ExceptionHandler.class);
                 if (handler != null) {

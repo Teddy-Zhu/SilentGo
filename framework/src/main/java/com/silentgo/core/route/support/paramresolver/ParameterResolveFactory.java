@@ -3,14 +3,12 @@ package com.silentgo.core.route.support.paramresolver;
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.MethodAdviser;
 import com.silentgo.core.aop.MethodParam;
-import com.silentgo.core.aop.support.MethodAOPFactory;
 import com.silentgo.core.build.Factory;
 import com.silentgo.core.exception.AppBuildException;
 import com.silentgo.core.exception.AppParameterPaserException;
 import com.silentgo.core.exception.AppReleaseException;
 import com.silentgo.core.route.ParameterValueResolver;
-import com.silentgo.core.route.annotation.Controller;
-import com.silentgo.core.route.annotation.Route;
+import com.silentgo.core.route.support.RouteFactory;
 import com.silentgo.core.route.support.paramresolver.annotation.ParameterResolver;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.servlet.http.Request;
@@ -19,7 +17,6 @@ import com.silentgo.utils.CollectionKit;
 import com.silentgo.utils.logger.Logger;
 import com.silentgo.utils.logger.LoggerFactory;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -88,22 +85,28 @@ public class ParameterResolveFactory extends BaseFactory {
 
         resortParameterResolvers();
 
-        MethodAOPFactory methodAOPFactory = me.getFactory(MethodAOPFactory.class);
+        RouteFactory routeFactory = me.getFactory(RouteFactory.class);
 
-        me.getAnnotationManager().getClasses(Controller.class).forEach(aClass -> {
-            for (Method method : aClass.getDeclaredMethods()) {
-                if (method.getAnnotation(Route.class) == null) return;
-
-                MethodAdviser adviser = methodAOPFactory.getMethodAdviser(method);
-                //LOGGER.info("find adviser", adviser.getName());
-                for (MethodParam methodParam : adviser.getParams()) {
-                    try {
-                        addMethodParameterValueResolver(methodParam);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+        routeFactory.getHashRoute().forEach((k, listv) -> listv.forEach(basicRoute -> {
+            MethodAdviser adviser = basicRoute.getAdviser();
+            //LOGGER.info("find adviser", adviser.getName());
+            for (MethodParam methodParam : adviser.getParams()) {
+                try {
+                    addMethodParameterValueResolver(methodParam);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-
+            }
+        }));
+        routeFactory.getRegexRoute().forEach(route -> {
+            MethodAdviser adviser = route.getAdviser();
+            //LOGGER.info("find adviser", adviser.getName());
+            for (MethodParam methodParam : adviser.getParams()) {
+                try {
+                    addMethodParameterValueResolver(methodParam);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
         return true;

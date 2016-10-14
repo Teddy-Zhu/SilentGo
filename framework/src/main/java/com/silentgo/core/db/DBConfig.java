@@ -27,6 +27,7 @@ public class DBConfig extends AbstractConfig {
             manager.initial(config);
         }
     }
+
     public DBConfig(String dbType, String fileName) {
         if (DBType.MYSQL.equals(dbType.toLowerCase())) {
             manager = JDBCManager.getInstance();

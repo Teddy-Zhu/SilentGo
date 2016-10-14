@@ -69,22 +69,8 @@ public class AnnotationInceptFactory extends BaseFactory {
     public boolean initialize(SilentGo me) {
         MethodAOPFactory methodAOPFactory = me.getFactory(MethodAOPFactory.class);
 
-        me.getAnnotationManager().getClasses(CustomInterceptor.class).forEach(aClass -> {
-            if (IAnnotation.class.isAssignableFrom(aClass)) {
-                Class<? extends Annotation> an = (Class<? extends Annotation>) ClassKit.getGenericClass(aClass, 0);
-                try {
-                    if (addAnnotationInterceptor(an, (IAnnotation) aClass.newInstance())) {
-                        if (me.getConfig().isDevMode()) {
-                            LOGGER.debug("Register Custom Interceptor [{}] successfully", aClass.getName());
-                        }
-                    } else {
-                        LOGGER.error("Register Custom Interceptor [{}] failed", aClass.getName());
-                    }
-                } catch (InstantiationException | IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        me.getAnnotationManager().getClasses(CustomInterceptor.class).forEach(aClass -> buildCustomInterceptor(aClass, me));
+        me.getConfig().getAnnotationIntecepters().forEach(aClass -> buildCustomInterceptor(aClass, me));
 
         methodAOPFactory.getMethodAdviserMap().forEach((k, v) -> {
             //special interceptors
@@ -95,9 +81,26 @@ public class AnnotationInceptFactory extends BaseFactory {
 
     @Override
     public boolean destroy(SilentGo me) throws AppReleaseException {
-        return false;
+        return true;
     }
 
+
+    public void buildCustomInterceptor(Class<?> aClass, SilentGo me) {
+        if (IAnnotation.class.isAssignableFrom(aClass)) {
+            Class<? extends Annotation> an = (Class<? extends Annotation>) ClassKit.getGenericClass(aClass, 0);
+            try {
+                if (addAnnotationInterceptor(an, (IAnnotation) aClass.newInstance())) {
+                    if (me.getConfig().isDevMode()) {
+                        LOGGER.debug("Register Custom Interceptor [{}] successfully", aClass.getName());
+                    }
+                } else {
+                    LOGGER.error("Register Custom Interceptor [{}] failed", aClass.getName());
+                }
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     private void buildIAnnotation(MethodAdviser adviser) {
 

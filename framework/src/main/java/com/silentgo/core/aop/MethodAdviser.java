@@ -1,7 +1,5 @@
 package com.silentgo.core.aop;
 
-import net.sf.cglib.reflect.FastMethod;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -22,7 +20,7 @@ public class MethodAdviser {
 
     private String className;
 
-    private FastMethod method;
+    private Method method;
 
     private MethodParam[] params;
 
@@ -35,14 +33,14 @@ public class MethodAdviser {
     }
 
     public Method getName() {
-        return method.getJavaMethod();
+        return method;
     }
 
     public MethodParam[] getParams() {
         return params;
     }
 
-    public MethodAdviser(String className, String name, FastMethod method, MethodParam[] params, List<Annotation> annotations) {
+    public MethodAdviser(String className, String name, Method method, MethodParam[] params, List<Annotation> annotations) {
         this.methodName = name;
         this.className = className;
         this.method = method;
@@ -71,7 +69,7 @@ public class MethodAdviser {
         else return null;
     }
 
-    public FastMethod getMethod() {
+    public Method getMethod() {
         return method;
     }
 }

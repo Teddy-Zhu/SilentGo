@@ -45,6 +45,14 @@ public class SilentGo {
         return config.getConnect(config.getDbType(), name);
     }
 
+    public void releaseConnect(String name) {
+        config.releaseConnect(config.getDbType(), name);
+    }
+
+    public void releaseConnect() {
+        releaseConnect("mysql");
+    }
+
     public DBConnect getConnect() {
         return getConnect("mysql");
     }
@@ -80,6 +88,5 @@ public class SilentGo {
     public <T extends BaseFactory> T getFactory(Class<T> t) {
         return config.getFactory(t, getInstance());
     }
-
 
 }

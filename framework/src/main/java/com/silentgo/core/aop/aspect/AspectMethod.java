@@ -1,8 +1,7 @@
 package com.silentgo.core.aop.aspect;
 
-import net.sf.cglib.reflect.FastMethod;
-
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * Project : silentgo
@@ -17,15 +16,15 @@ public class AspectMethod {
 
     private boolean regex;
 
-    private FastMethod method;
+    private Method method;
 
     private Object targetAspect;
 
-    public Object invoke(Object... args) throws InvocationTargetException {
+    public Object invoke(Object... args) throws IllegalAccessException, InvocationTargetException {
         return method.invoke(targetAspect, args);
     }
 
-    public AspectMethod(String rule, boolean regex, FastMethod method, Object targetAspect) {
+    public AspectMethod(String rule, boolean regex, Method method, Object targetAspect) {
         this.rule = rule;
         this.regex = regex;
         this.method = method;
@@ -40,7 +39,7 @@ public class AspectMethod {
         return regex;
     }
 
-    public FastMethod getMethod() {
+    public Method getMethod() {
         return method;
     }
 

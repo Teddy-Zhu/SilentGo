@@ -19,5 +19,8 @@ public class Const {
 
     public static final String EmptyString = "";
 
-
+    public static final String Query = "query";
+    public static final String Delete = "delete";
+    public static final String Update = "update";
+    public static final String Insert = "insert";
 }

@@ -6,8 +6,8 @@ import com.silentgo.core.aop.annotation.Intercept;
 import com.silentgo.core.build.Factory;
 import com.silentgo.core.exception.AppBuildException;
 import com.silentgo.core.exception.AppReleaseException;
-import com.silentgo.core.ioc.bean.BeanDefinition;
 import com.silentgo.core.ioc.bean.BeanFactory;
+import com.silentgo.core.ioc.bean.BeanWrapper;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.utils.CollectionKit;
 
@@ -97,15 +97,15 @@ public class InterceptFactory extends BaseFactory {
         BeanFactory beanFactory = me.getFactory(me.getConfig().getBeanClass());
 
 
-        Map<String, BeanDefinition> beanDefinitionMap = (Map<String, BeanDefinition>) beanFactory.getBeans();
+        Map<String, BeanWrapper> beanDefinitionMap = (Map<String, BeanWrapper>) beanFactory.getBeans();
         beanDefinitionMap.forEach((k, v) -> {
-            Intercept classIntercept = v.getSourceClass().getAnnotation(Intercept.class);
+            Intercept classIntercept = v.getBeanClass().getAnnotation(Intercept.class);
             if (classIntercept != null && classIntercept.value().length != 0) {
                 for (Class<? extends Interceptor> aClass : classIntercept.value()) {
-                    addClassInterceptor(v.getSourceClass().getName(), getInterceptor(aClass));
+                    addClassInterceptor(v.getBeanClass().getName(), getInterceptor(aClass));
                 }
             }
-            Method[] methods = v.getSourceClass().getDeclaredMethods();
+            Method[] methods = v.getBeanClass().getDeclaredMethods();
             for (Method method : methods) {
                 Intercept intercept = method.getAnnotation(Intercept.class);
                 if (intercept != null && intercept.value().length != 0) {

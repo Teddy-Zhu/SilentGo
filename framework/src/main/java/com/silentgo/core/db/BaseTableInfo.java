@@ -68,4 +68,8 @@ public class BaseTableInfo {
     public void setColumnsMap(Map<String, Class<?>> columnsMap) {
         this.columnsMap = columnsMap;
     }
+
+    public String get(String name) {
+        return fullColumns.get(name);
+    }
 }

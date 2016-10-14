@@ -14,7 +14,7 @@ import com.silentgo.utils.PropKit;
  */
 public class Config implements com.silentgo.core.config.Config {
     @Override
-    public void init(SilentGoConfig config) {
+    public void initialBuild(SilentGoConfig config) {
 
         config.setDbType(DBType.MYSQL.getName());
 

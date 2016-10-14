@@ -1,5 +1,7 @@
 package com.silentgo.core.db;
 
+import com.silentgo.core.plugin.db.bridge.mysql.SQLTool;
+
 import java.util.List;
 
 /**
@@ -11,6 +13,10 @@ import java.util.List;
  *         Created by teddyzhu on 16/9/22.
  */
 public interface BaseDao<T extends TableModel> {
+
+    public <S extends T> int countCustom(SQLTool sqlTool);
+
+    public <S extends T> List<T> queryCustom(SQLTool sqlTool);
 
     //QUERY
     public <S extends T> T queryByPrimaryKey(Object id);

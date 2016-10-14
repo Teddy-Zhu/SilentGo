@@ -15,5 +15,5 @@ import java.lang.annotation.Annotation;
  */
 public interface IValidator<T extends Annotation> {
 
-    boolean validate(Response response, Request request, T param, Object arg);
+    boolean validate(Response response, Request request, T param, Object arg, int index, Object[] objects);
 }

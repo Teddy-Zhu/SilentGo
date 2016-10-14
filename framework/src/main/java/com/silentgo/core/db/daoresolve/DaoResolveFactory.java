@@ -31,6 +31,7 @@ public class DaoResolveFactory extends BaseFactory {
         resolverList.add(new GroupDaoResovler());
         resolverList.add(new LimitDaoResovler());
         resolverList.add(new UpdateDaoResolver());
+        resolverList.add(new CountDaoResolver());
         return true;
     }
 

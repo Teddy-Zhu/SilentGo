@@ -74,7 +74,7 @@ public class RouteAction extends ActionChain {
 
             MethodAdviser adviser = ret.getRoute().getAdviser();
             Object[] args = new Object[adviser.getParams().length];
-            Object bean = beanFactory.getBean(adviser.getClassName()).getBean();
+            Object bean = beanFactory.getBean(adviser.getClassName()).getObject();
 
             try {
                 if (!paramAnFactory.resolve(adviser, request, response)) {

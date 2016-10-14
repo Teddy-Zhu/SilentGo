@@ -26,7 +26,7 @@ public class StringRenderResolver implements RenderResolver {
 
     @Override
     public boolean match(MethodAdviser adviser) {
-        return adviser.getMethod().getJavaMethod().getReturnType().equals(String.class);
+        return adviser.getMethod().getReturnType().equals(String.class);
     }
 
     @Override

@@ -1,10 +1,13 @@
 package com.silentgo.core.config;
 
 import com.silentgo.core.SilentGo;
+import com.silentgo.core.action.ActionChain;
+import com.silentgo.core.aop.annotationintercept.IAnnotation;
 import com.silentgo.core.cache.CacheManager;
 import com.silentgo.core.db.DBConfig;
 import com.silentgo.core.db.DBType;
 import com.silentgo.core.exception.AppBuildException;
+import com.silentgo.core.ioc.bean.BeanWrapper;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.orm.base.DBConnect;
 import com.silentgo.utils.CollectionKit;
@@ -37,7 +40,7 @@ public class SilentGoConfig extends BaseConfig {
         setInnerPropKit(new PropKit(fileName, encoding));
         scanJars.add(Const.ApplicationName + "-" + getInnerPropKit().getValue(Const.Version) + ".jar");
         setScanJars(scanJars);
-        if (StringKit.isNotBlank(getPropfile())) {
+        if (StringKit.isNotBlank(getPropfile()) && getUserProp() != null) {
             setUserProp(new PropKit(getPropfile(), encoding));
         }
     }
@@ -69,6 +72,10 @@ public class SilentGoConfig extends BaseConfig {
         return (T) factory;
     }
 
+    public CacheManager getCacheManager() {
+        return getCacheManagerMap().get(getCacheClz());
+    }
+
     public <T extends CacheManager> T getCacheManager(Class<T> name) {
         return (T) getCacheManagerMap().get(name);
     }
@@ -84,6 +91,14 @@ public class SilentGoConfig extends BaseConfig {
     public boolean addStaticMapping(String prefix, String replacement) {
         CollectionKit.MapAdd(getStaticMapping(), prefix, replacement);
         return true;
+    }
+
+    public void releaseConnect(String type, String name) {
+        ThreadLocal<DBConnect> connectThreadLocal = getThreadConnect();
+        DBConnect connect = connectThreadLocal.get();
+        if (connect != null) {
+            connect.release();
+        }
     }
 
     public DBConnect getConnect(String type, String name) {
@@ -106,5 +121,29 @@ public class SilentGoConfig extends BaseConfig {
             connectThreadLocal.set(connect);
         }
         return connect;
+    }
+
+    public boolean addExtraFactory(Class<? extends BaseFactory> clz) {
+        return CollectionKit.ListAdd(getFactories(), clz);
+    }
+
+    public BeanWrapper getBean(Class<?> name) {
+        return getBean(name.getName());
+    }
+
+    public BeanWrapper getBean(String name) {
+        return getFactory(getBeanClass(), SilentGo.getInstance()).getBean(name);
+    }
+
+    public boolean addExtraAction(ActionChain chain) {
+        return CollectionKit.ListAdd(getActionChains(), chain);
+    }
+
+    public boolean addExtraAnInterceptor(Class<? extends IAnnotation> annotation) {
+        return CollectionKit.ListAdd(getAnnotationIntecepters(), annotation);
+    }
+
+    public boolean addExtraInitConfig(Config config) {
+        return CollectionKit.ListAdd(getExtraConfig(), config);
     }
 }

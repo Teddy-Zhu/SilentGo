@@ -28,9 +28,6 @@ public class RenderFactory extends BaseFactory {
     }
 
     public boolean addAndReplaceRender(RenderType renderType, Render render) {
-        if (renderHashMap.containsKey(renderType)) {
-            renderHashMap.remove(renderType);
-        }
         CollectionKit.MapAdd(renderHashMap, renderType, render);
         return true;
     }

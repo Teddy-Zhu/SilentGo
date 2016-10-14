@@ -45,7 +45,7 @@ public class ValidatorInterceptor implements Interceptor {
             for (Map.Entry<Annotation, IValidator> entry : map.entrySet()) {
                 Annotation annotation = entry.getKey();
                 IValidator validator = entry.getValue();
-                if (!validator.validate(point.getResponse(), point.getRequest(), annotation, point.getObjects()[i])) {
+                if (!validator.validate(point.getResponse(), point.getRequest(), annotation, point.getObjects()[i], i, point.getObjects())) {
                     throw new ValidateException(String.format("Parameter [%s] validate error", param.getName()));
                 }
             }

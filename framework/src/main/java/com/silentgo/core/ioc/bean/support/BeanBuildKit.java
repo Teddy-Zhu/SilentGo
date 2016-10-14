@@ -1,6 +1,7 @@
 package com.silentgo.core.ioc.bean.support;
 
 import com.silentgo.core.db.DaoInterceptor;
+import com.silentgo.core.ioc.annotation.Lazy;
 import com.silentgo.core.ioc.bean.BeanDefinition;
 import com.silentgo.utils.CollectionKit;
 import com.silentgo.utils.logger.Logger;
@@ -34,18 +35,29 @@ public class BeanBuildKit {
         return CollectionKit.ListAdd(beanHandlers, beanHandler);
     }
 
-    public static <T extends Annotation> void commonBuild(List<BeanDefinition> beanDefinitions, T annotation, Class<?> aClass, boolean inject) {
+    public static void commonBuildNoValue(List<BeanDefinition> beanDefinitions, Class<?> aClass, boolean inject) {
+        Lazy lazy = aClass.getAnnotation(Lazy.class);
+        boolean islazy = lazy != null;
+        beanDefinitions.add(new BeanDefinition(aClass, inject, islazy));
+    }
 
+    public static <T extends Annotation> void commonBuild(List<BeanDefinition> beanDefinitions, T annotation, Class<?> aClass, boolean inject) {
+        Lazy lazy = aClass.getAnnotation(Lazy.class);
+        boolean islazy = lazy != null;
         try {
             Method method = aClass.getDeclaredMethod("value");
-            beanDefinitions.add(new BeanDefinition(method.invoke(annotation).toString(), aClass, inject));
+            beanDefinitions.add(new BeanDefinition(method.invoke(annotation).toString(), aClass, inject, islazy));
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             LOGGER.debug("no value , ignored");
         }
-        beanDefinitions.add(new BeanDefinition(aClass, inject));
+        LOGGER.debug("reg class : {}", aClass);
+        beanDefinitions.add(new BeanDefinition(aClass, inject, islazy));
     }
 
+
     public static void buildBaseDaoInterface(List<BeanDefinition> beanDefinitions, Class<?> clz) {
-        beanDefinitions.add(new BeanDefinition(clz, DaoInterceptor.proxy(clz), false, true));
+        Lazy lazy = clz.getAnnotation(Lazy.class);
+        boolean islazy = lazy != null;
+        beanDefinitions.add(new BeanDefinition(clz, DaoInterceptor.proxy(clz), false, true, islazy));
     }
 }

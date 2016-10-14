@@ -3,16 +3,16 @@ package com.silentgo.utils.logger;
 public class Log4jLogger implements Logger {
 
     private final org.apache.log4j.Logger logger;
-    
+
     public Log4jLogger(org.apache.log4j.Logger logger) {
         this.logger = logger;
     }
-    
+
     @Override
     public void debug(String msg) {
     	logger.debug(msg);
     }
-    
+
     @Override
     public void debug(String msg, Object... args) {
     }
@@ -51,5 +51,5 @@ public class Log4jLogger implements Logger {
 	@Override
 	public void warn(String msg, Object... args) {
 	}
-	
+
 }

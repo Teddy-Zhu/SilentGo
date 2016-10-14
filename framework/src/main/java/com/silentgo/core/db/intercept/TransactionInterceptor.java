@@ -23,13 +23,16 @@ public class TransactionInterceptor implements IAnnotation<Transaction> {
     public Object intercept(AnnotationInterceptChain chain, Response response, Request request, Transaction annotation) throws Throwable {
         DBConnect connect = SilentGo.getInstance().getConnect();
 
+        boolean tr = false;
         if (!connect.getConnect().getAutoCommit()) {
+            tr = true;
             connect.getConnect().setAutoCommit(false);
         }
         Object ret = null;
         try {
             ret = chain.intercept();
-            connect.getConnect().commit();
+            if (tr)
+                connect.getConnect().commit();
         } catch (Exception e) {
             for (Class<? extends Exception> aClass : annotation.rollback()) {
                 if (aClass.isAssignableFrom(e.getClass())) {
@@ -39,7 +42,10 @@ public class TransactionInterceptor implements IAnnotation<Transaction> {
             }
             throw e;
         } finally {
-            connect.getConnect().setAutoCommit(true);
+            if (tr) {
+                connect.getConnect().setAutoCommit(true);
+            }
+            SilentGo.getInstance().releaseConnect();
         }
         return ret;
     }

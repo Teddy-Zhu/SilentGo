@@ -39,7 +39,7 @@ public class TableMetaGenerate implements TableMetaGenerator {
 
         List<TableMeta> tables = new ArrayList<>();
 
-        ResultSet rs = dbMetData.getTables(connection.getCatalog(), "%", "", new String[]{"TABLE"});
+        ResultSet rs = dbMetData.getTables(connection.getCatalog(), "%", "", new String[]{"TABLE","VIEW"});
 
         while (rs.next()) {
             TableMeta tableMeta = new TableMeta();

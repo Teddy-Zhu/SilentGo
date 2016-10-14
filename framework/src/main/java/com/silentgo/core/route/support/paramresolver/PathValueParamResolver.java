@@ -22,6 +22,8 @@ import com.silentgo.utils.TypeConvertKit;
  */
 @ParameterResolver
 public class PathValueParamResolver implements ParameterValueResolver {
+
+
     @Override
     public boolean isValid(MethodParam methodParam) {
         return methodParam.existAnnotation(PathVariable.class);
