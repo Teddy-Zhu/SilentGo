@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!--- #include("/common/title.html") --->
+</head>
+<body>
+<!--- #include("/common/header.html") --->
+<!-- Content Start -->
+<div id="content">
+    <div id="mainContent" class="ui grid centered">
+        <!--- #include(ContentLayout) --->
+    </div>
+</div>
+<!-- Content  End -->
+
+<!---
+#if (floatTools != null && floatTools )
+ #include("/common/floatTools.html")
+#end
+#if (configTools != null && configTools)
+    #include("/common/configTools.html")
+#end
+#include("/common/footer.html")
+#set(String allJs = "")
+#if(!isEmpty(JS))
+    #for(String path : JS)
+        #set(allJs = allJs + '.script("'+Theme + path + '")')
+    #end
+#end
+--->
+
+<script type="text/javascript">$LAB.setOptions({AlwaysPreserveOrder: true}).script("http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js").script("http://cdn.bootcss.com/semantic-ui/2.1.6/semantic.min.js").script("${Theme}/js/lc4e/jquery-extend.js")${allJs}</script>
+</body>
+</html>

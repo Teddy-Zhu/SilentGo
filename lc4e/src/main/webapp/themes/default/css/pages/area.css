@@ -1,0 +1,141 @@
+@media only screen and (max-width: 768px) {
+
+    #topicItemsArea > .item > .user.picture > .image {
+        width: 70px !important;
+        max-width: 30% !important;
+        margin-left: inherit;
+    }
+
+    #topicItemsArea > .item {
+        padding-left: 1em !important;
+        padding-right: 1em !important;
+    }
+
+    #topicList {
+        width: 100% !important;
+        padding: 0;
+    }
+}
+
+#topicItemsArea > .item > .content {
+    padding-top: 0.3em;
+}
+
+#topicItemsArea > .item img {
+    border-radius: .25rem;
+}
+
+#topicItemsArea > .item > .content > .header > .title {
+    display: inline-block;
+}
+
+#topicItemsArea > .item > .content > .header:after {
+    width: 100%;
+    height: 2px;
+    background-color: #4183C4;
+    content: '';
+    -webkit-transition: all 0.2s;
+    -webkit-backface-visibility: hidden;
+    transition: all 0.2s;
+    backface-visibility: hidden;
+    -webkit-transform: scaleX(0);
+    transform: scaleX(0);
+    clear: both;
+    display: block;
+}
+
+#topicItemsArea > .item .topicQuickTool > .icon {
+    margin: 0;
+}
+
+#topicItemsArea > .item .topicQuickTools > .topicQuickTool {
+    margin: auto;
+}
+
+#topicItemsArea > .item .topicQuickTools {
+    float: right;
+    transition: opacity 0.5s ease;
+    opacity: 0;
+}
+
+#topicItemsArea > .item > .content > .header:hover:after {
+    -webkit-transform: scaleX(1);
+    transform: scaleX(1);
+}
+
+#topicItemsArea > .item > .content > .header i.icon {
+    margin: 0 0 0 0;
+}
+
+#topicItemsArea > .item > .content > .extra > .ui.label .icon {
+    margin: 0 .1em 0 0;
+}
+
+#topicItemsArea > .item > .user.picture > .ui.card .image > .ribbon.label, .ui.image > .ui.ribbon.label {
+    top: .3em;
+    padding: .2em .3em .2em .3em;
+    left: calc(.49em - 1.2em);
+}
+
+#topicItemsArea > .item > .user.picture > .ui.card .image > .ribbon.label, .ui.image > .ui.ribbon.label:after {
+    border-width: 0 0.8em 0.8em 0;
+}
+
+#topicItemsArea > .item > .content > .extra > .ui.label, #topicItemsArea > .item > .content > .extra > .ui.label > a.ui.label {
+    padding: .2em .25em;
+}
+
+#topicItemsArea > .item > .user.picture > .image {
+    width: 5rem;
+}
+
+#topicItemsArea > .item {
+    cursor: pointer;
+    position: relative;
+    padding: 0 !important;
+}
+
+#topicItemsArea > .item > .user.picture {
+    padding: .5em 1em .5em 1.2em;
+    border-right: 1px solid rgba(34, 36, 38, .15);
+}
+
+#topicItemsArea > .item > .content {
+    padding: .5em 1em;
+}
+
+#topicItemsArea > .item > .user.picture:hover, #topicItemsArea > .item > .content:hover {
+    background: #ECECEC;
+}
+
+#topicItemsArea > .item > .content > .header:not(.ui) {
+    margin-top: .3em;
+}
+
+#topicItemsArea > .item > .content > .extra {
+    margin: 0;
+}
+
+#topicItemsArea > .item:hover .topicQuickTools {
+    opacity: 1;
+}
+
+#topicItemsArea > .item .topicQuickTools > .pointing.label:before {
+    display: none;
+}
+
+.item.topic > .ui.right.attached.label.status {
+    border-top-right-radius: 0;
+}
+
+#sortTopic {
+    float: right;
+}
+
+#areaDescription {
+    text-transform: none;
+}
+
+#areaLabel {
+    float: left;
+}

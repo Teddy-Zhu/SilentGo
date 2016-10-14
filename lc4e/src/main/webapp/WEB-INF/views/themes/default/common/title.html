@@ -1,0 +1,17 @@
+<meta charset="utf-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="renderer" content="webkit">
+<meta http-equiv="Cache-Control" content="no-siteapp"/>
+<link rel="alternate icon" type="image/png" href="${Theme}/images/logo.png">
+<title><!--- #if(Title == null) --->${SiteName}<!--- #else --->${Title}<!--- #end ---></title>
+<link rel="stylesheet" type="text/css" class="ui" href="http://cdn.bootcss.com/semantic-ui/2.1.6/semantic.min.css">
+<link rel="stylesheet" type="text/css" class="ui" href="${Theme}/css/lc4e/jquery-extend.css">
+<!---
+#if(CSS != null )
+    #for(String path : CSS)
+       #[[<link rel="stylesheet" type="text/css" class="ui" href="]]#${Theme}${path}#[[">]]#
+    #end
+#end
+--->
+<script src="http://cdn.bootcss.com/labjs/2.0.3/LAB.min.js"></script>

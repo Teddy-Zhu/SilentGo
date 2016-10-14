@@ -1,0 +1,14 @@
+<!---
+#if(user())
+   #set(List jsFile = ["/js/plugins/editor.md/editormd.js","/js/pages/topic.js"],List cssFile = ["/js/plugins/editor.md/css/editormd.min.css","/css/pages/topic.css"])
+#else
+   #set(List jsFile = ["/js/pages/topic.js"],List cssFile = ["/css/pages/topic.css"])
+#end
+#include("/template/template.html",{
+"ContentLayout":"/ajax/_topic.html",
+"CSS":cssFile,
+"JS":jsFile,
+"configTools":false,
+"floatTools":true
+})
+--->

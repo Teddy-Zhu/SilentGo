@@ -1,0 +1,20 @@
+<!---
+#options(import="com.teddy.lc4e.database.model.SysMenu")
+#for(SysMenu curMenu: menus)
+    #if(curMenu.children.size() > 0)
+        #[[<div class="ui dropdown link item">]]#
+        #if(curMenu.ICON !=null && !isEmpty(curMenu.ICON) )
+            #[[<i class="]]#${curMenu.ICON}#[[ icon"></i>]]#
+        #end
+        #[[<span class="text">]]#${curMenu.NAME}#[[</span><i class="dropdown icon"></i><div class="menu">]]#
+        #include("/common/menudropdown.html",{'menus':curMenu.children})
+        #[[</div><div class="itemBar"></div></div>]]#
+    #else
+        #[[<a class="item linked" title="]]#${curMenu.NAME}#[[" href="]]#${curMenu.ABBR}#[[">]]#
+        #if(curMenu.ICON != null && !isEmpty(curMenu.ICON))
+             #[[<i class="]]#${curMenu.ICON}#[[ icon"></i>]]#
+        #end
+        ${curMenu.NAME}#[[<div class="itemBar"></div></a>]]#
+    #end
+#end
+--->

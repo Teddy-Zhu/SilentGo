@@ -20,16 +20,10 @@ import javax.servlet.ServletContext;
  */
 public class ShiroLoader {
 
-    /**
-     * Servlet Context config param for specifying the {@link WebEnvironment} implementation class to use:
-     * {@code shiroEnvironmentClass}
-     */
+
     public static final String ENVIRONMENT_CLASS_PARAM = "shiroEnvironmentClass";
 
-    /**
-     * Servlet Context config param for the resource path to use for configuring the {@link WebEnvironment} instance:
-     * {@code shiroConfigLocations}
-     */
+
     public static final String CONFIG_LOCATIONS_PARAM = "shiroConfigLocations";
 
     public static final String ENVIRONMENT_ATTRIBUTE_KEY = EnvironmentLoader.class.getName() + ".ENVIRONMENT_ATTRIBUTE_KEY";
@@ -74,15 +68,7 @@ public class ShiroLoader {
         }
     }
 
-    /**
-     * Return the WebEnvironment implementation class to use, either the default
-     * {@link IniWebEnvironment} or a custom class if specified.
-     *
-     * @param servletContext current servlet context
-     * @return the WebEnvironment implementation class to use
-     * @see #ENVIRONMENT_CLASS_PARAM
-     * @see IniWebEnvironment
-     */
+
     protected Class<?> determineWebEnvironmentClass(ServletContext servletContext) {
         String className = servletContext.getInitParameter(ENVIRONMENT_CLASS_PARAM);
         if (className != null) {
@@ -97,20 +83,6 @@ public class ShiroLoader {
         }
     }
 
-    /**
-     * Instantiates a {@link WebEnvironment} based on the specified ServletContext.
-     * <p/>
-     * This implementation {@link #determineWebEnvironmentClass(javax.servlet.ServletContext) determines} a
-     * {@link WebEnvironment} implementation class to use.  That class is instantiated, configured, and returned.
-     * <p/>
-     * This allows custom {@code WebEnvironment} implementations to be specified via a ServletContext initialBuild-param if
-     * desired.  If not specified, the default {@link IniWebEnvironment} implementation will be used.
-     *
-     * @param sc current servlet context
-     * @return the constructed Shiro WebEnvironment instance
-     * @see MutableWebEnvironment
-     * @see ResourceConfigurable
-     */
     protected WebEnvironment createEnvironment(ServletContext sc) {
 
         Class<?> clazz = determineWebEnvironmentClass(sc);
@@ -150,11 +122,6 @@ public class ShiroLoader {
     protected void customizeEnvironment(WebEnvironment environment) {
     }
 
-    /**
-     * Destroys the {@link WebEnvironment} for the given servlet context.
-     *
-     * @param servletContext the ServletContext attributed to the WebSecurityManager
-     */
     public void destroyEnvironment(ServletContext servletContext) {
         servletContext.log("Cleaning up Shiro Environment");
         try {

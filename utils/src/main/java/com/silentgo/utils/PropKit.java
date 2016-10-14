@@ -91,4 +91,7 @@ public class PropKit {
         return value == null ? defaultValue : Boolean.valueOf(value);
     }
 
+    public Properties getProperties() {
+        return properties;
+    }
 }
