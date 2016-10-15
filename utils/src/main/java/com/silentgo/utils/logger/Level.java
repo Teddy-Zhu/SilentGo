@@ -17,7 +17,7 @@ public enum Level {
         this.value = value;
     }
 
-    public static Level valueOf(int value) {    //    手写的从int到enum的转换函数
+    public static Level valueOf(int value) {
         switch (value) {
             case 100:
                 return TRACE;

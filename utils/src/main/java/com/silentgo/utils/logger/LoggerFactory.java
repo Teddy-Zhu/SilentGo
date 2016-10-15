@@ -22,11 +22,11 @@ public class LoggerFactory {
 
 
     public static Logger getLog(Class<?> clazz) {
-        if (log4jAvailable) {
-            return new Log4jLogger(org.apache.log4j.Logger.getLogger(clazz));
-        }
         if (slf4jAvailable) {
             return new Slf4jLogger(org.slf4j.LoggerFactory.getLogger(clazz));
+        }
+        if (log4jAvailable) {
+            return new Log4jLogger(org.apache.log4j.Logger.getLogger(clazz));
         }
         return new SilentGoLogger(clazz);
     }
