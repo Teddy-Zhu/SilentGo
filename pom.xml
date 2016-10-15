@@ -13,7 +13,6 @@
         <module>orm</module>
         <module>test</module>
         <module>jetbrick</module>
-        <module>lc4e</module>
         <module>shiro</module>
     </modules>
     <packaging>pom</packaging>
