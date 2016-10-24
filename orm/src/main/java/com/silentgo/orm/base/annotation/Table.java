@@ -1,6 +1,7 @@
-package com.silentgo.core.db;
+package com.silentgo.orm.base.annotation;
 
-import com.silentgo.core.config.Const;
+
+import com.silentgo.orm.common.Const;
 
 import java.lang.annotation.*;
 
@@ -17,7 +18,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface Table {
-    String value() default Const.DEFAULT_NONE;
+    String value() default Const.EmptyString;
 
     String[] primaryKey() default Const.DEFAULT_PY_KEY;
 

@@ -1,6 +1,7 @@
-package com.silentgo.core.db;
+package com.silentgo.orm.base;
 
-import com.silentgo.core.plugin.db.bridge.mysql.SQLTool;
+import com.silentgo.orm.base.SQLTool;
+import com.silentgo.orm.base.TableModel;
 
 import java.util.List;
 

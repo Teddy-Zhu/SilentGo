@@ -1,8 +1,8 @@
 package com.silentgo.test.dao;
 
 import java.util.Date;
-import com.silentgo.core.db.Table;
-import com.silentgo.core.db.TableModel;
+import com.silentgo.orm.base.annotation.Table;
+import com.silentgo.orm.base.TableModel;
 
 @Table(value="sys_role_permission",  primaryKey = "id")
 public class SysRolePermission extends TableModel {

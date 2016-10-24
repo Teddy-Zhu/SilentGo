@@ -1,10 +1,10 @@
 package com.silentgo.core.db.daoresolve;
 
-import com.silentgo.core.db.BaseTableInfo;
-import com.silentgo.core.db.TableModel;
+import com.silentgo.orm.base.BaseTableInfo;
+import com.silentgo.orm.base.TableModel;
 import com.silentgo.core.db.funcanalyse.DaoKeyWord;
 import com.silentgo.core.exception.AppSQLException;
-import com.silentgo.core.plugin.db.bridge.mysql.SQLTool;
+import com.silentgo.orm.base.SQLTool;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
@@ -32,7 +32,7 @@ public class UpdateDaoResolver implements DaoResolver {
             String f = DaoResolveKit.getField(parsedMethod, tableInfo, 2);
             sqlTool.whereEquals(f);
         }
-        int set = parsedMethod.indexOf("Set");
+        int set = parsedMethod.indexOf(DaoKeyWord.Set.innername);
 
         if (set == -1 && parsedMethod.size() >= (set + 1)) {
             throw new AppSQLException("can not set field because set keyword not found");

@@ -1,4 +1,4 @@
-package com.silentgo.orm;
+package com.silentgo.orm.model;
 
 import java.util.List;
 

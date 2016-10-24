@@ -2,8 +2,8 @@ package com.silentgo.test.dao;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import com.silentgo.core.db.Table;
-import com.silentgo.core.db.TableModel;
+import com.silentgo.orm.base.annotation.Table;
+import com.silentgo.orm.base.TableModel;
 
 @Table(value="user_basicinfo",  primaryKey = "id")
 public class UserBasicinfo extends TableModel {

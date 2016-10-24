@@ -1,14 +1,14 @@
-package com.silentgo.core.plugin.db.generate;
+package com.silentgo.orm.generate;
 
 /**
  * Project : parent
- * Package : com.silentgo.core.plugin.db.generate
+ * Package : com.silentgo.orm.generate
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>
  *         Created by teddyzhu on 16/9/27.
  */
-public class Column {
+public class TableColumn {
 
     public String name;
     public String colName;

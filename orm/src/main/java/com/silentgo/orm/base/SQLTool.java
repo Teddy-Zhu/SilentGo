@@ -1,4 +1,4 @@
-package com.silentgo.core.plugin.db.bridge.mysql;
+package com.silentgo.orm.base;
 
 import com.silentgo.utils.StringKit;
 
@@ -106,7 +106,11 @@ public class SQLTool {
     private String getInsertSQL() {
         String sql = getListSQL(this.insertList, "insert ( ", " ) ", " , ", EmptySplit);
         String value = getListSQL(this.insertList.size(), " ( ", " ) ", "?", EmptySplit);
-        return sql + getListSQL(this.insertList.size(), value, "", ",", EmptySplit);
+        StringBuilder ret = new StringBuilder(sql + " values " + value);
+        for (int i = 1, len = (params.size() / insertList.size()); i < len; i++) {
+            ret.append(",").append(value);
+        }
+        return ret.toString();
     }
 
     public String getUpdateSQL() {

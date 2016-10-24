@@ -1,12 +1,11 @@
-package com.silentgo.core.plugin.db.generate;
+package com.silentgo.orm.generate;
 
-import com.silentgo.core.db.BaseDao;
-import com.silentgo.core.ioc.annotation.Service;
+import com.silentgo.orm.base.BaseDao;
 import com.silentgo.utils.StringKit;
 
 /**
  * Project : parent
- * Package : com.silentgo.core.plugin.db.generate
+ * Package : com.silentgo.orm.generate
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>
@@ -22,8 +21,8 @@ public class TableDaoGenerate {
         if (!packageName.equals(modelPackage)) {
             builder.append(format(ClassConst._importOne, modelPackage + "." + tableMeta.getName()));
         }
-        builder.append(format(ClassConst._importOne, Service.class.getName()));
-        builder.append(format(ClassConst._annotaion, Service.class.getSimpleName()));
+        builder.append(format(ClassConst._importOne, "com.silentgo.core.ioc.annotation.Service"));
+        builder.append(format(ClassConst._annotaion, "Service"));
         builder.append(format(ClassConst._interfaceclassbody_extend_t, StringKit.firstToUpper(tableMeta.getName()) + "Dao",
                 BaseDao.class.getSimpleName(), StringKit.firstToUpper(tableMeta.getName()), ""));
 

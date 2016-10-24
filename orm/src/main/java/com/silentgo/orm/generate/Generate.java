@@ -1,4 +1,4 @@
-package com.silentgo.core.plugin.db.generate;
+package com.silentgo.orm.generate;
 
 import com.silentgo.utils.StringKit;
 
@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * Project : parent
- * Package : com.silentgo.core.plugin.db.generate
+ * Package : com.silentgo.orm.generate
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>

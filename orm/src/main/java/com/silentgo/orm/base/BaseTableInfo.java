@@ -1,4 +1,7 @@
-package com.silentgo.core.db;
+package com.silentgo.orm.base;
+
+import com.silentgo.orm.base.DBType;
+import com.silentgo.orm.base.TableModel;
 
 import java.util.List;
 import java.util.Map;
@@ -17,9 +20,7 @@ public class BaseTableInfo {
     public Class<? extends TableModel> clazz;
     public String tableName;
     public List<String> primaryKeys;
-    public Map<String, Class<?>> columnsMap;
-
-    public Map<String, String> fullColumns;
+    public Map<String, Column> columnInfo;
 
     public Class<? extends TableModel> getClazz() {
         return clazz;
@@ -35,14 +36,6 @@ public class BaseTableInfo {
 
     public void setClazz(Class<? extends TableModel> clazz) {
         this.clazz = clazz;
-    }
-
-    public Map<String, String> getFullColumns() {
-        return fullColumns;
-    }
-
-    public void setFullColumns(Map<String, String> fullColumns) {
-        this.fullColumns = fullColumns;
     }
 
     public List<String> getPrimaryKeys() {
@@ -61,15 +54,12 @@ public class BaseTableInfo {
         this.tableName = tableName;
     }
 
-    public Map<String, Class<?>> getColumnsMap() {
-        return columnsMap;
+    public Map<String, Column> getColumnInfo() {
+        return columnInfo;
     }
 
-    public void setColumnsMap(Map<String, Class<?>> columnsMap) {
-        this.columnsMap = columnsMap;
+    public Column get(String name) {
+        return columnInfo.get(name);
     }
 
-    public String get(String name) {
-        return fullColumns.get(name);
-    }
 }

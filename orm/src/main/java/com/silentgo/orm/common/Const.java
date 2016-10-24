@@ -18,7 +18,7 @@ public class Const {
     public static final String password = prefix + "password";
 
     public static final String EmptyString = "";
-
+    public static final String DEFAULT_PY_KEY = "id";
     public static final String Query = "query";
     public static final String Delete = "delete";
     public static final String Update = "update";

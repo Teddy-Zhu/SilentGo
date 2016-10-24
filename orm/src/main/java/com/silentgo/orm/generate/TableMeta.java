@@ -1,10 +1,10 @@
-package com.silentgo.core.plugin.db.generate;
+package com.silentgo.orm.generate;
 
 import java.util.List;
 
 /**
  * Project : parent
- * Package : com.silentgo.core.plugin.db.generate
+ * Package : com.silentgo.orm.generate
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>
@@ -18,7 +18,7 @@ public class TableMeta {
 
     public List<String> primaryKeys;
 
-    public List<Column> columns;
+    public List<TableColumn> columns;
 
     public String getTableName() {
         return tableName;
@@ -44,11 +44,11 @@ public class TableMeta {
         this.primaryKeys = primaryKeys;
     }
 
-    public List<Column> getColumns() {
+    public List<TableColumn> getColumns() {
         return columns;
     }
 
-    public void setColumns(List<Column> columns) {
+    public void setColumns(List<TableColumn> columns) {
         this.columns = columns;
     }
 }

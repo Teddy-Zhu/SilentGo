@@ -1,8 +1,8 @@
-package com.silentgo.core.plugin.db.util;
+package com.silentgo.orm.kit;
 
-import com.silentgo.core.db.BaseTableInfo;
-import com.silentgo.core.db.TableModel;
-import com.silentgo.core.plugin.db.bridge.mysql.SQLTool;
+import com.silentgo.orm.base.BaseTableInfo;
+import com.silentgo.orm.base.TableModel;
+import com.silentgo.orm.base.SQLTool;
 import com.silentgo.utils.logger.Logger;
 import com.silentgo.utils.logger.LoggerFactory;
 
@@ -90,7 +90,7 @@ public class PropertyTool {
     public static  Map<String, PropertyDescriptor> getProps(BeanInfo beanInfo, BaseTableInfo tableInfo) {
         Map<String, PropertyDescriptor> propsMap = new HashMap<>();
         for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
-            if (tableInfo.getColumnsMap().containsKey(propertyDescriptor.getName())) {
+            if (tableInfo.getColumnInfo().containsKey(propertyDescriptor.getName())) {
                 propsMap.put(propertyDescriptor.getName(), propertyDescriptor);
             }
         }

@@ -1,4 +1,4 @@
-package com.silentgo.core.db;
+package com.silentgo.orm.base;
 
 /**
  * Project : silentgo

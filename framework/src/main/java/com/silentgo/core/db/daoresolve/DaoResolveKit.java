@@ -1,7 +1,8 @@
 package com.silentgo.core.db.daoresolve;
 
-import com.silentgo.core.db.BaseTableInfo;
+import com.silentgo.orm.base.BaseTableInfo;
 import com.silentgo.core.exception.AppSQLException;
+import com.silentgo.orm.base.Column;
 import com.silentgo.utils.StringKit;
 
 import java.util.List;
@@ -22,7 +23,8 @@ public class DaoResolveKit {
     }
 
     public static String getField(String field, BaseTableInfo baseTableInfo) throws AppSQLException {
-        String f = baseTableInfo.getFullColumns().get(StringKit.firstToLower(field));
+        Column column = baseTableInfo.get(StringKit.firstToLower(field));
+        String f = column == null ? null : column.getFullName();
         if (StringKit.isNotBlank(f)) {
             return f;
         } else {

@@ -5,7 +5,7 @@ import com.silentgo.core.action.ActionChain;
 import com.silentgo.core.aop.annotationintercept.IAnnotation;
 import com.silentgo.core.cache.CacheManager;
 import com.silentgo.core.db.DBConfig;
-import com.silentgo.core.db.DBType;
+import com.silentgo.orm.base.DBType;
 import com.silentgo.core.exception.AppBuildException;
 import com.silentgo.core.ioc.bean.BeanWrapper;
 import com.silentgo.core.support.BaseFactory;

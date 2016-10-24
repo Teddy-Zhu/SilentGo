@@ -1,8 +1,8 @@
 package com.silentgo.test.dao;
 
 import java.util.Date;
-import com.silentgo.core.db.Table;
-import com.silentgo.core.db.TableModel;
+import com.silentgo.orm.base.annotation.Table;
+import com.silentgo.orm.base.TableModel;
 
 @Table(value="sys_common_variable",  primaryKey = "id")
 public class SysCommonVariable extends TableModel {

@@ -2,6 +2,7 @@ package com.silentgo.core.db;
 
 import com.silentgo.core.config.AbstractConfig;
 import com.silentgo.orm.base.DBManager;
+import com.silentgo.orm.base.DBType;
 import com.silentgo.orm.jdbc.JDBCManager;
 import com.silentgo.orm.kit.configKit;
 import com.silentgo.utils.PropKit;

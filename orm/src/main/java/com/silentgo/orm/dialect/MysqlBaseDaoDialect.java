@@ -1,9 +1,10 @@
-package com.silentgo.core.plugin.db.bridge.mysql;
+package com.silentgo.orm.dialect;
 
-import com.silentgo.core.db.BaseDaoDialect;
-import com.silentgo.core.db.BaseTableInfo;
-import com.silentgo.core.db.TableModel;
-import com.silentgo.core.plugin.db.util.PropertyTool;
+import com.silentgo.orm.base.BaseDaoDialect;
+import com.silentgo.orm.base.BaseTableInfo;
+import com.silentgo.orm.base.SQLTool;
+import com.silentgo.orm.base.TableModel;
+import com.silentgo.orm.kit.PropertyTool;
 import com.silentgo.utils.StringKit;
 import com.silentgo.utils.logger.Logger;
 import com.silentgo.utils.logger.LoggerFactory;
@@ -33,8 +34,8 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
             throw new RuntimeException("the table did not has primary key");
         }
         SQLTool sqlTool = new SQLTool();
-        sqlTool.select(table.getTableName(), table.getFullColumns().get("*"))
-                .whereEquals(table.getFullColumns().get(table.getPrimaryKeys().get(0)))
+        sqlTool.select(table.getTableName(), table.get("*").getSelectFullName())
+                .whereEquals(table.get(table.getPrimaryKeys().get(0)).getFullName())
                 .appendParam(id);
         return sqlTool;
     }
@@ -47,8 +48,8 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
         }
 
         SQLTool sqlTool = new SQLTool();
-        sqlTool.select(table.getTableName(), table.getFullColumns().get("*"))
-                .whereIn(table.getFullColumns().get(table.getPrimaryKeys().get(0)), ids.size());
+        sqlTool.select(table.getTableName(), table.get("*").getSelectFullName())
+                .whereIn(table.get(table.getPrimaryKeys().get(0)).getFullName(), ids.size());
         ids.forEach(sqlTool::appendParam);
         return sqlTool;
     }
@@ -57,7 +58,7 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
     public <T extends TableModel> SQLTool queryByModelSelective(BaseTableInfo table, T t) {
 
         SQLTool sqlTool = new SQLTool();
-        sqlTool.select(table.getTableName(), table.getFullColumns().get("*"));
+        sqlTool.select(table.getTableName(), table.get("*").getSelectFullName());
 
 
         PropertyTool.getCachedProps(table).forEach((k, propertyDescriptor) -> {
@@ -74,7 +75,7 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
             if (target instanceof String && StringKit.isBlank(target.toString())) {
                 return;
             }
-            sqlTool.whereEquals(table.getFullColumns().get(k)).appendParam(target);
+            sqlTool.whereEquals(table.get(k).getFullName()).appendParam(target);
         });
 
         return sqlTool;
@@ -92,10 +93,7 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
             } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }
-            if (table.getPrimaryKeys().contains(k) && target == null) {
-                return;
-            }
-            sqlTool.insert(k).appendParam(target);
+            sqlTool.insert(table.get(k).getFullName()).appendParam(target);
         });
         return sqlTool;
     }
@@ -134,7 +132,7 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
                 e.printStackTrace();
                 target = null;
             }
-            sqlTool.set(k).appendParam(target);
+            sqlTool.set(table.get(k).getFullName()).appendParam(target);
         });
         return sqlTool;
     }
@@ -153,7 +151,7 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
                 e.printStackTrace();
                 target = null;
             }
-            sqlTool.set(k).appendParam(target);
+            sqlTool.set(table.get(k).getFullName()).appendParam(target);
         });
         return sqlTool;
     }
@@ -179,7 +177,7 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
             if (target instanceof String && StringKit.isBlank(target.toString())) {
                 return;
             }
-            sqlTool.set(k).appendParam(target);
+            sqlTool.set(table.get(k).getFullName()).appendParam(target);
         });
         return sqlTool;
     }
@@ -204,7 +202,7 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
 
     @Override
     public SQLTool queryAll(BaseTableInfo tableInfo) {
-        return new SQLTool().select(tableInfo.getTableName(), tableInfo.getTableName() + ".*");
+        return new SQLTool().select(tableInfo.getTableName(), tableInfo.get("*").getSelectFullName());
     }
 
     @Override

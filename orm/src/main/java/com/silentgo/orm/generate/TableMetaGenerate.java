@@ -1,4 +1,4 @@
-package com.silentgo.core.plugin.db.generate;
+package com.silentgo.orm.generate;
 
 import com.silentgo.utils.StringKit;
 
@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * Project : parent
- * Package : com.silentgo.core.plugin.db.generate
+ * Package : com.silentgo.orm.generate
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>
@@ -33,13 +33,81 @@ public class TableMetaGenerate implements TableMetaGenerator {
         return tableMetas;
     }
 
+    public TableMeta getTable(Connection connection, String tableName) throws SQLException, ClassNotFoundException {
+
+        DatabaseMetaData dbMetData = connection.getMetaData();
+
+        ResultSet rs = dbMetData.getTables(connection.getCatalog(), "%", tableName, new String[]{"TABLE", "VIEW"});
+
+        while (rs.next()) {
+            TableMeta tableMeta = new TableMeta();
+            tableMeta.setName(format(tableName));
+            tableMeta.setTableName(rs.getString(3));
+            ResultSet colRet = dbMetData.getColumns(connection.getCatalog(), "%", tableName,
+                    "%");
+            ResultSet primaryKeyResultSet = dbMetData.getPrimaryKeys(connection.getCatalog(), null, tableName);
+
+            tableMeta.setPrimaryKeys(new ArrayList<>());
+            while (primaryKeyResultSet.next()) {
+                tableMeta.getPrimaryKeys().add(primaryKeyResultSet.getString("COLUMN_NAME"));
+            }
+            tableMeta.setColumns(new ArrayList<>());
+            while (colRet.next()) {
+                String columnName = colRet.getString("COLUMN_NAME");
+                String remarks = colRet.getString("REMARKS");
+                int nullable = colRet.getInt("NULLABLE");
+                TableColumn column = new TableColumn();
+                column.setName(format(columnName));
+                column.setColName(columnName);
+                //column.setType(Class.forName(TypeMapping.getType(columnType)));
+                //column.setTypeString(TypeMapping.getType(columnType));
+                column.setNullAble(nullable == 1);
+                column.setDescription(remarks);
+                tableMeta.getColumns().add(column);
+            }
+            Statement stm = connection.createStatement();
+            ResultSet colRs = stm.executeQuery(getSelectSql(tableName));
+            ResultSetMetaData rsmd = colRs.getMetaData();
+
+            for (int i = 1; i <= rsmd.getColumnCount(); i++) {
+                String name = format(rsmd.getColumnName(i));
+
+                TableColumn column = tableMeta.getColumns().stream()
+                        .filter(col -> name.equals(col.getName())).findFirst().get();
+
+                String colClassName = rsmd.getColumnClassName(i);
+                String typeStr = TypeMapping.getType(colClassName);
+
+                if (typeStr != null) {
+                    column.setTypeString(typeStr);
+                } else {
+                    int type = rsmd.getColumnType(i);
+                    if (type == Types.BINARY || type == Types.VARBINARY || type == Types.BLOB) {
+                        column.setTypeString("byte[]");
+                    } else if (type == Types.CLOB || type == Types.NCLOB) {
+                        column.setTypeString("java.lang.String");
+                    } else {
+                        column.setTypeString("java.lang.String");
+                    }
+                }
+
+            }
+            primaryKeyResultSet.close();
+            colRs.close();
+            colRet.close();
+            rs.close();
+            return tableMeta;
+        }
+        return null;
+    }
+
     public List<TableMeta> getTables(Connection connection) throws SQLException, ClassNotFoundException {
 
         DatabaseMetaData dbMetData = connection.getMetaData();
 
         List<TableMeta> tables = new ArrayList<>();
 
-        ResultSet rs = dbMetData.getTables(connection.getCatalog(), "%", "", new String[]{"TABLE","VIEW"});
+        ResultSet rs = dbMetData.getTables(connection.getCatalog(), "%", "", new String[]{"TABLE", "VIEW"});
 
         while (rs.next()) {
             TableMeta tableMeta = new TableMeta();
@@ -59,7 +127,7 @@ public class TableMetaGenerate implements TableMetaGenerator {
                 String columnName = colRet.getString("COLUMN_NAME");
                 String remarks = colRet.getString("REMARKS");
                 int nullable = colRet.getInt("NULLABLE");
-                Column column = new Column();
+                TableColumn column = new TableColumn();
                 column.setName(format(columnName));
                 column.setColName(columnName);
                 //column.setType(Class.forName(TypeMapping.getType(columnType)));
@@ -75,7 +143,7 @@ public class TableMetaGenerate implements TableMetaGenerator {
             for (int i = 1; i <= rsmd.getColumnCount(); i++) {
                 String name = format(rsmd.getColumnName(i));
 
-                Column column = tableMeta.getColumns().stream()
+                TableColumn column = tableMeta.getColumns().stream()
                         .filter(col -> name.equals(col.getName())).findFirst().get();
 
                 String colClassName = rsmd.getColumnClassName(i);

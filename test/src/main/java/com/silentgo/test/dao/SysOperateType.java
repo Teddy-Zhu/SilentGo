@@ -1,8 +1,8 @@
 package com.silentgo.test.dao;
 
 import java.util.Date;
-import com.silentgo.core.db.Table;
-import com.silentgo.core.db.TableModel;
+import com.silentgo.orm.base.annotation.Table;
+import com.silentgo.orm.base.TableModel;
 
 @Table(value="sys_operate_type",  primaryKey = "id")
 public class SysOperateType extends TableModel {

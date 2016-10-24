@@ -1,10 +1,10 @@
 package com.silentgo.core.db.daoresolve;
 
-import com.silentgo.core.db.BaseTableInfo;
-import com.silentgo.core.db.TableModel;
+import com.silentgo.orm.base.BaseTableInfo;
+import com.silentgo.orm.base.TableModel;
 import com.silentgo.core.db.funcanalyse.DaoKeyWord;
 import com.silentgo.core.exception.AppSQLException;
-import com.silentgo.core.plugin.db.bridge.mysql.SQLTool;
+import com.silentgo.orm.base.SQLTool;
 import com.silentgo.utils.Assert;
 
 import java.lang.annotation.Annotation;
@@ -56,7 +56,7 @@ public class QueryDaoResolver implements DaoResolver {
                 sqlTool.whereEquals(f);
             }
         }
-        sqlTool.select(tableInfo.getTableName(), tableInfo.getFullColumns().get("*"));
+        sqlTool.select(tableInfo.getTableName(), tableInfo.get("*").getSelectFullName());
         return sqlTool;
     }
 }

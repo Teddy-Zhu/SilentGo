@@ -1,7 +1,7 @@
 package com.silentgo.test.config;
 
 import com.silentgo.core.config.SilentGoConfig;
-import com.silentgo.core.db.DBType;
+import com.silentgo.orm.base.DBType;
 import com.silentgo.utils.PropKit;
 
 /**

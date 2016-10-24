@@ -4,8 +4,10 @@ import com.silentgo.core.SilentGo;
 import com.silentgo.core.build.Factory;
 import com.silentgo.core.exception.AppBuildException;
 import com.silentgo.core.exception.AppReleaseException;
-import com.silentgo.core.plugin.db.bridge.mysql.MysqlBaseDaoDialect;
+import com.silentgo.orm.dialect.MysqlBaseDaoDialect;
 import com.silentgo.core.support.BaseFactory;
+import com.silentgo.orm.base.BaseDaoDialect;
+import com.silentgo.orm.base.DBType;
 
 import java.util.HashMap;
 import java.util.Map;

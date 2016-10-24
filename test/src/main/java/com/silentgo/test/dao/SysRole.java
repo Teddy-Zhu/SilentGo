@@ -1,7 +1,7 @@
 package com.silentgo.test.dao;
 
-import com.silentgo.core.db.Table;
-import com.silentgo.core.db.TableModel;
+import com.silentgo.orm.base.annotation.Table;
+import com.silentgo.orm.base.TableModel;
 
 @Table(value="sys_role",  primaryKey = "id")
 public class SysRole extends TableModel {

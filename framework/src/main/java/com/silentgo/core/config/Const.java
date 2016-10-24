@@ -61,6 +61,4 @@ public final class Const {
     public static final String FileUploadConfig = "FileUpload";
 
 
-    public static final String DEFAULT_PY_KEY = "id";
-
 }

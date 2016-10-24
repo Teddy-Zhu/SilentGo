@@ -1,10 +1,10 @@
 package com.silentgo.core.ioc.bean.support;
 
 import com.silentgo.core.SilentGo;
-import com.silentgo.core.db.BaseDao;
-import com.silentgo.core.db.BaseTableInfo;
+import com.silentgo.orm.base.BaseDao;
+import com.silentgo.orm.base.BaseTableInfo;
 import com.silentgo.core.db.DaoFactory;
-import com.silentgo.core.db.TableModel;
+import com.silentgo.orm.base.TableModel;
 import com.silentgo.core.ioc.bean.BeanDefinition;
 import com.silentgo.utils.ClassKit;
 

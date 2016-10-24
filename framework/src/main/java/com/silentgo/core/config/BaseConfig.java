@@ -6,7 +6,7 @@ import com.silentgo.core.aop.annotationintercept.support.AnnotationInterceptor;
 import com.silentgo.core.aop.validator.support.ValidatorInterceptor;
 import com.silentgo.core.cache.CacheManager;
 import com.silentgo.core.cache.EhCache;
-import com.silentgo.core.db.DBType;
+import com.silentgo.orm.base.DBType;
 import com.silentgo.core.ioc.bean.BeanFactory;
 import com.silentgo.core.ioc.bean.SilentGoBeanFactory;
 import com.silentgo.core.route.RoutePaser;
