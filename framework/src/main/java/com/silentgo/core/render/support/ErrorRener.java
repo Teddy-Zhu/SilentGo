@@ -54,7 +54,7 @@ public class ErrorRener {
 
     public void render(Request request, Response response, int code, Throwable error, boolean isDev) {
 
-        String encoding = SilentGo.getInstance().getConfig().getEncoding();
+        String encoding = SilentGo.me().getConfig().getEncoding();
 
         response.setContentType(contentType + encoding);
         response.setStatus(code);

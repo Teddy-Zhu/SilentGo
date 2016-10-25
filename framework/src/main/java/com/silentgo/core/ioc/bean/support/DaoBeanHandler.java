@@ -32,7 +32,7 @@ public class DaoBeanHandler implements BeanHandler {
 
         Class<? extends TableModel> tableClass = (Class<? extends TableModel>) ClassKit.getGenericClass(clz)[0];
 
-        DaoFactory daoFactory = SilentGo.getInstance().getFactory(DaoFactory.class);
+        DaoFactory daoFactory = SilentGo.me().getFactory(DaoFactory.class);
 
         BaseTableInfo baseTableInfo = daoFactory.getTableInfoMap().get(tableClass);
         if (baseTableInfo != null) {

@@ -21,7 +21,7 @@ public class TransactionInterceptor implements IAnnotation<Transaction> {
 
     @Override
     public Object intercept(AnnotationInterceptChain chain, Response response, Request request, Transaction annotation) throws Throwable {
-        DBConnect connect = SilentGo.getInstance().getConnect();
+        DBConnect connect = SilentGo.me().getConnect();
 
         boolean tr = false;
         if (!connect.getConnect().getAutoCommit()) {
@@ -45,7 +45,7 @@ public class TransactionInterceptor implements IAnnotation<Transaction> {
             if (tr) {
                 connect.getConnect().setAutoCommit(true);
             }
-            SilentGo.getInstance().releaseConnect();
+            SilentGo.me().releaseConnect();
         }
         return ret;
     }

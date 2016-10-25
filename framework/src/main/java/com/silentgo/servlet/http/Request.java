@@ -98,8 +98,8 @@ public class Request extends HttpServletRequestWrapper {
      * @throws Throwable
      */
     public void forward(String controllerName) throws Throwable {
-        SilentGo instance = SilentGo.getInstance();
-        instance.getConfig().getRouteAction().doAction(SilentGo.getInstance().getConfig().getCtx().get().getActionParam());
+        SilentGo instance = SilentGo.me();
+        instance.getConfig().getRouteAction().doAction(SilentGo.me().getConfig().getCtx().get().getActionParam());
     }
 
 

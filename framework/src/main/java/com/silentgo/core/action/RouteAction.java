@@ -45,7 +45,7 @@ public class RouteAction extends ActionChain {
         Response response = param.getResponse();
 
         Request request = param.getRequest();
-        SilentGo me = SilentGo.getInstance();
+        SilentGo me = SilentGo.me();
 
         boolean isDev = me.isDevMode();
 

@@ -33,7 +33,7 @@ public class CacheAnnotationResolver implements IAnnotation<Cache> {
         Object returnValue;
         boolean useCache;
         Object cacheKey = null;
-        SilentGo instance = SilentGo.getInstance();
+        SilentGo instance = SilentGo.me();
         CacheManager cacheManager = instance.getConfig().getCacheManager();
         Object[] objects = chain.getPoint().getObjects();
 

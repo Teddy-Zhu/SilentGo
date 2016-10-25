@@ -1,10 +1,10 @@
 package com.silentgo.servlet;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.silentgo.core.action.ActionParam;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
+
+import java.util.HashMap;
 
 /**
  * Project : silentgo
@@ -22,25 +22,12 @@ public class SilentGoContext {
     //origin
     String hashString;
 
-    JSONObject jsonObject;
-
-
-    //JSON
-    private JSONObject parameterJson;
-    private JSONArray parameterJsonArray;
+    private Object jsonObject;
 
     private String jsonString;
 
     public SilentGoContext(ActionParam param) {
         this.actionParam = param;
-    }
-
-    public JSONObject getJsonObject() {
-        return jsonObject;
-    }
-
-    public void setJsonObject(JSONObject jsonObject) {
-        this.jsonObject = jsonObject;
     }
 
     public String getHashString() {
@@ -67,22 +54,6 @@ public class SilentGoContext {
         actionParam.setRequest(request);
     }
 
-    public JSONObject getParameterJson() {
-        return parameterJson;
-    }
-
-    public void setParameterJson(JSONObject parameterJson) {
-        this.parameterJson = parameterJson;
-    }
-
-    public JSONArray getParameterJsonArray() {
-        return parameterJsonArray;
-    }
-
-    public void setParameterJsonArray(JSONArray parameterJsonArray) {
-        this.parameterJsonArray = parameterJsonArray;
-    }
-
     public String getJsonString() {
         return jsonString;
     }
@@ -93,5 +64,13 @@ public class SilentGoContext {
 
     public ActionParam getActionParam() {
         return actionParam;
+    }
+
+    public Object getJsonObject() {
+        return jsonObject;
+    }
+
+    public void setJsonObject(Object jsonObject) {
+        this.jsonObject = jsonObject;
     }
 }

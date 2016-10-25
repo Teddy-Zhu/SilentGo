@@ -45,7 +45,7 @@ public class CommonDaoResolver implements DaoResolver {
 
     @Override
     public <T extends TableModel> SQLTool processSQL(String methodName, Class<?> returnType, Object[] objects, List<String> parsedMethod, BaseTableInfo tableInfo, SQLTool sqlTool, List<Annotation> annotations, boolean[] isHandled) throws AppSQLException {
-        BaseDaoDialect daoDialect = SilentGo.getInstance().getFactory(DialectFactory.class).getDialect(tableInfo.getType());
+        BaseDaoDialect daoDialect = SilentGo.me().getFactory(DialectFactory.class).getDialect(tableInfo.getType());
         isHandled[0] = true;
         switch (methodName) {
             case "queryByPrimaryKey": {

@@ -1,6 +1,5 @@
 package com.silentgo.core.route.support.paramresolver;
 
-import com.alibaba.fastjson.JSON;
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.MethodParam;
 import com.silentgo.core.exception.AppParameterPaserException;
@@ -10,6 +9,7 @@ import com.silentgo.core.route.support.paramresolver.annotation.ParameterResolve
 import com.silentgo.servlet.SilentGoContext;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
+import com.silentgo.utils.json.JsonPaser;
 
 import java.util.Map;
 
@@ -36,16 +36,18 @@ public class RequestParamOrCommonParamResolver implements ParameterValueResolver
     @Override
     public Object getValue(Response response, Request request, MethodParam methodParam) throws AppParameterPaserException {
         Object ret = null;
-
+        SilentGo me = SilentGo.me();
         RequestParam requestParam = methodParam.getAnnotation(RequestParam.class);
 
         Map<String, Object> resolvedMap = request.getResolvedMap();
-        SilentGoContext context = SilentGo.getInstance().getConfig().getCtx().get();
+        SilentGoContext context = me.getConfig().getCtx().get();
+        JsonPaser parser = me.json();
+        Object jsonObject = context.getJsonObject();
 
-        ret = context.getJsonObject().getObject(methodParam.getName(), methodParam.getType());
+        ret = parser.toObject(methodParam.getName(), jsonObject, methodParam.getType());
         if (ret == null && requestParam == null) {
             try {
-                ret = JSON.parseObject(context.getHashString(), methodParam.getType());
+                ret = me.json().toObject(context.getHashString(), methodParam.getType());
             } catch (Exception e) {
                 ret = null;
             }

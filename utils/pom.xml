@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
-    <version>0.0.7</version>
+    <version>0.0.8</version>
     <artifactId>utils</artifactId>
 
     <properties>
@@ -22,8 +22,14 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>1.2.14</version>
+            <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.7</version>
+        </dependency>
 
         <dependency>
             <groupId>log4j</groupId>

@@ -1,5 +1,7 @@
 package com.silentgo.utils.json;
 
+import java.util.Collection;
+
 /**
  * Project : silentgo
  * com.silentgo.kit.json
@@ -8,12 +10,23 @@ package com.silentgo.utils.json;
  *         <p>
  *         Created by teddyzhu on 16/9/1.
  */
-public interface JsonPaser {
+public interface JsonPaser<C> {
+    public JsonPaser me();
+
+    public C toJson(String json);
 
     public String toJsonString(Object object);
 
     public <T> T toObject(String json, Class<T> type);
 
     public <T> T[] toObjectArray(String json, Class<T> type);
+
+    public <T> Collection<T> toObjectList(String json, Class<T> type);
+
+    public <T> T toObject(String name, C c, Class<T> type);
+
+    public <T> T[] toObjectArray(String name, C c, Class<T> type);
+
+    public <T> Collection<T> toObjectList(String name, C c, Class<T> type);
 
 }

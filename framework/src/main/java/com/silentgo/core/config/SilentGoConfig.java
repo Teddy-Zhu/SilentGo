@@ -132,7 +132,7 @@ public class SilentGoConfig extends BaseConfig {
     }
 
     public BeanWrapper getBean(String name) {
-        return getFactory(getBeanClass(), SilentGo.getInstance()).getBean(name);
+        return getFactory(getBeanClass(), SilentGo.me()).getBean(name);
     }
 
     public boolean addExtraAction(ActionChain chain) {

@@ -32,7 +32,7 @@ public class SilentGoFilter implements Filter {
 
     private static Config configInit = null;
 
-    private static SilentGo appContext = SilentGo.getInstance();
+    private static SilentGo appContext = SilentGo.me();
 
     private SilentGoConfig globalConfig = null;
 

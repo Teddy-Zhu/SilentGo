@@ -29,7 +29,7 @@ public class AnnotationInterceptor implements Interceptor {
     @Override
     public Object resolve(AOPPoint point) throws Throwable {
         LOGGER.debug("start Annotaion Intercept");
-        AnnotationInceptFactory annotationInceptFactory = SilentGo.getInstance().getFactory(AnnotationInceptFactory.class);
+        AnnotationInceptFactory annotationInceptFactory = SilentGo.me().getFactory(AnnotationInceptFactory.class);
         Object ret = new AnnotationInterceptChain(point, annotationInceptFactory.getSortedAnnotationMap(point.getAdviser().getName())).intercept();
         LOGGER.debug("end Annotaion Intercept");
         return ret;

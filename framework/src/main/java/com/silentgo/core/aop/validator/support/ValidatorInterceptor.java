@@ -37,7 +37,7 @@ public class ValidatorInterceptor implements Interceptor {
     public Object resolve(AOPPoint point) throws Throwable {
         LOGGER.debug("start validator Intercept");
         MethodParam[] params = point.getAdviser().getParams();
-        ValidatorFactory validatorFactory = SilentGo.getInstance().getFactory(ValidatorFactory.class);
+        ValidatorFactory validatorFactory = SilentGo.me().getFactory(ValidatorFactory.class);
         Map<String, Map<Annotation, IValidator>> validateMap = validatorFactory.getParamValidatorMap(point.getAdviser().getName());
         for (int i = 0, len = params.length; i < len; i++) {
             MethodParam param = params[i];

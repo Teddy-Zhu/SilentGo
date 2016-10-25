@@ -1,7 +1,5 @@
 package com.silentgo.core.route.support.paramresolver;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.MethodParam;
 import com.silentgo.core.exception.AppParameterPaserException;
@@ -33,30 +31,28 @@ public class RequestBodyParamResolver implements ParameterValueResolver {
 
     @Override
     public Object getValue(Response response, Request request, MethodParam methodParam) throws AppParameterPaserException {
-        RequestBody requestBody = methodParam.getAnnotation(RequestBody.class);
         RequestParam requestParam = methodParam.getAnnotation(RequestParam.class);
-        SilentGoContext context = SilentGo.getInstance().getConfig().getCtx().get();
+        SilentGo me = SilentGo.me();
+        SilentGoContext context = me.getConfig().getCtx().get();
         Object ret = null;
         try {
-            boolean notHasName = requestParam == null;
-
-            if (notHasName) {
+            if (requestParam == null) {
                 if (methodParam.getType().isArray()) {
-                    context.getParameterJsonArray().toArray(
-                            new Object[]{Array.newInstance(methodParam.getType().getComponentType(),
-                                    context.getParameterJsonArray().size())});
+                    ret = me.json().toObject(context.getJsonString(), Array.newInstance(methodParam.getType().getComponentType(), 0).getClass());
                 } else if (Collection.class.isAssignableFrom(methodParam.getType())) {
-                    ret = context.getParameterJsonArray();
+                    ret = me.json().toObjectList(context.getJsonString(), methodParam.getType());
                 } else {
-                    ret = JSON.parseObject(context.getJsonString(), methodParam.getType());
+                    ret = me.json().toObject(context.getJsonString(), methodParam.getType());
                 }
             } else {
-                JSONObject jsonObject = context.getParameterJson();
-                if (jsonObject != null) {
-                    ret = jsonObject.getObject(methodParam.getName(), methodParam.getType());
+                if (methodParam.getType().isArray()) {
+                    ret = me.json().toObjectArray(methodParam.getName(), context.getJsonObject(), methodParam.getType().getComponentType());
+                } else if (Collection.class.isAssignableFrom(methodParam.getType())) {
+                    ret = me.json().toObjectList(methodParam.getName(), context.getJsonObject(), methodParam.getType());
+                } else {
+                    ret = me.json().toObject(methodParam.getName(), context.getJsonObject(), methodParam.getType());
                 }
             }
-
         } catch (Exception e) {
             ret = null;
             if (methodParam.getType().isPrimitive())

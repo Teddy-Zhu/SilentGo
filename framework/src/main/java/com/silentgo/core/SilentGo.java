@@ -4,6 +4,7 @@ import com.silentgo.core.config.SilentGoConfig;
 import com.silentgo.core.support.AnnotationManager;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.orm.base.DBConnect;
+import com.silentgo.utils.json.JsonPaser;
 
 import javax.servlet.ServletContext;
 
@@ -21,7 +22,7 @@ public class SilentGo {
         static SilentGo instance = new SilentGo();
     }
 
-    public static SilentGo getInstance() {
+    public static SilentGo me() {
         return SilentGoHolder.instance;
     }
 
@@ -86,7 +87,10 @@ public class SilentGo {
     }
 
     public <T extends BaseFactory> T getFactory(Class<T> t) {
-        return config.getFactory(t, getInstance());
+        return config.getFactory(t, me());
     }
 
+    public JsonPaser json() {
+        return config.getJsonPaser();
+    }
 }

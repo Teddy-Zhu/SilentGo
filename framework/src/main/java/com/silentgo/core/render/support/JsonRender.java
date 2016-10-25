@@ -1,6 +1,6 @@
 package com.silentgo.core.render.support;
 
-import com.alibaba.fastjson.JSON;
+import com.silentgo.core.SilentGo;
 import com.silentgo.core.exception.AppRenderException;
 import com.silentgo.core.render.Render;
 import com.silentgo.servlet.http.Request;
@@ -33,6 +33,7 @@ public class JsonRender implements Render {
 
     @Override
     public void render(Response response, Request request, Object retVal) throws AppRenderException {
+
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Cache-Control", "no-cache , no-store , mag-age=0");
         response.setDateHeader("Expires", 0);
@@ -42,7 +43,7 @@ public class JsonRender implements Render {
         try {
             writer = response.getWriter();
 
-            writer.write(retVal instanceof String ? retVal.toString() : JSON.toJSONString(retVal));
+            writer.write(retVal instanceof String ? retVal.toString() : SilentGo.me().json().toJsonString(retVal));
             writer.flush();
 
         } catch (IOException e) {

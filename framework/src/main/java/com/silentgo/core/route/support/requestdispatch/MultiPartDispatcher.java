@@ -53,18 +53,18 @@ public class MultiPartDispatcher implements RequestDispatcher {
         ServletFileUpload servletFileUpload = new ServletFileUpload();
         if (!ServletFileUpload.isMultipartContent(request)) return;
 
-        FileUploadConfig config = (FileUploadConfig) SilentGo.getInstance().getConfig().getConfig(Const.FileUploadConfig);
+        FileUploadConfig config = (FileUploadConfig) SilentGo.me().getConfig().getConfig(Const.FileUploadConfig);
 
 
         DiskFileItemFactory factory = new DiskFileItemFactory();
 
         factory.setRepository(new File(config.getUploadPath()));
         factory.setSizeThreshold(config.getSizeThreshold());
-        factory.setFileCleaningTracker(getTracker(SilentGo.getInstance()));
+        factory.setFileCleaningTracker(getTracker(SilentGo.me()));
 
         servletFileUpload.setSizeMax(config.getMaxSize());
         servletFileUpload.setFileItemFactory(factory);
-        servletFileUpload.setHeaderEncoding(SilentGo.getInstance().getConfig().getEncoding());
+        servletFileUpload.setHeaderEncoding(SilentGo.me().getConfig().getEncoding());
         try {
             List<FileItem> items = servletFileUpload.parseRequest(request);
 

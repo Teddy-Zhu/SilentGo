@@ -1,8 +1,5 @@
 package com.silentgo.core.route.support.requestdispatch;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.action.ActionParam;
 import com.silentgo.core.exception.AppRequestParseException;
@@ -33,11 +30,11 @@ public class JsonDispatcher implements RequestDispatcher {
     public void dispatch(ActionParam param) throws AppRequestParseException {
         Request request = param.getRequest();
 
-        String jsonHash = JSON.toJSONString(request.getResolvedMap());
-        JSONObject jsonObjectParam = JSON.parseObject(jsonHash);
-        SilentGoContext context = SilentGo.getInstance().getConfig().getCtx().get();
-        context.setJsonObject(jsonObjectParam);
-        context.setHashString(jsonHash);
+        SilentGo me = SilentGo.me();
+
+        String hashString = me.json().toJsonString(request.getResolvedMap());
+        SilentGoContext context = me.getConfig().getCtx().get();
+        context.setHashString(hashString);
 
         if (request.getContentType() == null || !request.getContentType().contains(ContentType.JSON.toString())) {
             return;
@@ -62,17 +59,16 @@ public class JsonDispatcher implements RequestDispatcher {
         }
         try {
             String jsonString = new String(buffer, request.getCharacterEncoding());
-            if (jsonString.startsWith("[")) {
-                JSONArray jsonArray = JSON.parseArray(jsonString);
-                context.setParameterJsonArray(jsonArray);
-            } else {
-                JSONObject jsonObject = JSON.parseObject(jsonString);
-                context.setParameterJson(jsonObject);
-            }
             context.setJsonString(jsonString);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             throw new AppRequestParseException(e.getMessage());
+        }
+
+        try {
+            context.setJsonObject(me.json().toJson(context.getJsonString()));
+        } catch (Exception e) {
+            throw new AppRequestParseException("json string parse error");
         }
     }
 }

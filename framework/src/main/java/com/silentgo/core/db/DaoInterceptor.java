@@ -3,7 +3,6 @@ package com.silentgo.core.db;
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.db.daoresolve.DaoResolveFactory;
 import com.silentgo.core.db.daoresolve.DaoResolver;
-import com.silentgo.core.db.funcanalyse.AnalyseKit;
 import com.silentgo.core.db.methodnameparser.MethodParserKit;
 import com.silentgo.core.exception.AppSQLException;
 import com.silentgo.orm.base.*;
@@ -49,7 +48,7 @@ public class DaoInterceptor implements MethodInterceptor {
 
     @Override
     public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
-        SilentGo instance = SilentGo.getInstance();
+        SilentGo instance = SilentGo.me();
         DaoResolveFactory daoResolveFactory = instance.getFactory(DaoResolveFactory.class);
         DaoFactory daoFactory = instance.getFactory(DaoFactory.class);
         SQLTool sqlTool = new SQLTool();

@@ -6,16 +6,16 @@ import com.silentgo.core.aop.annotationintercept.support.AnnotationInterceptor;
 import com.silentgo.core.aop.validator.support.ValidatorInterceptor;
 import com.silentgo.core.cache.CacheManager;
 import com.silentgo.core.cache.EhCache;
-import com.silentgo.orm.base.DBType;
 import com.silentgo.core.ioc.bean.BeanFactory;
 import com.silentgo.core.ioc.bean.SilentGoBeanFactory;
 import com.silentgo.core.route.RoutePaser;
 import com.silentgo.core.route.support.routeparse.DefaultRouteParser;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.orm.base.DBConnect;
+import com.silentgo.orm.base.DBType;
 import com.silentgo.utils.ClassKit;
 import com.silentgo.utils.CollectionKit;
-import com.silentgo.utils.json.FastJsonPaser;
+import com.silentgo.utils.json.GsonPaser;
 import com.silentgo.utils.json.JsonPaser;
 
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public class BaseConfig extends InterConfig {
 
     private List<Class<? extends IAnnotation>> annotationIntecepters = new ArrayList<>();
 
-    private JsonPaser jsonPaser = new FastJsonPaser();
+    private JsonPaser jsonPaser = new GsonPaser();
 
     private RoutePaser routePaser = new DefaultRouteParser();
 

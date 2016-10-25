@@ -131,7 +131,7 @@ public class BeanDefinition extends BeanWrapper {
 
     @Override
     public Object getObject() {
-        SilentGoBeanFactory beanFactory = SilentGo.getInstance().getFactory(SilentGoBeanFactory.class);
+        SilentGoBeanFactory beanFactory = SilentGo.me().getFactory(SilentGoBeanFactory.class);
         if (!injectComplete) {
             beanFactory.depend(this);
         }

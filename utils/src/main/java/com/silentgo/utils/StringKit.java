@@ -1,7 +1,10 @@
 package com.silentgo.utils;
 
+import com.alibaba.fastjson.JSON;
+
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Project : silentgo
@@ -126,4 +129,59 @@ public class StringKit {
             }
         }
     }
+
+    public static String toString(Object object) {
+        if (object instanceof String) {
+            return (String) object;
+        }
+        if (object.getClass().isPrimitive()) {
+            return String.valueOf(object);
+        }
+        return object.toString();
+    }
+
+    public static String format(String template, Object... values) {
+        if (CollectionKit.isEmpty(values) || isBlank(template)) {
+            return template;
+        }
+
+        final StringBuilder sb = new StringBuilder();
+        final int length = template.length();
+
+        int valueIndex = 0;
+        char currentChar;
+        for (int i = 0; i < length; i++) {
+            if (valueIndex >= values.length) {
+                sb.append(template.substring(i));
+                break;
+            }
+
+            currentChar = template.charAt(i);
+            if (currentChar == '{') {
+                final char nextChar = template.charAt(++i);
+                if (nextChar == '}') {
+                    sb.append(toString(values[valueIndex++]));
+                } else {
+                    sb.append('{').append(nextChar);
+                }
+            } else {
+                sb.append(currentChar);
+            }
+
+        }
+
+        return sb.toString();
+    }
+
+    public static String format(String template, Map<String, ?> map) {
+        if (null == map || map.isEmpty()) {
+            return template;
+        }
+
+        for (Map.Entry<?, ?> entry : map.entrySet()) {
+            template = template.replace("{" + entry.getKey() + "}", entry.getValue().toString());
+        }
+        return template;
+    }
+
 }

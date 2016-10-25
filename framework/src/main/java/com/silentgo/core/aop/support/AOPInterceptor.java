@@ -26,8 +26,8 @@ public class AOPInterceptor implements MethodInterceptor {
 
     @Override
     public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
-        SilentGoContext ctx = SilentGo.getInstance().getConfig().getCtx().get();
-        MethodAOPFactory methodAOPFactory = SilentGo.getInstance().getFactory(MethodAOPFactory.class);
+        SilentGoContext ctx = SilentGo.me().getConfig().getCtx().get();
+        MethodAOPFactory methodAOPFactory = SilentGo.me().getFactory(MethodAOPFactory.class);
         MethodAdviser adviser = methodAOPFactory.getMethodAdviser(method);
         AOPPoint point = new AOPPoint(o, method, objects, methodProxy,
                 adviser, ctx != null ? ctx.getResponse() : null, ctx != null ? ctx.getRequest() : null);
