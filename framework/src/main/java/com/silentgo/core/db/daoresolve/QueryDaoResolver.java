@@ -1,15 +1,21 @@
 package com.silentgo.core.db.daoresolve;
 
+import com.silentgo.core.db.annotation.Query;
+import com.silentgo.core.db.annotation.Select;
+import com.silentgo.core.db.funcanalyse.AnalyseKit;
 import com.silentgo.orm.base.BaseTableInfo;
 import com.silentgo.orm.base.TableModel;
 import com.silentgo.core.db.funcanalyse.DaoKeyWord;
 import com.silentgo.core.exception.AppSQLException;
 import com.silentgo.orm.base.SQLTool;
 import com.silentgo.utils.Assert;
+import com.silentgo.utils.StringKit;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Project : parent
@@ -30,7 +36,7 @@ public class QueryDaoResolver implements DaoResolver {
         if (isHandled[0]) return sqlTool;
         isHandled[0] = true;
         Integer index = 1;
-        String two = parsedMethod.get(index);
+        String two = DaoResolveKit.getField(parsedMethod, index);
         if (DaoKeyWord.One.equals(two)) {
             sqlTool.limit(1, 1);
             index += 1;
@@ -40,23 +46,45 @@ public class QueryDaoResolver implements DaoResolver {
             index += 1;
         }
         if (index != 1) {
-            two = parsedMethod.get(index);
+            two = DaoResolveKit.getField(parsedMethod, index);
         }
         if (DaoKeyWord.By.equals(two)) {
-            String nextKeyword = parsedMethod.get(index + 1);
-            if (DaoKeyWord.List.equals(nextKeyword)) {
-                if (objects[0] instanceof Collection) {
-                    String f = DaoResolveKit.getField(parsedMethod, tableInfo, index + 2);
-                    sqlTool.whereIn(f, ((Collection) objects[0]).size());
-                } else {
-                    throw new AppSQLException("the first parameter is not collection instance");
-                }
-            } else {
-                String f = DaoResolveKit.getField(nextKeyword, tableInfo);
-                sqlTool.whereEquals(f);
-            }
+            setWhere(index, DaoKeyWord.And.innername, parsedMethod, tableInfo, sqlTool);
         }
         sqlTool.select(tableInfo.getTableName(), tableInfo.get("*").getSelectFullName());
         return sqlTool;
+    }
+
+    private void setWhere(int index, String string, List<String> parsedMethod, BaseTableInfo tableInfo, SQLTool sqlTool) throws AppSQLException {
+        if (DaoKeyWord.And.equals(string)) {
+            String f = DaoResolveKit.getField(parsedMethod, tableInfo, index + 1);
+            String condition = DaoResolveKit.getField(parsedMethod, index + 2);
+            String condition2 = DaoResolveKit.getField(parsedMethod, index + 3);
+
+            if (DaoKeyWord.Greater.equals(condition)) {
+                if (DaoKeyWord.Eq.equals(condition2)) {
+                    sqlTool.whereGreaterEq(f);
+                    index += 2;
+                } else {
+                    sqlTool.whereGreater(f);
+                    index += 1;
+                }
+            } else if (DaoKeyWord.Less.equals(condition)) {
+                if (DaoKeyWord.Eq.equals(condition2)) {
+                    sqlTool.whereLessEq(f);
+                    index += 2;
+                } else {
+                    sqlTool.whereLess(f);
+                    index += 1;
+                }
+            } else {
+                sqlTool.whereEquals(f);
+                index += 1;
+            }
+            Integer nextIndex = index + 1;
+            setWhere(nextIndex, DaoResolveKit.getField(parsedMethod, nextIndex), parsedMethod, tableInfo, sqlTool);
+        } else {
+            return;
+        }
     }
 }

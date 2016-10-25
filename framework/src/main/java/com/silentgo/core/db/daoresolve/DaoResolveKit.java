@@ -17,8 +17,13 @@ import java.util.List;
  */
 public class DaoResolveKit {
 
+    public static String getField(List<String> parsedString, int index) throws AppSQLException {
+        return index < parsedString.size() ? parsedString.get(index) : "";
+    }
+
+
     public static String getField(List<String> parsedString, BaseTableInfo baseTableInfo, int index) throws AppSQLException {
-        String field = parsedString.get(index);
+        String field = getField(parsedString, index);
         return getField(field, baseTableInfo);
     }
 
@@ -30,5 +35,9 @@ public class DaoResolveKit {
         } else {
             throw new AppSQLException("the table [" + baseTableInfo.getTableName() + "] do not contains column [" + field + "]");
         }
+    }
+
+    public static boolean isField(String field, BaseTableInfo baseTableInfo) {
+        return baseTableInfo.get(StringKit.firstToLower(field)) != null;
     }
 }

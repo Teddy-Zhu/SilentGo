@@ -263,6 +263,25 @@ public class SQLTool {
         return this;
     }
 
+    public SQLTool whereGreater(String condition) {
+        this.whereList.add(condition + " > ?");
+        return this;
+    }
+    public SQLTool whereLess(String condition) {
+        this.whereList.add(condition + " < ?");
+        return this;
+    }
+
+    public SQLTool whereGreaterEq(String condition) {
+        this.whereList.add(condition + " >= ?");
+        return this;
+    }
+    public SQLTool whereLessEq(String condition) {
+        this.whereList.add(condition + " <= ?");
+        return this;
+    }
+
+
     public SQLTool whereIn(String condition) {
         return whereIn(condition, 1);
     }

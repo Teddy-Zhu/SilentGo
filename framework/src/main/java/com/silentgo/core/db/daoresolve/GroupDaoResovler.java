@@ -26,7 +26,7 @@ public class GroupDaoResovler implements DaoResolver {
     @Override
     public <T extends TableModel> SQLTool processSQL(String methodName, Class<?> returnType, Object[] objects, List<String> parsedMethod, BaseTableInfo tableInfo, SQLTool sqlTool, List<Annotation> annotations, boolean[] isHandled) throws AppSQLException {
         int index = parsedMethod.indexOf(DaoKeyWord.Order.innername);
-        String two = parsedMethod.get(index + 1);
+        String two = DaoResolveKit.getField(parsedMethod, index + 1);
         if (DaoKeyWord.By.equals(two)) {
             String f = DaoResolveKit.getField(parsedMethod, tableInfo, index + 2);
             sqlTool.whereEquals(f);

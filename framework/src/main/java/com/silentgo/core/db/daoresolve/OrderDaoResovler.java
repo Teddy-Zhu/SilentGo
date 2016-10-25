@@ -26,7 +26,7 @@ public class OrderDaoResovler implements DaoResolver {
     @Override
     public <T extends TableModel> SQLTool processSQL(String methodName, Class<?> returnType, Object[] objects, List<String> parsedMethod, BaseTableInfo tableInfo, SQLTool sqlTool, List<Annotation> annotations, boolean[] isHandled) throws AppSQLException {
         int index = parsedMethod.indexOf(DaoKeyWord.Order.innername);
-        String two = parsedMethod.get(index + 1);
+        String two = DaoResolveKit.getField(parsedMethod, index + 1);
         if (DaoKeyWord.By.equals(two)) {
             setOrder(index + 1, DaoKeyWord.And.innername, parsedMethod, tableInfo, sqlTool);
         } else {
@@ -38,7 +38,7 @@ public class OrderDaoResovler implements DaoResolver {
     public void setOrder(int index, String string, List<String> parsedMethod, BaseTableInfo tableInfo, SQLTool sqlTool) throws AppSQLException {
         if (DaoKeyWord.And.equals(string)) {
             String f = DaoResolveKit.getField(parsedMethod, tableInfo, index + 1);
-            String sort = parsedMethod.get(index + 2);
+            String sort = DaoResolveKit.getField(parsedMethod, index + 2);
             if (DaoKeyWord.Desc.equals(sort)) {
                 sqlTool.orderByDesc(f);
                 index += 1;
@@ -47,7 +47,7 @@ public class OrderDaoResovler implements DaoResolver {
                 index += 1;
             }
             Integer nextIndex = index + 2;
-            setOrder(nextIndex, parsedMethod.get(nextIndex), parsedMethod, tableInfo, sqlTool);
+            setOrder(nextIndex, DaoResolveKit.getField(parsedMethod, nextIndex), parsedMethod, tableInfo, sqlTool);
         } else {
             return;
         }

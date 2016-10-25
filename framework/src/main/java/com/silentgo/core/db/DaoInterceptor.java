@@ -4,6 +4,7 @@ import com.silentgo.core.SilentGo;
 import com.silentgo.core.db.daoresolve.DaoResolveFactory;
 import com.silentgo.core.db.daoresolve.DaoResolver;
 import com.silentgo.core.db.funcanalyse.AnalyseKit;
+import com.silentgo.core.db.methodnameparser.MethodParserKit;
 import com.silentgo.core.exception.AppSQLException;
 import com.silentgo.orm.base.*;
 import com.silentgo.orm.kit.PropertyTool;
@@ -20,10 +21,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Project : silentgo
@@ -36,6 +34,9 @@ import java.util.Map;
 public class DaoInterceptor implements MethodInterceptor {
 
     private static final Logger LOGGER = LoggerFactory.getLog(DaoInterceptor.class);
+
+
+    private static final Map<Method, List<String>> cacheNamePaser = new HashMap<>();
 
 
     public static <T> T proxy(Class<T> tclz) {
@@ -53,14 +54,21 @@ public class DaoInterceptor implements MethodInterceptor {
         DaoFactory daoFactory = instance.getFactory(DaoFactory.class);
         SQLTool sqlTool = new SQLTool();
         String methodName = method.getName();
-        List<String> parsedString = new ArrayList<>();
-        AnalyseKit.analyse(method.getName(), parsedString);
+        List<String> parsedString;
+        List<Annotation> annotations = daoFactory.getMethodListMap().get(method);
         Class<? extends BaseDao> daoClass = (Class<? extends BaseDao>) o.getClass().getInterfaces()[0];
         BaseTableInfo tableInfo = daoFactory.getTableInfo(daoClass);
+        boolean cached = cacheNamePaser.containsKey(method);
+        if (cached) {
+            parsedString = cacheNamePaser.get(method);
+        } else {
+            parsedString = new ArrayList<>();
+            MethodParserKit.parse(methodName, annotations, parsedString, tableInfo);
+            cacheNamePaser.put(method, parsedString);
+        }
 
         Class<?> methodRetType = method.getReturnType();
         boolean[] isHandled = new boolean[]{false};
-        List<Annotation> annotations = daoFactory.getMethodListMap().get(method);
         for (DaoResolver daoResolver : daoResolveFactory.getResolverList()) {
             if (daoResolver.handle(methodName, parsedString, annotations) && !isHandled[0]) {
                 try {
@@ -99,6 +107,7 @@ public class DaoInterceptor implements MethodInterceptor {
         if (connect != null && connect.getConnect().getAutoCommit()) {
             connect.release();
         }
+
         return ret;
     }
 

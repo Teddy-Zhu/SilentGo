@@ -29,7 +29,6 @@ public class CountDaoResolver implements DaoResolver {
         isHandled[0] = true;
         String two = parsedMethod.get(1);
         if (DaoKeyWord.By.equals(two)) {
-            String field = parsedMethod.get(2);
             String f = DaoResolveKit.getField(parsedMethod, tableInfo, 2);
             sqlTool.whereEquals(f);
         }

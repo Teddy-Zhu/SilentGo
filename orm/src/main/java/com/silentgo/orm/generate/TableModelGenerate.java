@@ -25,6 +25,7 @@ public class TableModelGenerate {
         Set<String> imports = new HashSet<>();
         imports.add(TableModel.class.getName());
         imports.add(Table.class.getName());
+        imports.add(Column.class.getName());
 
         StringBuilder body = new StringBuilder();
 
@@ -66,7 +67,7 @@ public class TableModelGenerate {
         String field = format(ClassConst._field_null,
                 column.getTypeName(),
                 column.getName());
-        String an = "$t" + format(ClassConst._annotaion, Column.class.getSimpleName() + (column.getName().equals(column.getColName()) ? "" : "(" + column.getColName() + ")"));
+        String an = "$t" + format(ClassConst._annotaion, Column.class.getSimpleName() + (column.getName().equals(column.getColName()) ? "" : "(\"" + column.getColName() + "\")"));
         return an + field;
     }
 

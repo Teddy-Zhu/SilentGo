@@ -47,6 +47,7 @@ public class BaseTableInfoKit {
             nc.setType(field.getType());
             nc.setColumnName(an != null && !Const.EmptyString.equals(an.value()) ? an.value() : field.getName());
             nc.setFullName(tableMeta.getTableName() + DOT + nc.getColumnName());
+            nc.setSelectFullName(nc.getFullName() + (nc.getPropName().equals(nc.getColumnName()) ? "" : " as " + nc.getPropName()));
             fullMap.put(nc.getPropName(), nc);
             all.add(nc.getSelectFullName());
         }
@@ -67,6 +68,7 @@ public class BaseTableInfoKit {
 //            fullMap.put(nc.getPropName(), nc);
 //        });
 
+        info.setColumnInfo(fullMap);
         return info;
     }
 }

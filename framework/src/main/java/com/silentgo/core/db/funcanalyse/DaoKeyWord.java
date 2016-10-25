@@ -21,8 +21,11 @@ public enum DaoKeyWord {
     By("By"),
     Set("Set"),
     One("One"),
-    Desc("desc"),
-    Asc("asc"),
+    Desc("Desc"),
+    Greater("Greater"),
+    Eq("Eq"),
+    Less("Less"),
+    Asc("Asc"),
     List("List");
 
     public String innername;

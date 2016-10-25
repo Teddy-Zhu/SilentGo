@@ -62,4 +62,7 @@ public class BaseTableInfo {
         return columnInfo.get(name);
     }
 
+    public void setColumnInfo(Map<String, Column> columnInfo) {
+        this.columnInfo = columnInfo;
+    }
 }

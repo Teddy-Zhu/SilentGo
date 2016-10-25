@@ -32,7 +32,7 @@ public class DeleteDaoResolver implements DaoResolver {
         if (isHandled[0]) return sqlTool;
         isHandled[0] = true;
         int index = parsedMethod.indexOf(DaoKeyWord.Order.innername);
-        String two = parsedMethod.get(index + 1);
+        String two = DaoResolveKit.getField(parsedMethod, index + 1);
         if (DaoKeyWord.By.equals(two)) {
             String f = DaoResolveKit.getField(parsedMethod, tableInfo, index + 2);
             sqlTool.whereEquals(f);
