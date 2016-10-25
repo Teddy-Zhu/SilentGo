@@ -1,20 +1,20 @@
 # SilentGo Framework
 a light web mvc framework.
-#### How to Use
+### How to Use
 add maven dependency
 ```
 <dependency>
     <groupId>com.silentgo</groupId>
     <artifactId>framework</artifactId>
-    <version>0.0.18</version>
+    <version>0.0.21</version>
 </dependency>
 ```
 
 
 
-####  IOC
+###  IOC
 use with @Inject  
-####  AOP 
+###  AOP 
 class implements Interceptor.
 ```java
 public interface Interceptor {
@@ -30,14 +30,14 @@ public interface Interceptor {
     Object resolve(AOPPoint point, boolean[] isResolved) throws Throwable;
 }
 ```
-####  route
-match path , you can use :   
+###  route
+##### match path , you can use :   
 		
 ```java
 	@Controller(value="/path")  
 	@Route(value="/{id}/{name}") or @Route(value="/[0-9a-z]+" , regex = true)
 ```
-match parameters  
+##### match parameters  
 
 ```java
 	public void index(Response reponse,Resquest request ,@PathVariable(value="id") Integer id ,@PathVariable(value="name") String myname, 
@@ -47,8 +47,36 @@ validate parameters
 	class implements IValidator
 	you can custom validator for parameters yourself
 
+##### restful
+```java
+    @Route("/")
+    public String index() {
+        return "index.jsp";
+    }
 
-#### dao
+    @Route("/{string}")
+    @ResponseBody
+    public String test(@PathVariable String string) {
+        LOGGER.info("msg:{}", string);
+        return string;
+    }
+
+    @Route("/{string}")
+    @ResponseBody
+    @RouteMatch(method = RequestMethod.POST)
+    public String testpost(@PathVariable String string) {
+        return "post method :" + string;
+    }
+
+    @Route("/{string}")
+    @ResponseBody
+    @RouteMatch(method = RequestMethod.POST, params = "name=1")
+    public String testpost2(@PathVariable String string) {
+        return "post method name 1:" + string;
+    }
+
+```
+### dao
 
 generate dao and db model by tools in framework
 
