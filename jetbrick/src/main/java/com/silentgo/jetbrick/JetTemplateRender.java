@@ -26,11 +26,11 @@ public class JetTemplateRender implements Render {
     private final JetEngine engine;
 
     public JetTemplateRender() {
-        engine = JetWebEngine.create(SilentGo.getInstance().getContext());
+        engine = JetWebEngine.create(SilentGo.me().getContext());
     }
 
     public JetTemplateRender(Properties properties) {
-        engine = JetWebEngine.create(SilentGo.getInstance().getContext(), properties, null);
+        engine = JetWebEngine.create(SilentGo.me().getContext(), properties, null);
     }
 
 

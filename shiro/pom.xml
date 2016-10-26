@@ -11,13 +11,13 @@
 
     <artifactId>shiro</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
 
     <dependencies>
         <dependency>
             <groupId>com.silentgo</groupId>
             <artifactId>framework</artifactId>
-            <version>0.0.17</version>
+            <version>0.0.21</version>
             <scope>provided</scope>
         </dependency>
 

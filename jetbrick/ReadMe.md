@@ -5,7 +5,7 @@ add maven dependency
 <dependency>
     <groupId>com.silentgo</groupId>
     <artifactId>shrio</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
 </dependency>
 ```
 in config class

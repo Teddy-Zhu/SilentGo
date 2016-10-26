@@ -50,7 +50,7 @@ public class ShiroAction extends ActionChain {
     }
 
     private WebSecurityManager getSecurityManager() {
-        return SilentGo.getInstance().getFactory(ShiroFactory.class).getDefaultWebSecurityManager();
+        return SilentGo.me().getFactory(ShiroFactory.class).getDefaultWebSecurityManager();
     }
 
     private boolean isHttpSessions() {

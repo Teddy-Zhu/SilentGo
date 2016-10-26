@@ -32,7 +32,7 @@ public class JetbrickInitConfig implements Config {
         if (properties == null) {
             properties = config.getUserProp().getProperties();
         }
-        RenderFactory renderFactory = config.getFactory(RenderFactory.class, SilentGo.getInstance());
+        RenderFactory renderFactory = config.getFactory(RenderFactory.class, SilentGo.me());
         JetTemplateRender jetTemplateRender = new JetTemplateRender(properties);
         renderFactory.addAndReplaceRender(RenderType.View, jetTemplateRender);
     }

@@ -15,10 +15,10 @@ public class RetryLimitHashedCredentialsMatcher extends HashedCredentialsMatcher
     public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
         String username = (String) token.getPrincipal();
         //retry count + 1
-        AtomicInteger retryCount = (AtomicInteger) SilentGo.getInstance().getConfig().getCacheManager().get("passwordRetryCache", username);
+        AtomicInteger retryCount = (AtomicInteger) SilentGo.me().getConfig().getCacheManager().get("passwordRetryCache", username);
         if (retryCount == null) {
             retryCount = new AtomicInteger(0);
-            SilentGo.getInstance().getConfig().getCacheManager().set("passwordRetryCache", username, retryCount);
+            SilentGo.me().getConfig().getCacheManager().set("passwordRetryCache", username, retryCount);
         }
         if (retryCount.incrementAndGet() > 5) {
             //if retry count > 5 throw
@@ -28,7 +28,7 @@ public class RetryLimitHashedCredentialsMatcher extends HashedCredentialsMatcher
         boolean matches = super.doCredentialsMatch(token, info);
         if (matches) {
             //clear retry count
-            SilentGo.getInstance().getConfig().getCacheManager().evict("passwordRetryCache", username);
+            SilentGo.me().getConfig().getCacheManager().evict("passwordRetryCache", username);
         }
         return matches;
     }
