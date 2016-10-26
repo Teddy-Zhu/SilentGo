@@ -11,6 +11,9 @@
     <packaging>jar</packaging>
     <artifactId>jetbrick</artifactId>
     <version>0.0.2</version>
+    <properties>
+        <frame.version>0.0.22</frame.version>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>com.github.subchen</groupId>
@@ -21,7 +24,7 @@
         <dependency>
             <groupId>com.silentgo</groupId>
             <artifactId>framework</artifactId>
-            <version>0.0.21</version>
+            <version>${frame.version}</version>
             <scope>provided</scope>
         </dependency>
 

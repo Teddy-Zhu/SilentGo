@@ -5,6 +5,7 @@ import com.silentgo.core.action.ActionChain;
 import com.silentgo.core.aop.annotationintercept.IAnnotation;
 import com.silentgo.core.cache.CacheManager;
 import com.silentgo.core.db.DBConfig;
+import com.silentgo.core.ioc.bean.BeanFactory;
 import com.silentgo.orm.base.DBType;
 import com.silentgo.core.exception.AppBuildException;
 import com.silentgo.core.ioc.bean.BeanWrapper;
@@ -45,7 +46,7 @@ public class SilentGoConfig extends BaseConfig {
         }
     }
 
-    private boolean addFactory(BaseFactory baseFactory) {
+    public boolean addFactory(BaseFactory baseFactory) {
         return CollectionKit.MapAdd(getFactoryMap(), baseFactory.getClass(), baseFactory);
     }
 
@@ -65,6 +66,7 @@ public class SilentGoConfig extends BaseConfig {
                 factory = name.newInstance();
                 addFactory(factory);
                 factory.initialize(me);
+                getFactory(getBeanClass(), me).addBean(factory, true, false, false);
             } catch (InstantiationException | IllegalAccessException | AppBuildException e) {
                 e.printStackTrace();
             }

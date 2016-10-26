@@ -2,6 +2,8 @@ package com.silentgo.test.controller;
 
 
 import com.silentgo.core.SilentGo;
+import com.silentgo.core.ioc.annotation.Inject;
+import com.silentgo.core.ioc.bean.SilentGoBeanFactory;
 import com.silentgo.core.route.annotation.*;
 import com.silentgo.servlet.http.RequestMethod;
 import com.silentgo.test.model.Menu;
@@ -23,6 +25,9 @@ import java.util.List;
 public class view {
 
     private static final Logger LOGGER = LoggerFactory.getLog(view.class);
+
+    @Inject
+    SilentGoBeanFactory silentGoBeanFactory;
 
     @Route("/")
     public String index() {

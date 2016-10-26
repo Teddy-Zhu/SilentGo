@@ -82,6 +82,14 @@ public class SilentGoBeanFactory extends BeanFactory<BeanDefinition> {
     }
 
     @Override
+    public BeanDefinition addBean(Object target, boolean isSingle, boolean needInject, boolean isLazy) {
+        BeanDefinition beanDefinition = new BeanDefinition(target.getClass(), target, needInject, isSingle, isLazy);
+        beansMap.put(beanDefinition.getBeanName(), beanDefinition);
+        depend(beanDefinition);
+        return beanDefinition;
+    }
+
+    @Override
     public Object getBeans() {
         return beansMap;
     }
@@ -94,7 +102,11 @@ public class SilentGoBeanFactory extends BeanFactory<BeanDefinition> {
 
     public void depend(BeanDefinition beanDefinition) {
         if (beanDefinition.isInjectComplete() || beanDefinition.isLazy()) return;
-        beanDefinition.getFieldBeans().forEach((k, v) -> {
+        Set<Map.Entry<String, FieldBean>> set = beanDefinition.getFieldBeans().entrySet();
+
+        for (Map.Entry<String, FieldBean> entity : set) {
+            String k = entity.getKey();
+            FieldBean v = entity.getValue();
             Field field = v.getField();
             Class<?> type = field.getType();
             BeanDefinition bean = null;
@@ -103,6 +115,7 @@ public class SilentGoBeanFactory extends BeanFactory<BeanDefinition> {
                     bean = beansMap.entrySet().stream().filter(keyset -> keyset.getValue().getInterfaceClass().getName().equals(k))
                             .findFirst().get().getValue();
                 } catch (NoSuchElementException ex) {
+                    ex.printStackTrace();
                     LOGGER.error("Can not find [{}] find implemented class bean", k);
                     return;
                 }
@@ -129,15 +142,10 @@ public class SilentGoBeanFactory extends BeanFactory<BeanDefinition> {
                     //method.invoke(beanDefinition.getTarget(), bean);
                 }
             } catch (IntrospectionException e) {
-//                field.setAccessible(true);
-//                try {
-//                    field.set(beanDefinition.getTarget(), bean.getObject());
-//                } catch (IllegalAccessException e1) {
-//                    e1.printStackTrace();
-//                }
+                e.printStackTrace();
                 LOGGER.debug("Field {} Can not find getter and setter in Class {}", field.getName(), bean.getBeanClass());
             }
-        });
+        }
         beanDefinition.setInjectComplete(true);
     }
 

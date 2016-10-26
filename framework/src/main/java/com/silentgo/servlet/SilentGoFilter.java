@@ -7,7 +7,10 @@ import com.silentgo.core.config.Config;
 import com.silentgo.core.config.Const;
 import com.silentgo.core.config.SilentGoConfig;
 import com.silentgo.core.config.support.ConfigChecker;
+import com.silentgo.core.exception.AppBuildException;
 import com.silentgo.core.exception.AppReleaseException;
+import com.silentgo.core.ioc.bean.BeanFactory;
+import com.silentgo.core.ioc.bean.BeanWrapper;
 import com.silentgo.core.render.support.ErrorRener;
 import com.silentgo.core.support.AnnotationManager;
 import com.silentgo.core.support.BaseFactory;
@@ -80,7 +83,7 @@ public class SilentGoFilter implements Filter {
 
             //build bean first
             LOGGER.debug("init bean factory");
-            appContext.getFactory(config.getBeanClass());
+            initBeanFactory(config);
 
             LOGGER.debug("init other factoryss");
             buildFactory(manager, config);
@@ -94,6 +97,7 @@ public class SilentGoFilter implements Filter {
             for (Config extraConfig : config.getExtraConfig()) {
                 extraConfig.afterInit(config);
             }
+
 
             ConfigChecker.Check(config);
 
@@ -162,6 +166,24 @@ public class SilentGoFilter implements Filter {
                 appContext.getFactory(factory);
             }
         });
+    }
+
+    private void initBeanFactory(SilentGoConfig config) {
+        LOGGER.info("build bean Factory");
+        BeanFactory beanFactory = null;
+        try {
+            beanFactory = config.getBeanClass().newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        config.addFactory(beanFactory);
+        try {
+            beanFactory.initialize(appContext);
+        } catch (AppBuildException e) {
+            e.printStackTrace();
+        }
+        beanFactory.addBean(beanFactory, true, false, false);
+        beanFactory.addBean(config, true, false, false);
     }
 
     private Config getConfig(String className) throws ServletException {

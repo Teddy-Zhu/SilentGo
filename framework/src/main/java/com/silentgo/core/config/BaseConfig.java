@@ -8,6 +8,7 @@ import com.silentgo.core.cache.CacheManager;
 import com.silentgo.core.cache.EhCache;
 import com.silentgo.core.ioc.bean.BeanFactory;
 import com.silentgo.core.ioc.bean.SilentGoBeanFactory;
+import com.silentgo.core.plugin.event.EventListener;
 import com.silentgo.core.route.RoutePaser;
 import com.silentgo.core.route.support.routeparse.DefaultRouteParser;
 import com.silentgo.core.support.BaseFactory;
@@ -57,6 +58,8 @@ public class BaseConfig extends InterConfig {
     private List<ActionChain> actionChains = new ArrayList<>();
 
     private Map<String, String> staticMapping = new HashMap<>();
+
+    private List<Class<? extends EventListener>> eventListeners = new ArrayList<>();
 
     private Class<? extends CacheManager> cacheClz = EhCache.class;
 
@@ -231,5 +234,9 @@ public class BaseConfig extends InterConfig {
 
     public List<Config> getExtraConfig() {
         return extraConfig;
+    }
+
+    public List<Class<? extends EventListener>> getEventListeners() {
+        return eventListeners;
     }
 }

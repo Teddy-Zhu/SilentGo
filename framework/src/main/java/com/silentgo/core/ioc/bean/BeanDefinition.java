@@ -87,8 +87,10 @@ public class BeanDefinition extends BeanWrapper {
         interfaceClass = clz.isInterface() ? clz : clz.getInterfaces().length > 0 ? clz.getInterfaces()[0] : clz;
         if (needInject)
             proxyTarget = CGLibKit.Proxy(target);
-        else
+        else {
             proxyTarget = target;
+            injectComplete = true;
+        }
 
         fieldBeans = new HashMap<>();
         Field[] fields = clz.getDeclaredFields();

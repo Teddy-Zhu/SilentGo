@@ -25,6 +25,8 @@ public abstract class BeanFactory<T extends BeanWrapper> extends BaseFactory {
 
     public abstract T addBean(T beanDefinition);
 
+    public abstract T addBean(Object target, boolean isSingle, boolean needInject, boolean isLazy);
+
     public abstract Object getBeans();
 
     public abstract boolean destory(String name);
