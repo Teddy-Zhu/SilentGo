@@ -19,16 +19,7 @@ public class JDBCManager implements DBManager {
 
     private static final Logger LOGGER = LoggerFactory.getLog(JDBCManager.class);
 
-    public static Map<String, DBPool> poolHashMap;
-
-    //singleton
-    private static class JDBCManagerHolder {
-        static JDBCManager instance = new JDBCManager();
-    }
-
-    public static JDBCManager getInstance() {
-        return JDBCManagerHolder.instance;
-    }
+    public Map<String, DBPool> poolHashMap;
 
     @Override
     public void initial(DBConfig... configs) {

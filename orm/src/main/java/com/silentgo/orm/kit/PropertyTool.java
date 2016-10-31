@@ -80,13 +80,6 @@ public class PropertyTool {
         }
     }
 
-    /**
-     * get prop info from bean
-     *
-     * @param beanInfo
-     * @param tableInfo
-     * @return
-     */
     public static  Map<String, PropertyDescriptor> getProps(BeanInfo beanInfo, BaseTableInfo tableInfo) {
         Map<String, PropertyDescriptor> propsMap = new HashMap<>();
         for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {

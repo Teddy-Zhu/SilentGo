@@ -1,6 +1,6 @@
 package com.silentgo.core.ioc.bean.support;
 
-import com.silentgo.core.db.DaoInterceptor;
+import com.silentgo.orm.base.DaoInterceptor;
 import com.silentgo.core.ioc.annotation.Lazy;
 import com.silentgo.core.ioc.bean.BeanDefinition;
 import com.silentgo.utils.CollectionKit;
@@ -55,7 +55,7 @@ public class BeanBuildKit {
     }
 
 
-    public static void buildBaseDaoInterface(List<BeanDefinition> beanDefinitions, Class<?> clz) {
+    public static void buildBaseDaoInterface(List<BeanDefinition> beanDefinitions, Object target, Class<?> clz) {
         Lazy lazy = clz.getAnnotation(Lazy.class);
         boolean islazy = lazy != null;
         beanDefinitions.add(new BeanDefinition(clz, DaoInterceptor.proxy(clz), false, true, islazy));

@@ -131,7 +131,7 @@ public class SilentGoBeanFactory extends BeanFactory<BeanDefinition> {
                 PropertyDescriptor pd = new PropertyDescriptor(field.getName(),
                         beanDefinition.getBeanClass(),
                         "get" + StringKit.firstToUpper(field.getName()),
-                        "set" + StringKit.firstToUpper(field.getName())
+                        "setEqual" + StringKit.firstToUpper(field.getName())
                 );
 
                 Method method = pd.getWriteMethod();
@@ -142,8 +142,7 @@ public class SilentGoBeanFactory extends BeanFactory<BeanDefinition> {
                     //method.invoke(beanDefinition.getTarget(), bean);
                 }
             } catch (IntrospectionException e) {
-                e.printStackTrace();
-                LOGGER.debug("Field {} Can not find getter and setter in Class {}", field.getName(), bean.getBeanClass());
+                LOGGER.warn("Field {} Can not find getter and setter in Class {}", field.getName(), bean.getBeanClass());
             }
         }
         beanDefinition.setInjectComplete(true);

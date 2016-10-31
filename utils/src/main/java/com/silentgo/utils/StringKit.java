@@ -184,4 +184,37 @@ public class StringKit {
         return template;
     }
 
+    public static int countDuplChar(String origin, String target, int fromIndex, int toIndex) {
+
+        int count = 0, tlen = target.length();
+        int i = indexOf(origin, target, fromIndex, toIndex);
+
+        while (i != -1) {
+            count += 1;
+            fromIndex += i + tlen;
+            i = indexOf(origin, target, fromIndex, toIndex);
+        }
+        return count;
+    }
+
+    public static int indexOf(String source,
+                              String target, int fromIndex, int toIndex) {
+        int first = -1;
+        int last = target.length() - 1;
+        int max = source.length();
+        for (int i = fromIndex; i <= toIndex && i < max; i++) {
+            for (int i1 = 0, s = i1 + i; i1 < target.length() && s <= toIndex && s < max; i1++) {
+                if (target.charAt(i1) == source.charAt(s)) {
+                    if (i1 == last) {
+                        first = i;
+                    }
+                }
+            }
+            if (first != -1) {
+                return first;
+            }
+        }
+        return -1;
+    }
+
 }

@@ -11,6 +11,8 @@ import com.silentgo.utils.logger.LoggerFactory;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +43,7 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
     }
 
     @Override
-    public SQLTool queryByPrimaryKeys(BaseTableInfo table, List<Object> ids) {
+    public SQLTool queryByPrimaryKeys(BaseTableInfo table, Collection<Object> ids) {
         if (table.getPrimaryKeys().size() == 0) {
             LOGGER.debug("table {} can not find primary key", table.getTableName());
             throw new RuntimeException("the table did not has primary key");
@@ -99,13 +101,15 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
     }
 
     @Override
-    public <T extends TableModel> SQLTool insertByRows(BaseTableInfo table, List<T> t) {
+    public <T extends TableModel> SQLTool insertByRows(BaseTableInfo table, Collection<T> t) {
         if (t.size() <= 0) return null;
 
-        SQLTool sqlTool = insertByRow(table, t.get(0));
+        Iterator iterator = t.iterator();
 
-        for (int i = 1; i < t.size(); i++) {
-            T cur = t.get(i);
+        SQLTool sqlTool = insertByRow(table, (T) iterator.next());
+
+        while (iterator.hasNext()){
+            T cur = (T) iterator.next();
             PropertyTool.getCachedProps(table).forEach((k, propertyDescriptor) -> {
                 Object target = null;
                 try {
@@ -132,13 +136,13 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
                 e.printStackTrace();
                 target = null;
             }
-            sqlTool.set(table.get(k).getFullName()).appendParam(target);
+            sqlTool.setEqual(table.get(k).getFullName()).appendParam(target);
         });
         return sqlTool;
     }
 
     @Override
-    public <T extends TableModel> SQLTool updateByPrimaryKeyOptional(BaseTableInfo table, T t, List<String> columns) {
+    public <T extends TableModel> SQLTool updateByPrimaryKeyOptional(BaseTableInfo table, T t, Collection<String> columns) {
         Map<String, PropertyDescriptor> propsMap = PropertyTool.getCachedProps(table);
         SQLTool sqlTool = PropertyTool.getUpdateByPrimerySQLTool(table, t, propsMap);
 
@@ -151,7 +155,7 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
                 e.printStackTrace();
                 target = null;
             }
-            sqlTool.set(table.get(k).getFullName()).appendParam(target);
+            sqlTool.setEqual(table.get(k).getFullName()).appendParam(target);
         });
         return sqlTool;
     }
@@ -177,7 +181,7 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
             if (target instanceof String && StringKit.isBlank(target.toString())) {
                 return;
             }
-            sqlTool.set(table.get(k).getFullName()).appendParam(target);
+            sqlTool.setEqual(table.get(k).getFullName()).appendParam(target);
         });
         return sqlTool;
     }
@@ -191,7 +195,7 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
     }
 
     @Override
-    public SQLTool deleteByPrimaryKeys(BaseTableInfo table, List<Object> ids) {
+    public SQLTool deleteByPrimaryKeys(BaseTableInfo table, Collection<Object> ids) {
         SQLTool sqlTool = new SQLTool();
         if (table.getPrimaryKeys().size() == 0) return sqlTool;
         sqlTool.delete(table.getTableName())

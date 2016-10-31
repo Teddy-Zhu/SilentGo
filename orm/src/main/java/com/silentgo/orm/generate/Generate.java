@@ -33,10 +33,18 @@ public class Generate {
             if (!file.isDirectory()) return;
             file.mkdirs();
         }
+        File filePath = new File(config.getOutPath() + "/model");
+        if (!filePath.exists()) {
+            filePath.mkdirs();
+        }
+        filePath = new File(config.getOutPath() + "/dao");
+        if (!filePath.exists()) {
+            filePath.mkdirs();
+        }
         for (TableMeta table : tables) {
-            String a = new TableModelGenerate().getModelString(table, config.getPackagePath());
+            String a = new TableModelGenerate().getModelString(table, config.getPackagePath() + ".model");
             a = a.replace(ClassConst.newline, "\n").replace(ClassConst.tab, "\t");
-            File tb = new File(config.getOutPath() + "/" + StringKit.firstToUpper(table.getName()) + ".java");
+            File tb = new File(config.getOutPath() + "/model/" + StringKit.firstToUpper(table.getName()) + ".java");
             if (tb.exists()) {
                 tb.delete();
             }
@@ -45,9 +53,9 @@ public class Generate {
             fileWritter.write(a);
             fileWritter.close();
 
-            String m = new TableDaoGenerate().run(table, config.getPackagePath(), config.getPackagePath());
+            String m = new TableDaoGenerate().run(table, config.getPackagePath() + ".dao", config.getPackagePath() + ".model");
             m = m.replace(ClassConst.newline, "\n").replace(ClassConst.tab, "\t");
-            File file = new File(config.getOutPath() + "/" + StringKit.firstToUpper(table.getName()) + "Dao.java");
+            File file = new File(config.getOutPath() + "/dao/" + StringKit.firstToUpper(table.getName()) + "Dao.java");
             if (file.exists()) {
                 file.delete();
             }
@@ -63,7 +71,7 @@ public class Generate {
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException, IOException {
         GenerateConfig config = new GenerateConfig();
-        config.setPackagePath("com.silentgo.test.dao");
+        config.setPackagePath("com.silentgo.lc4e.database");
         config.setOutPath("/Users/teddyzhu/Downloads/model");
         config.setDriver("com.mysql.cj.jdbc.Driver");
         config.setPass("12345678");

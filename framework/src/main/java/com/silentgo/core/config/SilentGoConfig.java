@@ -4,13 +4,12 @@ import com.silentgo.core.SilentGo;
 import com.silentgo.core.action.ActionChain;
 import com.silentgo.core.aop.annotationintercept.IAnnotation;
 import com.silentgo.core.cache.CacheManager;
-import com.silentgo.core.db.DBConfig;
-import com.silentgo.core.ioc.bean.BeanFactory;
-import com.silentgo.orm.base.DBType;
 import com.silentgo.core.exception.AppBuildException;
 import com.silentgo.core.ioc.bean.BeanWrapper;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.orm.base.DBConnect;
+import com.silentgo.orm.base.DBType;
+import com.silentgo.orm.connect.ConnectManager;
 import com.silentgo.utils.CollectionKit;
 import com.silentgo.utils.PropKit;
 import com.silentgo.utils.StringKit;
@@ -95,34 +94,12 @@ public class SilentGoConfig extends BaseConfig {
         return true;
     }
 
-    public void releaseConnect(String type, String name) {
-        ThreadLocal<DBConnect> connectThreadLocal = getThreadConnect();
-        DBConnect connect = connectThreadLocal.get();
-        if (connect != null) {
-            connect.release();
-        }
+    public void releaseConnect() {
+        ConnectManager.me().releaseConnect();
     }
 
-    public DBConnect getConnect(String type, String name) {
-        ThreadLocal<DBConnect> connectThreadLocal = getThreadConnect();
-        DBConnect connect = connectThreadLocal.get();
-        if (connect == null) {
-            DBConfig config = (DBConfig) getConfig(type);
-            connect = config.getManager().getConnect(name);
-            connectThreadLocal.set(connect);
-        }
-        return connect;
-    }
-
-    public DBConnect getConnect(DBType type, String name) {
-        ThreadLocal<DBConnect> connectThreadLocal = getThreadConnect();
-        DBConnect connect = connectThreadLocal.get();
-        if (connect == null) {
-            DBConfig config = (DBConfig) getConfig(type);
-            connect = config.getManager().getConnect(name);
-            connectThreadLocal.set(connect);
-        }
-        return connect;
+    public DBConnect getConnect(String name) {
+        return ConnectManager.me().getConnect(DBType.parse(getDbType()), name);
     }
 
     public boolean addExtraFactory(Class<? extends BaseFactory> clz) {

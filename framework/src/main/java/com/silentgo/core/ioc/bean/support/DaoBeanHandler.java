@@ -6,6 +6,7 @@ import com.silentgo.orm.base.BaseTableInfo;
 import com.silentgo.core.db.DaoFactory;
 import com.silentgo.orm.base.TableModel;
 import com.silentgo.core.ioc.bean.BeanDefinition;
+import com.silentgo.orm.infobuilder.BaseTableBuilder;
 import com.silentgo.utils.ClassKit;
 
 import java.lang.annotation.Annotation;
@@ -30,22 +31,11 @@ public class DaoBeanHandler implements BeanHandler {
     @Override
     public <T extends Annotation> void handle(T t, Class<?> clz, List<BeanDefinition> beanDefinitions) {
 
-        Class<? extends TableModel> tableClass = (Class<? extends TableModel>) ClassKit.getGenericClass(clz)[0];
+        SilentGo.me().getFactory(DaoFactory.class);
 
-        DaoFactory daoFactory = SilentGo.me().getFactory(DaoFactory.class);
+        Object target = BaseTableBuilder.me().initialDao((Class<? extends BaseDao>) clz);
 
-        BaseTableInfo baseTableInfo = daoFactory.getTableInfoMap().get(tableClass);
-        if (baseTableInfo != null) {
-            daoFactory.getClassTableInfoMap().put((Class<? extends BaseDao>) clz, baseTableInfo);
-            daoFactory.getReflectMap().put((Class<? extends BaseDao>) clz, tableClass);
-        }
-
-        BeanBuildKit.buildBaseDaoInterface(beanDefinitions, clz);
-
-        for (Method method : clz.getDeclaredMethods()) {
-            Annotation[] ans = method.getAnnotations();
-            daoFactory.getMethodListMap().put(method, Arrays.asList(ans));
-        }
+        BeanBuildKit.buildBaseDaoInterface(beanDefinitions, target, clz);
 
     }
 }

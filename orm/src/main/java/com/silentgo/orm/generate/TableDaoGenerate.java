@@ -19,7 +19,7 @@ public class TableDaoGenerate {
         builder.append(format(ClassConst._package, packageName));
         builder.append(format(ClassConst._importOne, BaseDao.class.getName()));
         if (!packageName.equals(modelPackage)) {
-            builder.append(format(ClassConst._importOne, modelPackage + "." + tableMeta.getName()));
+            builder.append(format(ClassConst._importOne, modelPackage + "." + StringKit.firstToUpper(tableMeta.getName())));
         }
         builder.append(format(ClassConst._importOne, "com.silentgo.core.ioc.annotation.Service"));
         builder.append(format(ClassConst._annotaion, "Service"));

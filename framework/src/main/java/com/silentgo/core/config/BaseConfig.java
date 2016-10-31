@@ -42,8 +42,6 @@ public class BaseConfig extends InterConfig {
 
     private Class<? extends BeanFactory> beanClass = SilentGoBeanFactory.class;
 
-    private final ThreadLocal<DBConnect> threadConnect = new ThreadLocal<>();
-
     private List<Class<? extends IAnnotation>> annotationIntecepters = new ArrayList<>();
 
     private JsonPaser jsonPaser = new GsonPaser();
@@ -220,9 +218,6 @@ public class BaseConfig extends InterConfig {
         this.beanClass = beanClass;
     }
 
-    public ThreadLocal<DBConnect> getThreadConnect() {
-        return threadConnect;
-    }
 
     public String getPropfile() {
         return propfile;

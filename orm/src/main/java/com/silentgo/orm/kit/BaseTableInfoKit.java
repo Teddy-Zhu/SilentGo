@@ -27,12 +27,13 @@ public class BaseTableInfoKit {
 
     private static final String DOT = ".";
 
-    public static BaseTableInfo getTableInfo(Connection connection, Class<? extends TableModel> table, String tableName, List<String> keys, DBType type) throws SQLException, ClassNotFoundException {
+    public static BaseTableInfo getTableInfo(String poolName, Connection connection, Class<? extends TableModel> table, String tableName, List<String> keys, DBType type) throws SQLException, ClassNotFoundException {
         BaseTableInfo info = new BaseTableInfo();
         info.setTableName(tableName);
         info.setClazz(table);
         info.setPrimaryKeys(keys);
         info.setType(type);
+        info.setPoolName(poolName);
         Map<String, Column> fullMap = new HashMap<String, Column>();
         TableMeta tableMeta = new TableMetaGenerate().getTable(connection, tableName);
 

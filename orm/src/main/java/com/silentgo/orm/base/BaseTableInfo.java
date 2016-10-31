@@ -17,10 +17,19 @@ import java.util.Map;
 public class BaseTableInfo {
 
     public DBType type;
+    public String poolName;
     public Class<? extends TableModel> clazz;
     public String tableName;
     public List<String> primaryKeys;
     public Map<String, Column> columnInfo;
+
+    public String getPoolName() {
+        return poolName;
+    }
+
+    public void setPoolName(String poolName) {
+        this.poolName = poolName;
+    }
 
     public Class<? extends TableModel> getClazz() {
         return clazz;

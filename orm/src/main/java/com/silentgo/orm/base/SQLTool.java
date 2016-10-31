@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by teddy on 2015/9/24.
@@ -78,6 +79,7 @@ public class SQLTool {
     }
 
     private String getSql(SQLType type) {
+        cached = true;
         switch (type) {
             case DELETE: {
                 return getDeleteSQL() + getWhereSQL();
@@ -117,7 +119,7 @@ public class SQLTool {
         if (updateList.size() == 0) {
             return "";
         }
-        return "update " + tableName + getJoinSQL() + " set " + getListSQL(updateList, " ", " = ? ", " = ? ,", " ");
+        return "update " + tableName + getJoinSQL() + " setEqual " + getListSQL(updateList, " ", " = ? ", " = ? ,", " ");
     }
 
     public String getDeleteSQL() {
@@ -183,13 +185,39 @@ public class SQLTool {
         return this;
     }
 
+    public SQLTool setPlus(String... columns) {
+        for (String column : columns) {
+            updateList.add(column + " += ?");
+        }
+        return this;
+    }
+
+    public SQLTool setMinus(String... columns) {
+        for (String column : columns) {
+            updateList.add(column + " -= ?");
+        }
+        return this;
+    }
+
+    public SQLTool setEqual(String... columns) {
+        for (String column : columns) {
+            updateList.add(column + " = ?");
+        }
+        return this;
+    }
+
+    public SQLTool set(Collection<String> columns) {
+        updateList.addAll(columns);
+        return this;
+    }
+
     public SQLTool set(String... columns) {
         Collections.addAll(updateList, columns);
         return this;
     }
 
-    public SQLTool set(Collection<String> columns) {
-        this.updateList.addAll(columns);
+    public SQLTool setEqual(Collection<String> columns) {
+        updateList.addAll(columns.stream().map(column -> column + " = ?").collect(Collectors.toList()));
         return this;
     }
 
@@ -267,6 +295,7 @@ public class SQLTool {
         this.whereList.add(condition + " > ?");
         return this;
     }
+
     public SQLTool whereLess(String condition) {
         this.whereList.add(condition + " < ?");
         return this;
@@ -276,6 +305,7 @@ public class SQLTool {
         this.whereList.add(condition + " >= ?");
         return this;
     }
+
     public SQLTool whereLessEq(String condition) {
         this.whereList.add(condition + " <= ?");
         return this;
@@ -334,6 +364,11 @@ public class SQLTool {
 
     public SQLTool orderByAsc(String... columns) {
         Collections.addAll(this.orderList, orderBy(" ASC ", columns));
+        return this;
+    }
+
+    public SQLTool orderBy(String ...columns){
+        Collections.addAll(this.orderList,  columns);
         return this;
     }
 
@@ -412,5 +447,14 @@ public class SQLTool {
 
     public SQLType getType() {
         return type;
+    }
+
+    public void setSql(String sql) {
+        this.cached = true;
+        this.sql = sql;
+    }
+
+    public void setType(SQLType type) {
+        this.type = type;
     }
 }

@@ -218,14 +218,14 @@ public class BaseResolverKit {
                 setter.invoke(target, new Object[]{value});
             } else {
                 throw new SQLException(
-                        "Cannot set " + prop.getName() + ": incompatible types, cannot convert "
+                        "Cannot setEqual " + prop.getName() + ": incompatible types, cannot convert "
                                 + value.getClass().getName() + " to " + params[0].getName());
                 // value cannot be null here because isCompatibleType allows null
             }
 
         } catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
             throw new SQLException(
-                    "Cannot set " + prop.getName() + ": " + e.getMessage());
+                    "Cannot setEqual " + prop.getName() + ": " + e.getMessage());
 
         }
     }

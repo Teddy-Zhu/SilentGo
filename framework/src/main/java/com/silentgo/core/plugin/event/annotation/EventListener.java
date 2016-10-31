@@ -15,4 +15,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface EventListener {
+    int delayTime() default 0;
+
+    boolean async() default false;
 }

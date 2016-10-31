@@ -43,15 +43,11 @@ public class SilentGo {
     }
 
     public DBConnect getConnect(String name) {
-        return config.getConnect(config.getDbType(), name);
-    }
-
-    public void releaseConnect(String name) {
-        config.releaseConnect(config.getDbType(), name);
+        return config.getConnect(name);
     }
 
     public void releaseConnect() {
-        releaseConnect("mysql");
+        config.releaseConnect();
     }
 
     public DBConnect getConnect() {

@@ -30,7 +30,7 @@ public class ClassConst {
     public static final String _importOne = "import $s;$n";
 
     public static final String _setter =
-            "$tpublic void set$s($s $s) {$n" +
+            "$tpublic void setEqual$s($s $s) {$n" +
                     "$t$tthis.$s = $s;" +
                     "$n$t}%n%n";
 

@@ -5,6 +5,8 @@ import com.silentgo.core.build.Factory;
 import com.silentgo.core.config.SilentGoConfig;
 import com.silentgo.core.exception.AppReleaseException;
 import com.silentgo.core.support.BaseFactory;
+import com.silentgo.orm.connect.ConnectManager;
+import com.silentgo.orm.infobuilder.BaseTableBuilder;
 
 /**
  * Project : silentgo
@@ -23,9 +25,9 @@ public class SqlFactory extends BaseFactory {
 
         if (config.getDbType() == null) return true;
         if (config.getUserProp() != null) {
-            config.addAbstractConfig(new DBConfig(config.getDbType(), config.getUserProp()));
+            ConnectManager.me().configManager(config.getDbType(), config.getDbType(), config.getUserProp());
         } else {
-            config.addAbstractConfig(new DBConfig(config.getDbType(), "config.properties"));
+            ConnectManager.me().configManager(config.getDbType(), config.getDbType(), "config.properties");
         }
 
         return true;

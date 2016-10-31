@@ -35,7 +35,7 @@ public class TypeMapping {
 
         // ---------
 
-        // varchar, char, enum, set, text, tinytext, mediumtext, longtext
+        // varchar, char, enum, setEqual, text, tinytext, mediumtext, longtext
         put("java.lang.String", "java.lang.String");
 
         // int, integer, tinyint, smallint, mediumint

@@ -1,6 +1,7 @@
 package com.silentgo.orm;
 
 import com.silentgo.orm.base.DBConnect;
+import com.silentgo.orm.base.NameParam;
 import com.silentgo.orm.common.Const;
 import com.silentgo.orm.rsresolver.IRSResolver;
 import com.silentgo.orm.rsresolver.support.*;
@@ -132,7 +133,6 @@ public class SilentGoOrm {
         if (params == null) {
             return;
         }
-
         for (int i = 0; i < params.length; i++) {
             if (params[i] != null) {
                 stmt.setObject(i + 1, params[i]);

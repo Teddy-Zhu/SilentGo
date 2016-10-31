@@ -31,8 +31,6 @@ public class BeanDefinition extends BeanWrapper {
 
     Class<?> clz;
 
-    Class<?> fastClass;
-
     Object target;
 
     Object proxyTarget;
@@ -83,7 +81,6 @@ public class BeanDefinition extends BeanWrapper {
         this.clz = clz;
         this.lazy = isLazy;
         this.target = target;
-        this.fastClass = clz;
         interfaceClass = clz.isInterface() ? clz : clz.getInterfaces().length > 0 ? clz.getInterfaces()[0] : clz;
         if (needInject)
             proxyTarget = CGLibKit.Proxy(target);
@@ -135,6 +132,7 @@ public class BeanDefinition extends BeanWrapper {
     public Object getObject() {
         SilentGoBeanFactory beanFactory = SilentGo.me().getFactory(SilentGoBeanFactory.class);
         if (!injectComplete) {
+            lazy = false;
             beanFactory.depend(this);
         }
         if (!isSingle) {
@@ -162,7 +160,7 @@ public class BeanDefinition extends BeanWrapper {
 
     @Override
     public Class<?> getBeanClass() {
-        return fastClass;
+        return clz;
     }
 
     @Override
