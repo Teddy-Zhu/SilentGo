@@ -4,11 +4,9 @@ import com.silentgo.orm.base.BaseDaoDialect;
 import com.silentgo.orm.base.BaseTableInfo;
 import com.silentgo.orm.base.SQLTool;
 import com.silentgo.orm.base.TableModel;
-import com.silentgo.orm.base.annotation.Param;
 import com.silentgo.orm.sqlparser.SQLKit;
 import com.silentgo.orm.sqlparser.annotation.Where;
 import com.silentgo.orm.sqlparser.funcanalyse.DaoKeyWord;
-import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
