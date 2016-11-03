@@ -93,6 +93,13 @@ public class RenderResolverFactory extends BaseFactory {
             }
         });
         resortRenderResolver();
+        me.getAnnotationManager().getClasses(ExceptionHandler.class).forEach(aClass -> {
+
+            for (Method method : aClass.getDeclaredMethods()) {
+                if (method.getName().equals("resolve"))
+                    addRenderResolver(methodAOPFactory.getMethodAdviser(method));
+            }
+        });
         me.getAnnotationManager().getClasses(Controller.class).forEach(aClass -> {
 
             for (Method method : aClass.getDeclaredMethods()) {

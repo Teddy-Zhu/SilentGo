@@ -11,7 +11,7 @@ import com.silentgo.servlet.http.HttpStatus;
  *         <p>
  *         Created by teddyzhu on 16/8/22.
  */
-public class AppException extends Exception {
+public class AppException extends RuntimeException {
 
     public int code = 500;
 

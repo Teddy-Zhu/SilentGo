@@ -15,16 +15,30 @@ public class Page<T> {
     private List<T> result;
     private int pageNumber;
     private int pageSize;
+    private int totalCount;
     private int totalPage;
 
     public Page() {
     }
 
-    public Page(List<T> result, int pageNumber, int pageSize, int totalPage) {
+    public Page(int pageNumber, int pageSize) {
+        this.pageNumber = pageNumber;
+        this.pageSize = pageSize;
+    }
+
+    public Page(List<T> result, int pageNumber, int pageSize, int totalCount, int totalPage) {
         this.result = result;
         this.pageNumber = pageNumber;
         this.pageSize = pageSize;
+        this.totalCount = totalCount;
         this.totalPage = totalPage;
+    }
+
+    public Page(List<T> result, int pageNumber, int pageSize, int totalCount) {
+        this.result = result;
+        this.pageNumber = pageNumber;
+        this.pageSize = pageSize;
+        this.totalCount = totalCount;
     }
 
     public List<T> getResult() {
@@ -52,11 +66,22 @@ public class Page<T> {
     }
 
     public int getTotalPage() {
-        return totalPage;
+        return (int) Math.ceil((double) totalCount / pageSize);
     }
 
     public void setTotalPage(int totalPage) {
         this.totalPage = totalPage;
     }
 
+    public int getStart() {
+        return (pageNumber - 1) * pageSize;
+    }
+
+    public int getTotalCount() {
+        return totalCount;
+    }
+
+    public void setTotalCount(int totalCount) {
+        this.totalCount = totalCount;
+    }
 }

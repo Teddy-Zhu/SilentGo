@@ -95,7 +95,7 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
             } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }
-            sqlTool.insert(table.get(k).getFullName()).appendParam(target);
+            sqlTool.insertCol(table.get(k).getFullName()).appendParam(target);
         });
         return sqlTool;
     }

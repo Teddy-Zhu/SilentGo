@@ -6,7 +6,7 @@ add maven dependency
 <dependency>
     <groupId>com.silentgo</groupId>
     <artifactId>framework</artifactId>
-    <version>0.0.22</version>
+    <version>0.0.24</version>
 </dependency>
 ```
 
@@ -87,7 +87,7 @@ dao class
 @Service
 public interface SysMenuDao extends BaseDao<SysMenu> {
 
-    SysMenu queryOneById(String id);
+    SysMenu queryOneWhereId(String id);
 }
 ```
 use 
@@ -100,7 +100,7 @@ use
     public String functodo() {
         //function name with rules
         //you can use directly without code;
-        SysMenu menuone = sysMenuDao.queryOneById("1");
+        SysMenu menuone = sysMenuDao.queryOneWhereId("1");
         
         //for baseDao
         List<SysMenu> menu = sysMenuDao.queryAll();

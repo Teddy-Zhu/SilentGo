@@ -42,9 +42,7 @@ public class RequestParamOrCommonParamResolver implements ParameterValueResolver
         Map<String, Object> resolvedMap = request.getResolvedMap();
         SilentGoContext context = me.getConfig().getCtx().get();
         JsonPaser parser = me.json();
-        Object jsonObject = context.getJsonObject();
-
-        ret = parser.toObject(methodParam.getName(), jsonObject, methodParam.getType());
+        ret = parser.toObject(methodParam.getName(), context.getHashObject(), methodParam.getType());
         if (ret == null && requestParam == null) {
             try {
                 ret = me.json().toObject(context.getHashString(), methodParam.getType());

@@ -16,6 +16,7 @@ import org.apache.commons.io.FileCleaningTracker;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -64,7 +65,9 @@ public class MultiPartDispatcher implements RequestDispatcher {
 
         servletFileUpload.setSizeMax(config.getMaxSize());
         servletFileUpload.setFileItemFactory(factory);
-        servletFileUpload.setHeaderEncoding(SilentGo.me().getConfig().getEncoding());
+        String encoding = SilentGo.me().getConfig().getEncoding();
+        servletFileUpload.setHeaderEncoding(encoding);
+
         try {
             List<FileItem> items = servletFileUpload.parseRequest(request);
 
@@ -73,7 +76,7 @@ public class MultiPartDispatcher implements RequestDispatcher {
             for (FileItem item : items) {
                 if (item.isFormField()) {
                     resortParameterMap = true;
-                    request.addParameter(item.getFieldName(), new String(item.get()));
+                    request.addParameter(item.getFieldName(), new String(item.get(), encoding));
                 } else {
                     String fileName = item.getName();
                     String ext = fileName.substring(fileName.lastIndexOf(".") + 1);
@@ -101,7 +104,7 @@ public class MultiPartDispatcher implements RequestDispatcher {
             if (files.size() > 0) {
                 param.setRequest(new MultiPartRequest(request, files));
             }
-        } catch (FileUploadException e) {
+        } catch (FileUploadException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
 

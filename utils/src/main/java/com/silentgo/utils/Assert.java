@@ -51,4 +51,15 @@ public class Assert {
             throw new RuntimeException(message);
         }
     }
+
+    public static void isNull(Object object, String message) {
+        if (object != null) {
+            throw new RuntimeException(message);
+        }
+    }
+    public static void isNotNull(Object object, String message) {
+        if (object == null) {
+            throw new RuntimeException(message);
+        }
+    }
 }

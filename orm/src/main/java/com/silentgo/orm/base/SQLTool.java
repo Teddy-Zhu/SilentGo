@@ -270,7 +270,7 @@ public class SQLTool {
         return this;
     }
 
-    public SQLTool insert(String... columns) {
+    public SQLTool insertCol(String... columns) {
         Collections.addAll(this.insertList, columns);
         return this;
     }

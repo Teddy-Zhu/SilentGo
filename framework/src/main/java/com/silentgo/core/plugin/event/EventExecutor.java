@@ -28,10 +28,10 @@ public class EventExecutor {
         this.async = async;
     }
 
-    public void run(Event event, Object... objects) throws ExecutionException, InterruptedException {
+    public void run(Event event) throws ExecutionException, InterruptedException {
         Callable<Boolean> callable = (Callable<Boolean>) () -> {
             Thread.sleep(delay);
-            eventListener.onEvent(event, objects);
+            eventListener.onEvent(event);
             return true;
         };
         FutureTask<Boolean> future = new FutureTask<>(callable);

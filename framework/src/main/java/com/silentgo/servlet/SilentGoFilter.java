@@ -44,69 +44,67 @@ public class SilentGoFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        if (!appContext.isLoaded()) {
-            SilentGoConfig config = null;
-            long startTime = System.currentTimeMillis();
-            LOGGER.info("SilentGoConfig filter initialize");
 
-            ServletContext context = filterConfig.getServletContext();
+        SilentGoConfig config = null;
+        long startTime = System.currentTimeMillis();
+        LOGGER.info("SilentGoConfig filter initialize");
 
-            String contextPath = context.getContextPath();
-            int contextPathLength = contextPath == null || Const.Slash.equals(contextPath) ? 0 : contextPath.length();
+        ServletContext context = filterConfig.getServletContext();
 
-            //noinspection unchecked
-            config = new SilentGoConfig(Const.BasePackages, Const.EmptyArray, true, Const.Encoding, contextPathLength, Const.configName);
+        String contextPath = context.getContextPath();
+        int contextPathLength = contextPath == null || Const.Slash.equals(contextPath) ? 0 : contextPath.length();
 
-            appContext.setConfig(config);
-            String configClassName = filterConfig.getInitParameter("config");
-            if (!StringKit.isBlank(configClassName)) {
-                configInit = getConfig(configClassName);
-            } else {
-                LOGGER.warn("Config class can not be found , the application may be run unnromally");
-            }
-            config.setContextPathLength(contextPathLength);
+        //noinspection unchecked
+        config = new SilentGoConfig(Const.BasePackages, Const.EmptyArray, true, Const.Encoding, contextPathLength, Const.configName);
 
-            appContext.setContext(context);
-
-            //scan packages and jars
-            AnnotationManager manager = new AnnotationManager(config);
-            appContext.setAnnotationManager(manager);
-
-            if (configInit != null) {
-                LOGGER.debug("init default build");
-                configInit.initialBuild(config);
-            }
-            LOGGER.debug("init extra build");
-            for (Config extraConfig : config.getExtraConfig()) {
-                extraConfig.initialBuild(config);
-            }
-
-            //build bean first
-            LOGGER.debug("init bean factory");
-            initBeanFactory(config);
-
-            LOGGER.debug("init other factoryss");
-            buildFactory(manager, config);
-
-            if (configInit != null) {
-                LOGGER.debug("after init default config");
-                configInit.afterInit(config);
-            }
-
-            LOGGER.debug("after init extra config");
-            for (Config extraConfig : config.getExtraConfig()) {
-                extraConfig.afterInit(config);
-            }
-
-
-            ConfigChecker.Check(config);
-
-            globalConfig = appContext.getConfig();
-
-            appContext.setLoaded(true);
-
-            LOGGER.info("SilentGoConfig filter initialize successfully, Time : {} ms.", System.currentTimeMillis() - startTime);
+        appContext.setConfig(config);
+        String configClassName = filterConfig.getInitParameter("config");
+        if (!StringKit.isBlank(configClassName)) {
+            configInit = getConfig(configClassName);
+        } else {
+            LOGGER.warn("Config class can not be found , the application may be run unnromally");
         }
+        config.setContextPathLength(contextPathLength);
+
+        appContext.setContext(context);
+
+        //scan packages and jars
+        AnnotationManager manager = new AnnotationManager(config);
+        appContext.setAnnotationManager(manager);
+
+        if (configInit != null) {
+            LOGGER.debug("init default build");
+            configInit.initialBuild(config);
+        }
+        LOGGER.debug("init extra build");
+        for (Config extraConfig : config.getExtraConfig()) {
+            extraConfig.initialBuild(config);
+        }
+
+        //build bean first
+        LOGGER.debug("init bean factory");
+        initBeanFactory(config);
+
+        LOGGER.debug("init other factoryss");
+        buildFactory(manager, config);
+
+        if (configInit != null) {
+            LOGGER.debug("after init default config");
+            configInit.afterInit(config);
+        }
+
+        LOGGER.debug("after init extra config");
+        for (Config extraConfig : config.getExtraConfig()) {
+            extraConfig.afterInit(config);
+        }
+
+
+        ConfigChecker.Check(config);
+
+        globalConfig = appContext.getConfig();
+
+        LOGGER.info("SilentGoConfig filter initialize successfully, Time : {} ms.", System.currentTimeMillis() - startTime);
+
     }
 
     @Override
@@ -130,7 +128,7 @@ public class SilentGoFilter implements Filter {
             long start = System.currentTimeMillis();
             LOGGER.debug("action start");
             globalConfig.getActionChain().doAction(param);
-            LOGGER.debug("action end : {} ms", System.currentTimeMillis() - start);
+            LOGGER.debug("action end in : {} ms", System.currentTimeMillis() - start);
         } catch (Throwable throwable) {
             new ErrorRener().render(request, response, HttpStatus.Code.INTERNAL_SERVER_ERROR, throwable, appContext.isDevMode());
             return;
@@ -177,13 +175,14 @@ public class SilentGoFilter implements Filter {
             e.printStackTrace();
         }
         config.addFactory(beanFactory);
+        beanFactory.addBean(config, true, false, false);
         try {
             beanFactory.initialize(appContext);
         } catch (AppBuildException e) {
             e.printStackTrace();
         }
         beanFactory.addBean(beanFactory, true, false, false);
-        beanFactory.addBean(config, true, false, false);
+
     }
 
     private Config getConfig(String className) throws ServletException {

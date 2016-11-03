@@ -10,6 +10,6 @@ package com.silentgo.core.plugin.event;
  */
 public interface EventListener<T extends Event> {
 
-    public void onEvent(T event, Object... objects);
+    public void onEvent(T event);
 
 }

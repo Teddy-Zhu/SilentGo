@@ -52,8 +52,10 @@ public class RouteAction extends ActionChain {
         RouteFactory routeFactory = me.getFactory(RouteFactory.class);
 
         RequestDispatchFactory requestDispatchFactory = me.getFactory(RequestDispatchFactory.class);
+        long start = System.currentTimeMillis();
 
         requestDispatchFactory.dispatch(param);
+        LOGGER.info("dispatch route end in :{} ", System.currentTimeMillis() - start);
 
         Route ret = me.getConfig().getRoutePaser().praseRoute(routeFactory, param);
 
@@ -77,23 +79,29 @@ public class RouteAction extends ActionChain {
             Object bean = beanFactory.getBean(adviser.getClassName()).getObject();
 
             try {
+                start = System.currentTimeMillis();
                 if (!paramAnFactory.resolve(adviser, request, response)) {
                     new ErrorRener().render(request, response, HttpStatus.Code.METHOD_NOT_ALLOWED, null, isDev);
                     return;
                 }
+                LOGGER.info("paramAnFactory resolve end in :{} ", System.currentTimeMillis() - start);
 
+                start = System.currentTimeMillis();
                 // parameter dispatch
                 paramDispatchFactory.dispatch(parameterResolveFactory, param, ret, args);
+                LOGGER.info("paramDispatchFactory dispatch end in :{} ", System.currentTimeMillis() - start);
 
 
                 Object returnVal = null;
 
+                start = System.currentTimeMillis();
                 //controller method with interceptors
                 returnVal = adviser.getMethod().invoke(bean, args);
-
+                LOGGER.info("route method end in :{} ", System.currentTimeMillis() - start);
+                start = System.currentTimeMillis();
                 //render
                 renderResolverFactory.render(renderFactory, adviser, request, response, returnVal);
-
+                LOGGER.info("render method end in :{} ", System.currentTimeMillis() - start);
             } catch (AppException e) {
                 e.printStackTrace();
                 new ErrorRener().render(request, response, e, isDev);

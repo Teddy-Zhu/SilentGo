@@ -9,6 +9,7 @@ import com.silentgo.core.exception.AppBuildException;
 import com.silentgo.core.exception.AppReleaseException;
 import com.silentgo.core.exception.annotaion.ExceptionHandler;
 import com.silentgo.core.ioc.bean.BeanFactory;
+import com.silentgo.core.render.RenderModel;
 import com.silentgo.core.render.renderresolver.RenderResolverFactory;
 import com.silentgo.core.render.support.RenderFactory;
 import com.silentgo.core.route.annotation.Controller;
@@ -20,10 +21,7 @@ import com.silentgo.utils.CollectionKit;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Project : silentgo
@@ -95,7 +93,16 @@ public class ExceptionFactory extends BaseFactory {
                 e.getClass());
 
         if (advisers == null || advisers.size() == 0) {
-            throw e;
+            if (globalExceptionHandlers.size() > 0) {
+                for (IExceptionHandler exceptionHandler : globalExceptionHandlers) {
+                    RenderModel renderModel = exceptionHandler.resolve(response, request, e);
+                    if (renderModel != null)
+                        renderModel.render();
+                }
+            } else {
+                throw e;
+            }
+
         } else {
             for (MethodAdviser exceptionMethodAdviser : advisers) {
                 Object expRet = exceptionMethodAdviser.getMethod().invoke(
@@ -117,7 +124,7 @@ public class ExceptionFactory extends BaseFactory {
                 try {
                     ExceptionHandler exceptionHandler = (ExceptionHandler) aClass.getAnnotation(ExceptionHandler.class);
                     if (exceptionHandler.value().length > 0) {
-                        Method method = aClass.getMethod("resolve", Response.class, Request.class, Throwable.class);
+                        Method method = aClass.getMethod("resolve", Response.class, Request.class, Exception.class);
                         MethodAdviser adviser = methodAOPFactory.getMethodAdviser(method);
                         for (Class<? extends Exception> aClass1 : exceptionHandler.value()) {
                             addToExceptionHandler(aClass1, adviser);

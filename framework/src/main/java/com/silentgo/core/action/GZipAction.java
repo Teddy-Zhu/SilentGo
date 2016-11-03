@@ -2,6 +2,8 @@ package com.silentgo.core.action;
 
 import com.silentgo.core.action.annotation.Action;
 import com.silentgo.core.action.gzip.GZIPResponseWrapper;
+import com.silentgo.utils.logger.Logger;
+import com.silentgo.utils.logger.LoggerFactory;
 
 /**
  * Project : parent
@@ -13,6 +15,8 @@ import com.silentgo.core.action.gzip.GZIPResponseWrapper;
  */
 @Action
 public class GZipAction extends ActionChain {
+
+    private static final Logger LOGGER = LoggerFactory.getLog(GZipAction.class);
 
     @Override
     public Integer priority() {

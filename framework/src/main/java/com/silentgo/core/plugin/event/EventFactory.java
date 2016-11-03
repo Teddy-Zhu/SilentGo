@@ -78,13 +78,13 @@ public class EventFactory extends BaseFactory {
         return true;
     }
 
-    public void emit(Event event, Object... objects) {
+    public void emit(Event event) {
         try {
             for (EventExecutor eventExecutor : eventSyncMap.getOrDefault(event, new ArrayList<>())) {
-                eventExecutor.run(event, objects);
+                eventExecutor.run(event);
             }
             for (EventExecutor eventExecutor : eventASyncMap.getOrDefault(event, new ArrayList<>())) {
-                eventExecutor.run(event, objects);
+                eventExecutor.run(event);
             }
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();

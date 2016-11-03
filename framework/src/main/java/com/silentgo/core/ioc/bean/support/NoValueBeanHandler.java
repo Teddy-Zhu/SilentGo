@@ -1,6 +1,7 @@
 package com.silentgo.core.ioc.bean.support;
 
 import com.silentgo.core.aop.annotationintercept.annotation.CustomInterceptor;
+import com.silentgo.core.exception.annotaion.ExceptionHandler;
 import com.silentgo.core.ioc.bean.BeanDefinition;
 
 import java.lang.annotation.Annotation;
@@ -19,6 +20,7 @@ public class NoValueBeanHandler implements BeanHandler {
 
     private static final ArrayList anList = new ArrayList() {{
         add(CustomInterceptor.class);
+        add(ExceptionHandler.class);
     }};
 
 

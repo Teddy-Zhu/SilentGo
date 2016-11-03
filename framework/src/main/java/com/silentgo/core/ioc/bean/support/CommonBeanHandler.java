@@ -1,6 +1,7 @@
 package com.silentgo.core.ioc.bean.support;
 
 import com.silentgo.core.aop.validator.annotation.Validator;
+import com.silentgo.core.exception.annotaion.ExceptionHandler;
 import com.silentgo.core.ioc.annotation.Component;
 import com.silentgo.core.ioc.annotation.Service;
 import com.silentgo.core.ioc.bean.BeanDefinition;

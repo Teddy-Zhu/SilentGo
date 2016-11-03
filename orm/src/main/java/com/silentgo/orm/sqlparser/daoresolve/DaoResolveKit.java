@@ -3,6 +3,8 @@ package com.silentgo.orm.sqlparser.daoresolve;
 import com.silentgo.orm.base.BaseTableInfo;
 import com.silentgo.orm.base.Column;
 import com.silentgo.utils.StringKit;
+import com.silentgo.utils.logger.Logger;
+import com.silentgo.utils.logger.LoggerFactory;
 
 import java.util.List;
 
@@ -15,6 +17,8 @@ import java.util.List;
  *         Created by teddyzhu on 2016/10/8.
  */
 public class DaoResolveKit {
+
+    private static Logger logger = LoggerFactory.getLog(DaoResolveKit.class);
 
     public static String getField(List<String> parsedString, int index) {
         return index < parsedString.size() ? parsedString.get(index) : "";
@@ -32,7 +36,8 @@ public class DaoResolveKit {
         if (StringKit.isNotBlank(f)) {
             return f;
         } else {
-            throw new RuntimeException("the table [" + baseTableInfo.getTableName() + "] do not contains column [" + field + "]");
+            logger.warn("the table [{}] do not contains column [{}]", baseTableInfo.getTableName(), field);
+            return null;
         }
     }
 

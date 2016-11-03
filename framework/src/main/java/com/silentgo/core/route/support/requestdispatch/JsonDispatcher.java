@@ -35,7 +35,7 @@ public class JsonDispatcher implements RequestDispatcher {
         String hashString = me.json().toJsonString(request.getResolvedMap());
         SilentGoContext context = me.getConfig().getCtx().get();
         context.setHashString(hashString);
-
+        context.setHashObject(me.json().toJson(hashString));
         if (request.getContentType() == null || !request.getContentType().contains(ContentType.JSON.toString())) {
             return;
         }

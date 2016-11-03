@@ -32,12 +32,6 @@ public class SilentGo {
 
     private ServletContext Context;
 
-    private boolean isLoaded = false;
-
-    public void setLoaded(boolean loaded) {
-        isLoaded = loaded;
-    }
-
     public SilentGoConfig getConfig() {
         return config;
     }
@@ -56,10 +50,6 @@ public class SilentGo {
 
     public boolean isDevMode() {
         return config.isDevMode();
-    }
-
-    public boolean isLoaded() {
-        return isLoaded;
     }
 
     public void setConfig(SilentGoConfig config) {

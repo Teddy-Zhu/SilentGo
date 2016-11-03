@@ -14,5 +14,5 @@ import com.silentgo.servlet.http.Response;
  */
 public interface IExceptionHandler {
 
-    public RenderModel resolve(Response response, Request request, Throwable ex);
+    public RenderModel resolve(Response response, Request request, Exception ex);
 }

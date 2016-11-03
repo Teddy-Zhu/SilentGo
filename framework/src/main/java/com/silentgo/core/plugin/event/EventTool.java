@@ -12,7 +12,7 @@ import com.silentgo.core.SilentGo;
  */
 public class EventTool {
 
-    public static void push(Event event, Object... objects) {
-        SilentGo.me().getFactory(EventFactory.class).emit(event, objects);
+    public static void push(Event event) {
+        SilentGo.me().getFactory(EventFactory.class).emit(event);
     }
 }

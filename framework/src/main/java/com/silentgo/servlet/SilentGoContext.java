@@ -21,6 +21,7 @@ public class SilentGoContext {
 
     //origin
     String hashString;
+    private Object hashObject;
 
     private Object jsonObject;
 
@@ -72,5 +73,13 @@ public class SilentGoContext {
 
     public void setJsonObject(Object jsonObject) {
         this.jsonObject = jsonObject;
+    }
+
+    public Object getHashObject() {
+        return hashObject;
+    }
+
+    public void setHashObject(Object hashObject) {
+        this.hashObject = hashObject;
     }
 }
