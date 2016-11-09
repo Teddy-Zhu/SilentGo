@@ -1,5 +1,6 @@
 package com.silentgo.orm.base;
 
+import com.silentgo.utils.Assert;
 import com.silentgo.utils.StringKit;
 
 import java.util.ArrayList;
@@ -67,6 +68,17 @@ public class SQLTool {
         return " from " + tableName + getJoinSQL() + getWhereSQL() + getGroupSQL() + getOrderSQL() + getLimit();
     }
 
+    public String getSQL(boolean cache) {
+        if (cache) {
+            if (StringKit.isBlank(sql)) {
+                sql = getSql(type);
+            }
+            return sql;
+        } else {
+            return getSql(type);
+        }
+    }
+
     public String getSQL() {
         if (cached) {
             if (StringKit.isBlank(sql)) {
@@ -94,7 +106,7 @@ public class SQLTool {
                 return getSelectSQL() + getExceptSQL();
             }
             case COUNT: {
-                return " count(1) " + getCountRight();
+                return "select count(1) " + getCountRight();
             }
 
         }
@@ -102,12 +114,13 @@ public class SQLTool {
     }
 
     public String getCountSQL() {
-        return " count(1) " + getCountRight();
+        return "select count(1) " + getCountRight();
     }
 
     private String getInsertSQL() {
-        String sql = getListSQL(this.insertList, "insert ( ", " ) ", " , ", EmptySplit);
-        String value = getListSQL(this.insertList.size(), " ( ", " ) ", "?", EmptySplit);
+        Assert.isNotEmpty(this.insertList, "calc insert sql error");
+        String sql = getListSQL(this.insertList, "insert into " + this.tableName + " ( ", " ) ", " , ", EmptySplit);
+        String value = getListSQL(this.insertList.size(), " ( ", " ) ", ",", "?", EmptySplit);
         StringBuilder ret = new StringBuilder(sql + " values " + value);
         for (int i = 1, len = (params.size() / insertList.size()); i < len; i++) {
             ret.append(",").append(value);
@@ -150,13 +163,13 @@ public class SQLTool {
         return list.size() > 0 ? (prefix + StringKit.join(list, split) + suffix) : empty;
     }
 
-    private String getListSQL(int len, String prefix, String suffix, String split, String empty) {
+    private String getListSQL(int len, String prefix, String suffix, String split, String c, String empty) {
         StringBuilder builder = new StringBuilder();
         builder.append(prefix);
-        for (int i = 0; i < len; i++) {
-            builder.append(split);
+        for (int i = 0; i < len - 1; i++) {
+            builder.append(c).append(split);
         }
-        builder.append(suffix).append(empty);
+        builder.append(c).append(suffix).append(empty);
         return builder.toString();
     }
 
@@ -276,8 +289,9 @@ public class SQLTool {
     }
     //endregion
 
-    public SQLTool count() {
+    public SQLTool count(String tableName) {
         this.type = SQLType.COUNT;
+        this.tableName = tableName;
         return this;
     }
 
@@ -367,8 +381,8 @@ public class SQLTool {
         return this;
     }
 
-    public SQLTool orderBy(String ...columns){
-        Collections.addAll(this.orderList,  columns);
+    public SQLTool orderBy(String... columns) {
+        Collections.addAll(this.orderList, columns);
         return this;
     }
 
@@ -401,7 +415,7 @@ public class SQLTool {
 
     @Override
     public String toString() {
-        return getSQL();
+        return getSQL(false);
     }
 
     public static String NOTIN(String column, String condition) {

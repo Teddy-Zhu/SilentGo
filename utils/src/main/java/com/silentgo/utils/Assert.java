@@ -1,5 +1,7 @@
 package com.silentgo.utils;
 
+import java.util.Collection;
+
 /**
  * Project : silentgo
  * com.silentgo.utils
@@ -57,8 +59,15 @@ public class Assert {
             throw new RuntimeException(message);
         }
     }
+
     public static void isNotNull(Object object, String message) {
         if (object == null) {
+            throw new RuntimeException(message);
+        }
+    }
+
+    public static void isNotEmpty(Collection<?> collection, String message) {
+        if (collection == null || collection.size() == 0) {
             throw new RuntimeException(message);
         }
     }

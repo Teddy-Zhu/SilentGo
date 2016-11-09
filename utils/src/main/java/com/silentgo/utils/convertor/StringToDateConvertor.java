@@ -1,8 +1,7 @@
-package com.silentgo.core.typeconvert.support;
+package com.silentgo.utils.convertor;
 
 
-import com.silentgo.core.typeconvert.ITypeConvertor;
-import com.silentgo.core.typeconvert.annotation.Convertor;
+import com.silentgo.utils.inter.ITypeConvertor;
 
 import java.util.Date;
 
@@ -14,7 +13,6 @@ import java.util.Date;
  *         <p>
  *         Created by teddyzhu on 16/7/27.
  */
-@Convertor
 public class StringToDateConvertor implements ITypeConvertor<String, Date> {
     @Override
     public Date convert(String source) {

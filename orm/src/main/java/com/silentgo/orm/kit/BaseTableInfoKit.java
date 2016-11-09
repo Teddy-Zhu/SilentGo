@@ -42,11 +42,14 @@ public class BaseTableInfoKit {
         for (Field field : table.getDeclaredFields()) {
             com.silentgo.orm.base.annotation.Column an = field.getAnnotation(com.silentgo.orm.base.annotation.Column.class);
 
+            boolean anexist = an != null;
             Column nc = new Column();
-
             nc.setPropName(field.getName());
             nc.setType(field.getType());
-            nc.setColumnName(an != null && !Const.EmptyString.equals(an.value()) ? an.value() : field.getName());
+            nc.setColumnName(anexist && !Const.EmptyString.equals(an.value()) ? an.value() : field.getName());
+            nc.setNullable(anexist && an.nullable());
+            nc.setAutoIncrement(anexist && an.aic());
+            nc.setHasDefault(anexist && an.def());
             nc.setFullName(tableMeta.getTableName() + DOT + nc.getColumnName());
             nc.setSelectFullName(nc.getFullName() + (nc.getPropName().equals(nc.getColumnName()) ? "" : " as " + nc.getPropName()));
             fullMap.put(nc.getPropName(), nc);

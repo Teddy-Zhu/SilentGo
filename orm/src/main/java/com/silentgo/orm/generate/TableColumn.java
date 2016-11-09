@@ -14,8 +14,26 @@ public class TableColumn {
     public String colName;
     public String typeString;
     public boolean nullAble;
+    public boolean isAutoincrement;
     public String description;
     public String typeName;
+    public boolean hasDefault;
+
+    public boolean isHasDefault() {
+        return hasDefault;
+    }
+
+    public boolean isAutoincrement() {
+        return isAutoincrement;
+    }
+
+    public void setAutoincrement(boolean autoincrement) {
+        isAutoincrement = autoincrement;
+    }
+
+    public void setHasDefault(boolean hasDefault) {
+        this.hasDefault = hasDefault;
+    }
 
     public void setTypeName(String typeName) {
         this.typeName = typeName;

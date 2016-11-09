@@ -10,7 +10,6 @@ import com.silentgo.core.config.support.ConfigChecker;
 import com.silentgo.core.exception.AppBuildException;
 import com.silentgo.core.exception.AppReleaseException;
 import com.silentgo.core.ioc.bean.BeanFactory;
-import com.silentgo.core.ioc.bean.BeanWrapper;
 import com.silentgo.core.render.support.ErrorRener;
 import com.silentgo.core.support.AnnotationManager;
 import com.silentgo.core.support.BaseFactory;
@@ -18,8 +17,8 @@ import com.silentgo.servlet.http.HttpStatus;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
 import com.silentgo.utils.StringKit;
-import com.silentgo.utils.logger.Logger;
-import com.silentgo.utils.logger.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -31,7 +30,7 @@ import java.io.IOException;
  */
 public class SilentGoFilter implements Filter {
 
-    private static Logger LOGGER = LoggerFactory.getLog(SilentGoFilter.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(SilentGoFilter.class);
 
     private static Config configInit = null;
 

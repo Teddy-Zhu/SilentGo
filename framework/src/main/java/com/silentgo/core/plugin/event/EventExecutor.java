@@ -2,6 +2,7 @@ package com.silentgo.core.plugin.event;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.FutureTask;
 
 /**
@@ -28,13 +29,15 @@ public class EventExecutor {
         this.async = async;
     }
 
-    public void run(Event event) throws ExecutionException, InterruptedException {
-        Callable<Boolean> callable = (Callable<Boolean>) () -> {
+    public void run(Event event, ExecutorService executorService) throws ExecutionException, InterruptedException {
+
+        Callable<Boolean> callable = () -> {
             Thread.sleep(delay);
             eventListener.onEvent(event);
             return true;
         };
         FutureTask<Boolean> future = new FutureTask<>(callable);
+        executorService.submit(future);
         if (!async) {
             future.get();
         }

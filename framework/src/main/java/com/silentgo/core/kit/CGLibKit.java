@@ -1,8 +1,8 @@
 package com.silentgo.core.kit;
 
 import com.silentgo.core.aop.support.AOPInterceptor;
-import com.silentgo.utils.logger.Logger;
-import com.silentgo.utils.logger.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import net.sf.cglib.proxy.Enhancer;
 
 import java.lang.reflect.Field;
@@ -17,7 +17,7 @@ import java.lang.reflect.Field;
  */
 public class CGLibKit {
 
-    private static final Logger LOGGER = LoggerFactory.getLog(CGLibKit.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CGLibKit.class);
 
     @SuppressWarnings("unchecked")
     public static <T> T getTarget(T target) {

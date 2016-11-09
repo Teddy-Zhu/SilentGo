@@ -1,7 +1,7 @@
 package com.silentgo.core.cache;
 
-import com.silentgo.utils.logger.Logger;
-import com.silentgo.utils.logger.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.Configuration;
@@ -24,7 +24,7 @@ public class EhCache implements CacheManager {
 
     private net.sf.ehcache.CacheManager cacheManager;
     private volatile Object locker = new Object();
-    private static final Logger log = LoggerFactory.getLog(EhCache.class);
+    private static final Logger log = LoggerFactory.getLogger(EhCache.class);
 
     public net.sf.ehcache.CacheManager getCacheManager() {
         return cacheManager;

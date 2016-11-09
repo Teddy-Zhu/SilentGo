@@ -16,8 +16,8 @@ import com.silentgo.core.ioc.bean.support.BeanHandleFactory;
 import com.silentgo.core.route.annotation.Controller;
 import com.silentgo.utils.CollectionKit;
 import com.silentgo.utils.StringKit;
-import com.silentgo.utils.logger.Logger;
-import com.silentgo.utils.logger.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -37,7 +37,7 @@ import java.util.*;
 @Factory
 public class SilentGoBeanFactory extends BeanFactory<BeanDefinition> {
 
-    private static final Logger LOGGER = LoggerFactory.getLog(SilentGoBeanFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SilentGoBeanFactory.class);
 
     private Map<String, BeanDefinition> beansMap = new HashMap<>();
 

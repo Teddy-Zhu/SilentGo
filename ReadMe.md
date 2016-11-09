@@ -6,7 +6,7 @@ add maven dependency
 <dependency>
     <groupId>com.silentgo</groupId>
     <artifactId>framework</artifactId>
-    <version>0.0.24</version>
+    <version>0.0.27</version>
 </dependency>
 ```
 

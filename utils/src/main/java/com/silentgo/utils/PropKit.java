@@ -1,7 +1,7 @@
 package com.silentgo.utils;
 
-import com.silentgo.utils.logger.Logger;
-import com.silentgo.utils.logger.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,7 +18,7 @@ import java.util.Properties;
  */
 public class PropKit {
 
-    private static final Logger LOGGER = LoggerFactory.getLog(PropKit.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PropKit.class);
 
     Properties properties = null;
 

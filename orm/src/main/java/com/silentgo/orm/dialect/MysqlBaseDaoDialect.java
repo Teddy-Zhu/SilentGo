@@ -1,19 +1,15 @@
 package com.silentgo.orm.dialect;
 
-import com.silentgo.orm.base.BaseDaoDialect;
-import com.silentgo.orm.base.BaseTableInfo;
-import com.silentgo.orm.base.SQLTool;
-import com.silentgo.orm.base.TableModel;
+import com.silentgo.orm.base.*;
 import com.silentgo.orm.kit.PropertyTool;
 import com.silentgo.utils.StringKit;
-import com.silentgo.utils.logger.Logger;
-import com.silentgo.utils.logger.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,7 +22,7 @@ import java.util.Map;
  */
 public class MysqlBaseDaoDialect implements BaseDaoDialect {
 
-    private static final Logger LOGGER = LoggerFactory.getLog(MysqlBaseDaoDialect.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MysqlBaseDaoDialect.class);
 
 
     @Override
@@ -95,7 +91,21 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
             } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }
-            sqlTool.insertCol(table.get(k).getFullName()).appendParam(target);
+            Column column = table.get(k);
+            if (target == null) {
+                if (column.isAutoIncrement()) return;
+                if (column.isNullable()) {
+                    sqlTool.insertCol(column.getFullName()).appendParam(target);
+                } else {
+                    if (column.isHasDefault()) {
+                        //ignore
+                    } else {
+                        throw new RuntimeException("column: " + column.getColumnName() + " can not be null");
+                    }
+                }
+            } else {
+                sqlTool.insertCol(column.getFullName()).appendParam(target);
+            }
         });
         return sqlTool;
     }
@@ -108,7 +118,7 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
 
         SQLTool sqlTool = insertByRow(table, (T) iterator.next());
 
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             T cur = (T) iterator.next();
             PropertyTool.getCachedProps(table).forEach((k, propertyDescriptor) -> {
                 Object target = null;
@@ -117,7 +127,21 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
                 } catch (IllegalAccessException | InvocationTargetException e) {
                     e.printStackTrace();
                 }
-                sqlTool.appendParam(target);
+                Column column = table.get(k);
+                if (target == null) {
+                    if (column.isAutoIncrement()) return;
+                    if (column.isNullable()) {
+                        sqlTool.appendParam((Object) null);
+                    } else {
+                        if (column.isHasDefault()) {
+                            //ignore
+                        } else {
+                            throw new RuntimeException("column: " + column.getColumnName() + " can not be null");
+                        }
+                    }
+                } else {
+                    sqlTool.appendParam(target);
+                }
             });
         }
         return sqlTool;

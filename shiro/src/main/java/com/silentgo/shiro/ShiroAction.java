@@ -5,8 +5,8 @@ import com.silentgo.core.action.ActionChain;
 import com.silentgo.core.action.ActionParam;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
-import com.silentgo.utils.logger.Logger;
-import com.silentgo.utils.logger.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
@@ -26,7 +26,7 @@ import javax.servlet.ServletResponse;
  */
 public class ShiroAction extends ActionChain {
 
-    private static final Logger logger = LoggerFactory.getLog(ShiroAction.class);
+    private static final Logger logger = LoggerFactory.getLogger(ShiroAction.class);
 
 
     @Override

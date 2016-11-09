@@ -18,4 +18,10 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD})
 public @interface Column {
     String value() default Const.EmptyString;
+
+    boolean def() default false;
+
+    boolean aic() default false;
+
+    boolean nullable() default false;
 }

@@ -1,7 +1,7 @@
 package com.silentgo.core.aop;
 
-import com.silentgo.utils.logger.Logger;
-import com.silentgo.utils.logger.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class MethodParam {
 
-    public static final Logger LOGGER = LoggerFactory.getLog(MethodParam.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(MethodParam.class);
 
     private Class<?> type;
 

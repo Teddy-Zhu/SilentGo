@@ -6,8 +6,8 @@ import com.silentgo.core.exception.AppParameterPaserException;
 import com.silentgo.core.route.ParameterValueResolver;
 import com.silentgo.core.route.annotation.PathVariable;
 import com.silentgo.core.route.support.paramresolver.annotation.ParameterResolver;
-import com.silentgo.core.typeconvert.ConvertKit;
-import com.silentgo.core.typeconvert.ITypeConvertor;
+import com.silentgo.utils.ConvertKit;
+import com.silentgo.utils.inter.ITypeConvertor;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
 import com.silentgo.utils.TypeConvertKit;
@@ -37,7 +37,7 @@ public class PathValueParamResolver implements ParameterValueResolver {
                 Const.EmptyString.equals(pathVariable.value()) ? request.getPathParameter(methodParam.getName()) :
                         request.getPathParameter(pathVariable.value());
 
-        ITypeConvertor typeConvertor = new ConvertKit().getTypeConvert(String.class, methodParam.getType());
+        ITypeConvertor typeConvertor = ConvertKit.getTypeConvert(String.class, methodParam.getType());
 
         Object ret = typeConvertor.convert(jsonString);
         if (methodParam.getType().isPrimitive() && ret == null) {

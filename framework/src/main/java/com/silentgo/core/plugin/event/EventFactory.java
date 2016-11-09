@@ -4,9 +4,8 @@ import com.silentgo.core.SilentGo;
 import com.silentgo.core.build.Factory;
 import com.silentgo.core.exception.AppBuildException;
 import com.silentgo.core.exception.AppReleaseException;
-import com.silentgo.core.ioc.bean.BeanDefinition;
 import com.silentgo.core.ioc.bean.BeanFactory;
-import com.silentgo.core.ioc.bean.BeanWrapper;
+import com.silentgo.core.plugin.event.annotation.EventListen;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.utils.ClassKit;
 import com.silentgo.utils.CollectionKit;
@@ -15,8 +14,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Project : SilentGo
@@ -29,6 +29,8 @@ import java.util.concurrent.ExecutionException;
 @Factory
 public class EventFactory extends BaseFactory {
 
+    private ExecutorService executorService = Executors.newFixedThreadPool(10);
+
     private Map<Class<? extends Event>, List<EventExecutor>> eventSyncMap = new HashMap<>();
 
     private Map<Class<? extends Event>, List<EventExecutor>> eventASyncMap = new HashMap<>();
@@ -37,9 +39,9 @@ public class EventFactory extends BaseFactory {
     public boolean initialize(SilentGo me) throws AppBuildException {
         BeanFactory beanFactory = me.getFactory(me.getConfig().getBeanClass());
 
-        me.getAnnotationManager().getClasses(com.silentgo.core.plugin.event.annotation.EventListener.class).forEach(clz -> {
+        me.getAnnotationManager().getClasses(EventListen.class).forEach(clz -> {
             if (EventListener.class.isAssignableFrom(clz)) {
-                com.silentgo.core.plugin.event.annotation.EventListener eventListenerAn = (com.silentgo.core.plugin.event.annotation.EventListener) clz.getAnnotation(com.silentgo.core.plugin.event.annotation.EventListener.class);
+                EventListen eventListenerAn = (EventListen) clz.getAnnotation(EventListen.class);
                 Class<? extends Event> event = (Class<? extends Event>) ClassKit.getGenericClass(clz, 0);
                 try {
                     EventListener eventListener = (EventListener) clz.newInstance();
@@ -80,11 +82,11 @@ public class EventFactory extends BaseFactory {
 
     public void emit(Event event) {
         try {
-            for (EventExecutor eventExecutor : eventSyncMap.getOrDefault(event, new ArrayList<>())) {
-                eventExecutor.run(event);
+            for (EventExecutor eventExecutor : eventSyncMap.getOrDefault(event.getClass(), new ArrayList<>())) {
+                eventExecutor.run(event, executorService);
             }
-            for (EventExecutor eventExecutor : eventASyncMap.getOrDefault(event, new ArrayList<>())) {
-                eventExecutor.run(event);
+            for (EventExecutor eventExecutor : eventASyncMap.getOrDefault(event.getClass(), new ArrayList<>())) {
+                eventExecutor.run(event, executorService);
             }
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();

@@ -16,8 +16,8 @@ import com.silentgo.core.route.annotation.Controller;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.utils.CollectionKit;
 import com.silentgo.utils.StringKit;
-import com.silentgo.utils.logger.Logger;
-import com.silentgo.utils.logger.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ import java.util.regex.Pattern;
 @Factory
 public class RouteFactory extends BaseFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLog(RouteFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RouteFactory.class);
 
     private Map<String, List<BasicRoute>> hashRoute = new HashMap<>();
 

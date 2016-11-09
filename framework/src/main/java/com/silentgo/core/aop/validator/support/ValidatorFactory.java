@@ -13,8 +13,8 @@ import com.silentgo.core.exception.AppReleaseException;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.utils.ClassKit;
 import com.silentgo.utils.CollectionKit;
-import com.silentgo.utils.logger.Logger;
-import com.silentgo.utils.logger.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -32,7 +32,7 @@ import java.util.Map;
 @Factory
 public class ValidatorFactory extends BaseFactory {
 
-    private static Logger LOGGER = LoggerFactory.getLog(ValidatorFactory.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(ValidatorFactory.class);
     /**
      * Key : Annotation Class Name  Value : Sorted ValidatorInterceptor
      */

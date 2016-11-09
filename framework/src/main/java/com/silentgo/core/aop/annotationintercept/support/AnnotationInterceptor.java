@@ -4,8 +4,8 @@ import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.AOPPoint;
 import com.silentgo.core.aop.Interceptor;
 import com.silentgo.core.aop.annotation.Intercept;
-import com.silentgo.utils.logger.Logger;
-import com.silentgo.utils.logger.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Project : silentgo
@@ -18,7 +18,7 @@ import com.silentgo.utils.logger.LoggerFactory;
 @Intercept
 public class AnnotationInterceptor implements Interceptor {
 
-    private static final Logger LOGGER = LoggerFactory.getLog(AnnotationInterceptor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AnnotationInterceptor.class);
 
     @Override
     public int priority() {

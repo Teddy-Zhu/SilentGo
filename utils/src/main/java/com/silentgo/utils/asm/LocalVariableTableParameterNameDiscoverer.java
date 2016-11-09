@@ -9,8 +9,8 @@ package com.silentgo.utils.asm;
  * Created by teddyzhu on 16/9/27.
  */
 
-import com.silentgo.utils.logger.Logger;
-import com.silentgo.utils.logger.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class LocalVariableTableParameterNameDiscoverer {
 
-    private static final Logger logger = LoggerFactory.getLog(LocalVariableTableParameterNameDiscoverer.class);
+    private static final Logger logger = LoggerFactory.getLogger(LocalVariableTableParameterNameDiscoverer.class);
 
     // marker object for classes that do not have any debug info
     private static final Map<Member, String[]> NO_DEBUG_INFO_MAP = Collections.emptyMap();

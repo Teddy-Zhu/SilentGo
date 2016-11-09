@@ -31,7 +31,7 @@ public class AOPInterceptor implements MethodInterceptor {
         MethodAdviser adviser = methodAOPFactory.getMethodAdviser(method);
         AOPPoint point = new AOPPoint(o, method, objects, methodProxy,
                 adviser, ctx != null ? ctx.getResponse() : null, ctx != null ? ctx.getRequest() : null);
-        if (adviser == null) point.resolve();
+        if (adviser == null) return point.resolve();
         InterceptChain chain = new InterceptChain(point, methodAOPFactory.getBuildedMethodInterceptors(adviser.getMethod()));
         point.setChain(chain);
         return point.proceed();

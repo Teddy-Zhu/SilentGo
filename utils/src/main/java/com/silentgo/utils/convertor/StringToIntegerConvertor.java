@@ -1,10 +1,9 @@
-package com.silentgo.core.typeconvert.support;
+package com.silentgo.utils.convertor;
 
 
-import com.silentgo.core.typeconvert.ITypeConvertor;
-import com.silentgo.core.typeconvert.annotation.Convertor;
-import com.silentgo.utils.logger.Logger;
-import com.silentgo.utils.logger.LoggerFactory;
+import com.silentgo.utils.inter.ITypeConvertor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Project : silentgo
@@ -14,10 +13,9 @@ import com.silentgo.utils.logger.LoggerFactory;
  *         <p>
  *         Created by teddyzhu on 16/7/26.
  */
-@Convertor
 public class StringToIntegerConvertor implements ITypeConvertor<String, Integer> {
 
-    private Logger LOGGER = LoggerFactory.getLog(StringToIntegerConvertor.class);
+    private Logger LOGGER = LoggerFactory.getLogger(StringToIntegerConvertor.class);
 
     @Override
     public Integer convert(String source) {

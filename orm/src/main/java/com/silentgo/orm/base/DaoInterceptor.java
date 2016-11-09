@@ -10,8 +10,9 @@ import com.silentgo.orm.sqlparser.daoresolve.DaoResolver;
 import com.silentgo.orm.sqlparser.daoresolve.DefaultDaoResolver;
 import com.silentgo.orm.sqlparser.methodnameparser.MethodParserKit;
 import com.silentgo.utils.ClassKit;
-import com.silentgo.utils.logger.Logger;
-import com.silentgo.utils.logger.LoggerFactory;
+import com.silentgo.utils.ConvertKit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
@@ -33,8 +34,9 @@ import java.util.*;
  */
 public class DaoInterceptor implements MethodInterceptor {
 
-    private static final Logger LOGGER = LoggerFactory.getLog(DaoInterceptor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DaoInterceptor.class);
 
+    private static final Map<String, Class<? extends BaseDao>> cacheClz = new HashMap<>();
     private static final Map<Method, List<String>> cacheNamePaser = new HashMap<>();
 
     public static <T> T proxy(Class<T> tclz) {
@@ -54,8 +56,11 @@ public class DaoInterceptor implements MethodInterceptor {
         SQLTool sqlTool = new SQLTool();
         String methodName = method.getName();
         List<String> parsedString;
-        List<Annotation> annotations = baseTableBuilder.getMethodListMap().get(method);
+        List<Annotation> annotations = baseTableBuilder.getMethodListMap().getOrDefault(method, new ArrayList<>());
         Class<? extends BaseDao> daoClass = (Class<? extends BaseDao>) method.getDeclaringClass();
+        if (daoClass.isInterface()) {
+            daoClass = getClz(o.getClass().getName());
+        }
         BaseTableInfo tableInfo = baseTableBuilder.getClassTableInfoMap().get(daoClass);
         BaseDaoDialect daoDialect = baseTableBuilder.getDialect(tableInfo.getType());
         boolean cached = cacheNamePaser.containsKey(method);
@@ -103,7 +108,7 @@ public class DaoInterceptor implements MethodInterceptor {
                 connect = ConnectManager.me().getConnect(tableInfo.getType(), tableInfo.getPoolName());
                 Object[] generateKeys = new Object[objects.length];
                 ret = SilentGoOrm.insert(connect, sqlTool.getSQL(), int.class, generateKeys, args);
-                resolveInsertResult(tableInfo, generateKeys, args);
+                resolveInsertResult(tableInfo, generateKeys, objects);
                 break;
             }
         }
@@ -115,12 +120,27 @@ public class DaoInterceptor implements MethodInterceptor {
         return ret;
     }
 
+    private Class<? extends BaseDao> getClz(String clzString) {
+        int index = clzString.indexOf("$$EnhancerByCGLIB");
+        String clzStr = clzString.substring(0, index);
+        Class<? extends BaseDao> clz = cacheClz.get(clzStr);
+        if (clz == null) {
+            try {
+                clz = (Class<? extends BaseDao>) Class.forName(clzStr);
+                cacheClz.put(clzStr, clz);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        return clz;
+    }
+
     private void resolveInsertResult(BaseTableInfo tableInfos, Object[] generateKeys, Object[] params) throws InvocationTargetException, IllegalAccessException {
         if (tableInfos.getPrimaryKeys().size() == 0) return;
         Map<String, PropertyDescriptor> propertyDescriptorMap = PropertyTool.getCachedProps(tableInfos);
         PropertyDescriptor p = propertyDescriptorMap.get(tableInfos.getPrimaryKeys().get(0));
         for (int i = 0; i < generateKeys.length; i++) {
-            p.getWriteMethod().invoke(params[i], generateKeys[i]);
+            p.getWriteMethod().invoke(params[i], ConvertKit.getTypeConvert(String.class, p.getPropertyType()).convert(generateKeys[i].toString()));
         }
     }
 

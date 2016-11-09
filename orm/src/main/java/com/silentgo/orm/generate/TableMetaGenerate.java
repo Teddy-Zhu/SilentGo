@@ -56,6 +56,8 @@ public class TableMetaGenerate implements TableMetaGenerator {
                 String columnName = colRet.getString("COLUMN_NAME");
                 String remarks = colRet.getString("REMARKS");
                 int nullable = colRet.getInt("NULLABLE");
+                String hasDefault = colRet.getString("COLUMN_DEF");
+                String auto = colRet.getString("IS_AUTOINCREMENT");
                 TableColumn column = new TableColumn();
                 column.setName(format(columnName));
                 column.setColName(columnName);
@@ -63,6 +65,8 @@ public class TableMetaGenerate implements TableMetaGenerator {
                 //column.setTypeString(TypeMapping.getType(columnType));
                 column.setNullAble(nullable == 1);
                 column.setDescription(remarks);
+                column.setAutoincrement(auto.equalsIgnoreCase("YES"));
+                column.setHasDefault(hasDefault != null);
                 tableMeta.getColumns().add(column);
             }
             Statement stm = connection.createStatement();
@@ -127,11 +131,15 @@ public class TableMetaGenerate implements TableMetaGenerator {
                 String columnName = colRet.getString("COLUMN_NAME");
                 String remarks = colRet.getString("REMARKS");
                 int nullable = colRet.getInt("NULLABLE");
+                String hasDefault = colRet.getString("COLUMN_DEF");
+                String auto = colRet.getString("IS_AUTOINCREMENT");
                 TableColumn column = new TableColumn();
                 column.setName(format(columnName));
                 column.setColName(columnName);
                 //column.setType(Class.forName(TypeMapping.getType(columnType)));
                 //column.setTypeString(TypeMapping.getType(columnType));
+                column.setAutoincrement(auto.equalsIgnoreCase("YES"));
+                column.setHasDefault(hasDefault != null);
                 column.setNullAble(nullable == 1);
                 column.setDescription(remarks);
                 tableMeta.getColumns().add(column);

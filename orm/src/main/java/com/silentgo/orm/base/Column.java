@@ -16,7 +16,13 @@ public class Column {
 
     private String fullName;
 
+    private boolean nullable = false;
+
+    private boolean hasDefault = false;
+
     private String selectFullName;
+
+    private boolean autoIncrement = false;
 
     private Class<?> type;
 
@@ -34,6 +40,30 @@ public class Column {
         this.fullName = fullName;
         this.selectFullName = fullName + (propName.equals(columnName) ? "" : " as " + propName);
         this.type = type;
+    }
+
+    public boolean isAutoIncrement() {
+        return autoIncrement;
+    }
+
+    public boolean isNullable() {
+        return nullable;
+    }
+
+    public void setNullable(boolean nullable) {
+        this.nullable = nullable;
+    }
+
+    public void setAutoIncrement(boolean autoIncrement) {
+        this.autoIncrement = autoIncrement;
+    }
+
+    public boolean isHasDefault() {
+        return hasDefault;
+    }
+
+    public void setHasDefault(boolean hasDefault) {
+        this.hasDefault = hasDefault;
     }
 
     public String getPropName() {

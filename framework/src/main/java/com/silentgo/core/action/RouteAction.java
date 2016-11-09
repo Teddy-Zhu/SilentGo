@@ -18,8 +18,9 @@ import com.silentgo.core.route.support.requestdispatch.RequestDispatchFactory;
 import com.silentgo.servlet.http.HttpStatus;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
-import com.silentgo.utils.logger.Logger;
-import com.silentgo.utils.logger.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * Project : silentgo
@@ -32,7 +33,7 @@ import com.silentgo.utils.logger.LoggerFactory;
 @Action
 public class RouteAction extends ActionChain {
 
-    public static final Logger LOGGER = LoggerFactory.getLog(RouteAction.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(RouteAction.class);
 
     @Override
     public Integer priority() {

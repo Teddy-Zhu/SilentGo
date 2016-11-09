@@ -1,13 +1,12 @@
 package com.silentgo.orm;
 
 import com.silentgo.orm.base.DBConnect;
-import com.silentgo.orm.base.NameParam;
 import com.silentgo.orm.common.Const;
 import com.silentgo.orm.rsresolver.IRSResolver;
 import com.silentgo.orm.rsresolver.support.*;
 import com.silentgo.utils.TypeConvertKit;
-import com.silentgo.utils.logger.Logger;
-import com.silentgo.utils.logger.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.List;
@@ -22,7 +21,7 @@ import java.util.Map;
  *         Created by teddyzhu on 16/9/20.
  */
 public class SilentGoOrm {
-    private static Logger LOGGER = LoggerFactory.getLog(SilentGoOrm.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(SilentGoOrm.class);
 
     private static boolean pmdKnownBroken = false;
 

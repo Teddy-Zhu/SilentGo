@@ -1,8 +1,8 @@
 package com.silentgo.orm.jdbc;
 
 import com.silentgo.orm.base.*;
-import com.silentgo.utils.logger.Logger;
-import com.silentgo.utils.logger.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class JDBCManager implements DBManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLog(JDBCManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JDBCManager.class);
 
     public Map<String, DBPool> poolHashMap;
 

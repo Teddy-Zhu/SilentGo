@@ -67,7 +67,40 @@ public class TableModelGenerate {
         String field = format(ClassConst._field_null,
                 column.getTypeName(),
                 column.getName());
-        String an = "$t" + format(ClassConst._annotaion, Column.class.getSimpleName() + (column.getName().equals(column.getColName()) ? "" : "(\"" + column.getColName() + "\")"));
+        StringBuilder string = new StringBuilder(Column.class.getSimpleName());
+        if (column.getName().equals(column.getColName())) {
+            if (column.isHasDefault() || column.isAutoincrement() || column.isNullAble()) {
+                string.append("(");
+                if (column.isHasDefault()) {
+                    string.append("def = true,");
+                }
+                if (column.isAutoincrement()) {
+                    string.append("aic = true,");
+                }
+                if (column.isNullAble()) {
+                    string.append("nullable = true,");
+                }
+                string = new StringBuilder(string.substring(0, string.length() - 1));
+                string.append(")");
+            }
+        } else {
+            if (column.isHasDefault() || column.isAutoincrement() || column.isNullAble()) {
+                string.append("(value= \"").append(column.getColName()).append("\"");
+                if (column.isHasDefault()) {
+                    string.append(",def = true");
+                }
+                if (column.isAutoincrement()) {
+                    string.append(",aic = true");
+                }
+                if (column.isNullAble()) {
+                    string.append(",nullable = true");
+                }
+                string.append(")");
+            } else {
+                string.append("(\"").append(column.getColName()).append("\")");
+            }
+        }
+        String an = "$t" + format(ClassConst._annotaion, string.toString());
         return an + field;
     }
 

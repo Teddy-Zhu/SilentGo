@@ -13,8 +13,8 @@ import com.silentgo.orm.connect.ConnectManager;
 import com.silentgo.utils.CollectionKit;
 import com.silentgo.utils.PropKit;
 import com.silentgo.utils.StringKit;
-import com.silentgo.utils.logger.Logger;
-import com.silentgo.utils.logger.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class SilentGoConfig extends BaseConfig {
 
-    private static final Logger LOGGER = LoggerFactory.getLog(SilentGoConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SilentGoConfig.class);
 
 
     public SilentGoConfig(List<String> scanPackages, List<String> scanJars, boolean devMode, String encoding, int contextPathLength, String fileName) {

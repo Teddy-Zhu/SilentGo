@@ -7,6 +7,7 @@ import org.apache.shiro.subject.Subject;
  * ShiroMethod. (SPI, Singleton, ThreadSafe)
  *
  * @author dafei (myaniu AT gmail DOT com)
+ * thanks to da fei
  */
 public class ShiroMethod {
 

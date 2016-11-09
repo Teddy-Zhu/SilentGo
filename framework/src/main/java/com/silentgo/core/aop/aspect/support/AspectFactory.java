@@ -12,8 +12,8 @@ import com.silentgo.core.ioc.bean.BeanFactory;
 import com.silentgo.core.ioc.bean.BeanWrapper;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.utils.CollectionKit;
-import com.silentgo.utils.logger.Logger;
-import com.silentgo.utils.logger.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ import java.util.Map;
 @Factory
 public class AspectFactory extends BaseFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLog(AspectFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AspectFactory.class);
 
     private List<AspectMethod> aspectMethods = new ArrayList<>();
 

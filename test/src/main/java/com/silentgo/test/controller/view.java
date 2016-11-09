@@ -7,8 +7,8 @@ import com.silentgo.core.ioc.bean.SilentGoBeanFactory;
 import com.silentgo.core.route.annotation.*;
 import com.silentgo.servlet.http.RequestMethod;
 import com.silentgo.test.model.Menu;
-import com.silentgo.utils.logger.Logger;
-import com.silentgo.utils.logger.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ import java.util.List;
 @Route("/")
 public class view {
 
-    private static final Logger LOGGER = LoggerFactory.getLog(view.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(view.class);
 
     @Inject
     SilentGoBeanFactory silentGoBeanFactory;

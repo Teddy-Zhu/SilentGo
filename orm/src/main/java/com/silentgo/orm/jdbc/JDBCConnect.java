@@ -2,8 +2,8 @@ package com.silentgo.orm.jdbc;
 
 import com.silentgo.orm.base.DBConfig;
 import com.silentgo.orm.base.DBConnect;
-import com.silentgo.utils.logger.Logger;
-import com.silentgo.utils.logger.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.silentgo.utils.random.RandomUtil;
 
 import java.sql.Connection;
@@ -20,7 +20,7 @@ import java.util.Date;
  */
 public class JDBCConnect implements DBConnect {
 
-    private static final Logger LOGGER = LoggerFactory.getLog(JDBCConnect.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JDBCConnect.class);
 
     private String name;
 

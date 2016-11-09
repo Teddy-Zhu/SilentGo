@@ -31,7 +31,7 @@ public class CountDaoResolver implements DaoResolver {
                                                      boolean[] isHandled, BaseDaoDialect daoDialect, Map<String, Object> nameObjects) {
         if (isHandled[0]) return sqlTool;
         isHandled[0] = true;
-        sqlTool.count();
+        sqlTool.count(tableInfo.getTableName());
         return sqlTool;
     }
 }

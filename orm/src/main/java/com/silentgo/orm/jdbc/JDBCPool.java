@@ -4,8 +4,8 @@ import com.silentgo.orm.base.DBConfig;
 import com.silentgo.orm.base.DBConnect;
 import com.silentgo.orm.base.DBPool;
 import com.silentgo.orm.base.DataSource;
-import com.silentgo.utils.logger.Logger;
-import com.silentgo.utils.logger.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -25,7 +25,7 @@ import java.util.Optional;
  */
 public class JDBCPool implements DBPool {
 
-    private static final Logger LOGGER = LoggerFactory.getLog(JDBCPool.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JDBCPool.class);
     /**
      * 连接池名称
      */

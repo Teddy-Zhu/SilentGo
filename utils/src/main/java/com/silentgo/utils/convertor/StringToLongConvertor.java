@@ -1,10 +1,9 @@
-package com.silentgo.core.typeconvert.support;
+package com.silentgo.utils.convertor;
 
 
-import com.silentgo.core.typeconvert.ITypeConvertor;
-import com.silentgo.core.typeconvert.annotation.Convertor;
-import com.silentgo.utils.logger.Logger;
-import com.silentgo.utils.logger.LoggerFactory;
+import com.silentgo.utils.inter.ITypeConvertor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Project : silentgo
@@ -14,10 +13,9 @@ import com.silentgo.utils.logger.LoggerFactory;
  *         <p>
  *         Created by teddyzhu on 16/8/20.
  */
-@Convertor
 public class StringToLongConvertor implements ITypeConvertor<String, Long> {
 
-    public static final Logger LOGGER = LoggerFactory.getLog(StringToLongConvertor.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(StringToLongConvertor.class);
 
     @Override
     public Long convert(String source) {

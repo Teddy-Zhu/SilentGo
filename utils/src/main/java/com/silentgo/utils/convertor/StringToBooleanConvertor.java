@@ -1,8 +1,7 @@
-package com.silentgo.core.typeconvert.support;
+package com.silentgo.utils.convertor;
 
-import com.silentgo.core.typeconvert.ITypeConvertor;
-import com.silentgo.core.typeconvert.annotation.Convertor;
 import com.silentgo.utils.common.Const;
+import com.silentgo.utils.inter.ITypeConvertor;
 
 /**
  * Project : silentgo
@@ -12,7 +11,6 @@ import com.silentgo.utils.common.Const;
  *         <p>
  *         Created by teddyzhu on 16/8/20.
  */
-@Convertor
 public class StringToBooleanConvertor implements ITypeConvertor<String, Boolean> {
     @Override
     public Boolean convert(String source) {

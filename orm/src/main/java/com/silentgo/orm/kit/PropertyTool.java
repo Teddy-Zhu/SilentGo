@@ -3,8 +3,8 @@ package com.silentgo.orm.kit;
 import com.silentgo.orm.base.BaseTableInfo;
 import com.silentgo.orm.base.TableModel;
 import com.silentgo.orm.base.SQLTool;
-import com.silentgo.utils.logger.Logger;
-import com.silentgo.utils.logger.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PropertyTool {
 
 
-    public static final Logger LOGGER = LoggerFactory.getLog(PropertyTool.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(PropertyTool.class);
 
     private static final Map<Class<? extends TableModel>, BeanInfo> beanMap = new ConcurrentHashMap<>();
 

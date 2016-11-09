@@ -1,4 +1,4 @@
-package com.silentgo.core.typeconvert;
+package com.silentgo.utils.inter;
 
 /**
  * Project : silentgo

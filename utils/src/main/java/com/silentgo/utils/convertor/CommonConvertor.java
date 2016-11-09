@@ -1,7 +1,7 @@
-package com.silentgo.core.typeconvert.support;
+package com.silentgo.utils.convertor;
 
 
-import com.silentgo.core.typeconvert.ITypeConvertor;
+import com.silentgo.utils.inter.ITypeConvertor;
 
 /**
  * Project : silentgo

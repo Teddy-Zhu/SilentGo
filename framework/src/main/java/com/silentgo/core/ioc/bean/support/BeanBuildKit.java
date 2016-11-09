@@ -4,8 +4,8 @@ import com.silentgo.orm.base.DaoInterceptor;
 import com.silentgo.core.ioc.annotation.Lazy;
 import com.silentgo.core.ioc.bean.BeanDefinition;
 import com.silentgo.utils.CollectionKit;
-import com.silentgo.utils.logger.Logger;
-import com.silentgo.utils.logger.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class BeanBuildKit {
 
-    private static final Logger LOGGER = LoggerFactory.getLog(BeanBuildKit.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BeanBuildKit.class);
 
     private static List<BeanHandler> beanHandlers = new ArrayList<>();
 
