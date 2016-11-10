@@ -30,7 +30,6 @@ public class DefaultRouteParser implements RoutePaser {
         Map<Route, Double> routeMap = routeFactory.matchRoutes(actionParam.getRequestURL());
 
         Iterator<Route> routes = routeMap.keySet().iterator();
-
         Route parsed = null;
         Double preCount = 0.0;
         for (; routes.hasNext(); ) {
@@ -98,7 +97,10 @@ public class DefaultRouteParser implements RoutePaser {
 
     private boolean validateProduces(String[] produces, Request request, Response response, Double[] count) {
         String accept = request.getHeader("Accept");
-        if (StringKit.isBlank(accept) || produces.length > 0) return false;
+        //default accept all;
+        if (StringKit.isBlank(accept)) {
+            return produces.length <= 0;
+        }
         boolean acceptAll = accept.contains("*/*");
         for (String produce : produces) {
             if (acceptAll || accept.contains(produce)) {

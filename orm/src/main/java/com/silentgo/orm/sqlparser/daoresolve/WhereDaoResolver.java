@@ -61,17 +61,4 @@ public class WhereDaoResolver implements DaoResolver {
         }
     }
 
-
-    public static void main(String[] args) {
-        String a = "<#asd/>asdasad?xxxk<#asxx/>xxxx?xasd";
-
-        Matcher matcher = SQLKit.namedPatternAll.matcher(a);
-
-        while (matcher.find()) {
-            System.out.println(matcher.group(0));
-            System.out.println(matcher.group(1));
-            System.out.println(matcher.group(2));
-            System.out.println("=======");
-        }
-    }
 }

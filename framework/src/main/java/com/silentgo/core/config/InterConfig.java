@@ -21,7 +21,7 @@ public class InterConfig {
 
     private final Map<Class<? extends BaseFactory>, BaseFactory> factoryMap = new HashMap<>();
 
-    private final ThreadLocal<SilentGoContext> ctx = new ThreadLocal<>();
+    private final ThreadLocal<SilentGoContext> ctx = new InheritableThreadLocal<>();
     private ActionChain actionChain;
 
     private ActionChain routeAction;

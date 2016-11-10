@@ -2,6 +2,7 @@ package com.silentgo.core.route.support.paramresolver;
 
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.MethodParam;
+import com.silentgo.core.config.Const;
 import com.silentgo.core.exception.AppParameterPaserException;
 import com.silentgo.core.route.ParameterValueResolver;
 import com.silentgo.core.route.annotation.RequestParam;
@@ -39,11 +40,10 @@ public class RequestParamOrCommonParamResolver implements ParameterValueResolver
         SilentGo me = SilentGo.me();
         RequestParam requestParam = methodParam.getAnnotation(RequestParam.class);
 
-        Map<String, Object> resolvedMap = request.getResolvedMap();
         SilentGoContext context = me.getConfig().getCtx().get();
         JsonPaser parser = me.json();
         ret = parser.toObject(methodParam.getName(), context.getHashObject(), methodParam.getType());
-        if (ret == null && requestParam == null) {
+        if (ret == null && (requestParam == null || Const.DEFAULT_NONE.equals(requestParam.value()))) {
             try {
                 ret = me.json().toObject(context.getHashString(), methodParam.getType());
             } catch (Exception e) {

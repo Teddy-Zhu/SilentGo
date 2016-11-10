@@ -24,7 +24,7 @@ public class TransactionInterceptor implements IAnnotation<Transaction> {
         DBConnect connect = SilentGo.me().getConnect();
 
         boolean tr = false;
-        if (!connect.getConnect().getAutoCommit()) {
+        if (connect.getConnect().getAutoCommit()) {
             tr = true;
             connect.getConnect().setAutoCommit(false);
         }

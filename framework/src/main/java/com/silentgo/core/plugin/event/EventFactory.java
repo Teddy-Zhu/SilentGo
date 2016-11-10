@@ -9,14 +9,14 @@ import com.silentgo.core.plugin.event.annotation.EventListen;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.utils.ClassKit;
 import com.silentgo.utils.CollectionKit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 /**
  * Project : SilentGo
@@ -28,6 +28,7 @@ import java.util.concurrent.Executors;
  */
 @Factory
 public class EventFactory extends BaseFactory {
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventFactory.class);
 
     private ExecutorService executorService = Executors.newFixedThreadPool(10);
 
@@ -75,6 +76,7 @@ public class EventFactory extends BaseFactory {
 
     @Override
     public boolean destroy(SilentGo me) throws AppReleaseException {
+        executorService.shutdownNow();
         eventSyncMap.clear();
         eventASyncMap.clear();
         return true;
@@ -82,14 +84,24 @@ public class EventFactory extends BaseFactory {
 
     public void emit(Event event) {
         try {
-            for (EventExecutor eventExecutor : eventSyncMap.getOrDefault(event.getClass(), new ArrayList<>())) {
-                eventExecutor.run(event, executorService);
-            }
             for (EventExecutor eventExecutor : eventASyncMap.getOrDefault(event.getClass(), new ArrayList<>())) {
                 eventExecutor.run(event, executorService);
             }
+        } catch (InterruptedException | ExecutionException e) {
+            LOGGER.info("async event error : {}", e.getCause());
+        }
+        try {
+            Callable<Boolean> callable = () -> {
+                for (EventExecutor eventExecutor : eventSyncMap.getOrDefault(event.getClass(), new ArrayList<>())) {
+                    eventExecutor.run(event);
+                }
+                return true;
+            };
+            executorService.submit(callable).get();
+            LOGGER.info("sync task end");
         } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
+            LOGGER.info("event error : {}", e.getMessage());
+            throw new RuntimeException(e.getCause());
         }
     }
 

@@ -27,7 +27,7 @@ public class UpdateDaoResolver implements DaoResolver {
     @Override
     public <T extends TableModel> SQLTool processSQL(String methodName, Class<?> returnType, Object[] objects, Integer[] objectIndex, List<String> parsedMethod, BaseTableInfo tableInfo, SQLTool sqlTool, List<Annotation> annotations, boolean[] isHandled,
                                                      BaseDaoDialect daoDialect, Map<String, Object> nameObjects) {
-        if (!isHandled[0]) return sqlTool;
+        if (isHandled[0]) return sqlTool;
         isHandled[0] = true;
         sqlTool.update(tableInfo.getTableName());
 

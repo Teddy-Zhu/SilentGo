@@ -29,18 +29,20 @@ public class EventExecutor {
         this.async = async;
     }
 
-    public void run(Event event, ExecutorService executorService) throws ExecutionException, InterruptedException {
+    public void run(Event event) throws InterruptedException {
+        Thread.sleep(delay);
+        eventListener.onEvent(event);
+    }
 
-        Callable<Boolean> callable = () -> {
-            Thread.sleep(delay);
+    public void run(Event event, ExecutorService executorService) throws ExecutionException, InterruptedException {
+        executorService.execute(() -> {
+            try {
+                Thread.currentThread().sleep(delay);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             eventListener.onEvent(event);
-            return true;
-        };
-        FutureTask<Boolean> future = new FutureTask<>(callable);
-        executorService.submit(future);
-        if (!async) {
-            future.get();
-        }
+        });
     }
 
     public EventListener getEventListener() {

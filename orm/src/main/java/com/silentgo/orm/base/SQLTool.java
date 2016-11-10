@@ -132,7 +132,7 @@ public class SQLTool {
         if (updateList.size() == 0) {
             return "";
         }
-        return "update " + tableName + getJoinSQL() + " setEqual " + getListSQL(updateList, " ", " = ? ", " = ? ,", " ");
+        return "update " + tableName + getJoinSQL() + " set " + getListSQL(updateList, " ", " ", ",", " ");
     }
 
     public String getDeleteSQL() {

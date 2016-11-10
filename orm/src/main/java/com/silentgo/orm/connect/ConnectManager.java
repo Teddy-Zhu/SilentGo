@@ -21,8 +21,8 @@ import java.util.concurrent.ConcurrentHashMap;
  *         Created by teddyzhu on 2016/10/29.
  */
 public class ConnectManager {
-
-    private ThreadLocal<DBConnect> threadConnect = new ThreadLocal<>();
+    //CONNECT INHERIT
+    private ThreadLocal<DBConnect> threadConnect = new InheritableThreadLocal<>();
     private Map<DBType, DBManager> dbManagerMap = new ConcurrentHashMap<>();
 
     private static class ConnectManagerHolder {
