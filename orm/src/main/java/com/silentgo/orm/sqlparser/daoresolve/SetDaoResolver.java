@@ -33,7 +33,8 @@ public class SetDaoResolver implements DaoResolver {
     public <T extends TableModel> SQLTool processSQL(String methodName, Class<?> returnType, Object[] objects, Integer[] objectIndex, List<String> parsedMethod, BaseTableInfo tableInfo, SQLTool sqlTool, List<Annotation> annotations, boolean[] isHandled,
                                                      BaseDaoDialect daoDialect, Map<String, Object> nameObjects) {
         int set = parsedMethod.indexOf(DaoKeyWord.Set.innername);
-        if (DaoResolveKit.isField(parsedMethod.get(set + 1), tableInfo))
+        String filed = DaoResolveKit.getField(parsedMethod, set + 1);
+        if (DaoResolveKit.isField(filed, tableInfo))
             set(set, DaoKeyWord.And.innername, parsedMethod, tableInfo, sqlTool);
 
         Optional<Annotation> opSet = annotations.stream().filter(annotation -> annotation.annotationType().equals(Set.class)).findFirst();

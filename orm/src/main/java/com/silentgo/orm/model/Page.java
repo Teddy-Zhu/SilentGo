@@ -1,5 +1,6 @@
 package com.silentgo.orm.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,11 +13,11 @@ import java.util.List;
  */
 public class Page<T> {
 
-    private List<T> result;
-    private int pageNumber;
-    private int pageSize;
-    private int totalCount;
-    private int totalPage;
+    private List<T> result = new ArrayList<T>();
+    private int pageNumber = 1;
+    private int pageSize = 20;
+    private int totalCount = 0;
+    private int totalPage = 0;
 
     public Page() {
     }

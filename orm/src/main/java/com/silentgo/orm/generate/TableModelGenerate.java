@@ -49,10 +49,10 @@ public class TableModelGenerate {
         if (table.getPrimaryKeys().size() == 0) {
             an = "(\"" + table.getTableName() + "\")";
         } else if (table.getPrimaryKeys().size() == 1) {
-            an = "(value= \"" + table.getTableName() +
+            an = "(value = \"" + table.getTableName() +
                     "\",  primaryKey = \"" + table.getPrimaryKeys().get(0) + "\")";
         } else {
-            an = "(value= \"" + table.getTableName() +
+            an = "(value = \"" + table.getTableName() +
                     "\",  primaryKey = {\"" +
                     StringKit.join(table.getPrimaryKeys(), "\",\"") + "\"})";
         }
@@ -85,7 +85,7 @@ public class TableModelGenerate {
             }
         } else {
             if (column.isHasDefault() || column.isAutoincrement() || column.isNullAble()) {
-                string.append("(value= \"").append(column.getColName()).append("\"");
+                string.append("(value = \"").append(column.getColName()).append("\"");
                 if (column.isHasDefault()) {
                     string.append(",def = true");
                 }

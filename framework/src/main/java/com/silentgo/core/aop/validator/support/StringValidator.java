@@ -23,7 +23,7 @@ public class StringValidator implements IValidator<RequestString> {
 
     @Override
     public boolean validate(Response response, Request request, RequestString param, Object arg, int index, Object[] objects) {
-        String value = arg.toString();
+        String value = arg == null ? null : arg.toString();
 
         if (StringKit.isBlank(value)) {
             if (!Const.DEFAULT_NONE.equals(param.defaultValue())) {

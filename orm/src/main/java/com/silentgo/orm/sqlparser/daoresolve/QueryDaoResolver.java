@@ -4,13 +4,14 @@ import com.silentgo.orm.base.BaseDaoDialect;
 import com.silentgo.orm.base.BaseTableInfo;
 import com.silentgo.orm.base.SQLTool;
 import com.silentgo.orm.base.TableModel;
+import com.silentgo.orm.sqlparser.SQLKit;
+import com.silentgo.orm.sqlparser.annotation.ColumnIgnore;
+import com.silentgo.orm.sqlparser.annotation.OrderBy;
 import com.silentgo.orm.sqlparser.funcanalyse.DaoKeyWord;
 import com.silentgo.utils.Assert;
 
 import java.lang.annotation.Annotation;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Project : parent
@@ -39,7 +40,24 @@ public class QueryDaoResolver implements DaoResolver {
             Assert.isTrue(Collection.class.isAssignableFrom(returnType), "Method [" + methodName + "] return type should be collection");
             sqlTool.limitClear();
         }
-        sqlTool.select(tableInfo.getTableName(), tableInfo.get("*").getSelectFullName());
+
+        Optional<Annotation> opColumnIgnore = annotations.stream().filter(annotation -> annotation.annotationType().equals(ColumnIgnore.class)).findFirst();
+        if (opColumnIgnore.isPresent()) {
+            ColumnIgnore columnIgnore = (ColumnIgnore) opColumnIgnore.get();
+            if (columnIgnore.value().length > 0) {
+                sqlTool.select(tableInfo.getTableName());
+                List<String> ignorelist = Arrays.asList(columnIgnore.value());
+                tableInfo.getColumnInfo().entrySet().forEach(column -> {
+                    if (!"*".equals(column.getKey()) && !ignorelist.contains(column.getKey())) {
+                        sqlTool.selectCol(column.getValue().getSelectFullName());
+                    }
+                });
+            } else {
+                sqlTool.select(tableInfo.getTableName(), tableInfo.get("*").getSelectFullName());
+            }
+        } else {
+            sqlTool.select(tableInfo.getTableName(), tableInfo.get("*").getSelectFullName());
+        }
         return sqlTool;
     }
 

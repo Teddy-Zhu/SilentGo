@@ -4,6 +4,7 @@ import com.silentgo.orm.base.BaseDaoDialect;
 import com.silentgo.orm.base.BaseTableInfo;
 import com.silentgo.orm.base.SQLTool;
 import com.silentgo.orm.base.TableModel;
+import com.silentgo.orm.sqlparser.SQLKit;
 import com.silentgo.orm.sqlparser.funcanalyse.DaoKeyWord;
 
 import java.lang.annotation.Annotation;
@@ -30,6 +31,6 @@ public class LimitDaoResovler implements DaoResolver {
                                                      BaseTableInfo tableInfo, SQLTool sqlTool,
                                                      List<Annotation> annotations, boolean[] isHandled,
                                                      BaseDaoDialect daoDialect, Map<String, Object> nameObjects) {
-        return sqlTool.limit();
+        return sqlTool.limit(SQLKit.buildParam(" limit ?,? ", objectIndex, objects, sqlTool, nameObjects));
     }
 }

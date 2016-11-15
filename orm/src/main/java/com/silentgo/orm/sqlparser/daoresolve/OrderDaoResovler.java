@@ -32,10 +32,9 @@ public class OrderDaoResovler implements DaoResolver {
         int index = parsedMethod.indexOf(DaoKeyWord.Order.innername);
         String two = DaoResolveKit.getField(parsedMethod, index + 1);
         if (DaoKeyWord.By.equals(two)) {
-            if (DaoResolveKit.isField(parsedMethod.get(index + 2), tableInfo))
+            String field = DaoResolveKit.getField(parsedMethod, index + 2);
+            if (DaoResolveKit.isField(field, tableInfo))
                 setOrder(index + 1, DaoKeyWord.And.innername, parsedMethod, tableInfo, sqlTool);
-        } else {
-            throw new RuntimeException("error syntax : after Order : " + two);
         }
         Optional<Annotation> opOrderBy = annotations.stream().filter(annotation -> annotation.annotationType().equals(OrderBy.class)).findFirst();
         if (opOrderBy.isPresent()) {

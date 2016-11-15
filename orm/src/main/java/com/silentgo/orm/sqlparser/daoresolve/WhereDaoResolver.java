@@ -6,7 +6,10 @@ import com.silentgo.orm.base.SQLTool;
 import com.silentgo.orm.base.TableModel;
 import com.silentgo.orm.sqlparser.SQLKit;
 import com.silentgo.orm.sqlparser.annotation.Where;
+import com.silentgo.orm.sqlparser.annotation.WhereGroup;
+import com.silentgo.orm.sqlparser.annotation.WhereJudge;
 import com.silentgo.orm.sqlparser.funcanalyse.DaoKeyWord;
+import com.silentgo.utils.StringKit;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
@@ -33,7 +36,8 @@ public class WhereDaoResolver implements DaoResolver {
     public <T extends TableModel> SQLTool processSQL(String methodName, Class<?> returnType, Object[] objects, Integer[] objectIndex, List<String> parsedMethod, BaseTableInfo tableInfo, SQLTool sqlTool, List<Annotation> annotations, boolean[] isHandled,
                                                      BaseDaoDialect daoDialect, Map<String, Object> nameObjects) {
         int index = parsedMethod.indexOf(DaoKeyWord.Where.innername);
-        if (DaoResolveKit.isField(parsedMethod.get(index + 1), tableInfo))
+        String tfield = DaoResolveKit.getField(parsedMethod, index + 1);
+        if (DaoResolveKit.isField(tfield, tableInfo))
             setWhere(index, DaoKeyWord.And.innername, parsedMethod, tableInfo, sqlTool, objectIndex, objects);
         Optional<Annotation> opWhere = annotations.stream().filter(annotation -> annotation.annotationType().equals(Where.class)).findFirst();
         if (opWhere.isPresent()) {
@@ -42,9 +46,30 @@ public class WhereDaoResolver implements DaoResolver {
                 sqlTool.where(SQLKit.buildParam(s, objectIndex, objects, sqlTool, nameObjects));
             }
         }
+        Optional<Annotation> opWhereGroup = annotations.stream().filter(annotation -> annotation.annotationType().equals(WhereGroup.class)).findFirst();
+        if (opWhereGroup.isPresent()) {
+            WhereGroup whereGroup = (WhereGroup) opWhereGroup.get();
+            for (WhereJudge whereJudge : whereGroup.value()) {
+                setWhereGroup(whereJudge, objectIndex, objects, nameObjects, sqlTool);
+            }
+        }
         return sqlTool;
     }
 
+    private void setWhereGroup(WhereJudge whereJudge, Integer[] objectIndex, Object[] objects, Map<String, Object> namedObjects, SQLTool sqlTool) {
+        Object object = namedObjects.get(whereJudge.value());
+
+        if (object == null) return;
+        if (object instanceof String) {
+            if (StringKit.isNotBlank((String) object)) {
+                sqlTool.where(SQLKit.buildParam(whereJudge.condition(), objectIndex, objects, sqlTool, namedObjects));
+            }
+        } else if (object instanceof Boolean) {
+            if ((Boolean) object) {
+                sqlTool.where(SQLKit.buildParam(whereJudge.condition(), objectIndex, objects, sqlTool, namedObjects));
+            }
+        }
+    }
 
     private void setWhere(int index, String string, List<String> parsedMethod, BaseTableInfo tableInfo, SQLTool sqlTool, Integer[] objectIndex, Object[] objects) {
         if (DaoKeyWord.And.equals(string)) {

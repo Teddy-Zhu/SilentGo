@@ -42,6 +42,6 @@ public class DaoResolveKit {
     }
 
     public static boolean isField(String field, BaseTableInfo baseTableInfo) {
-        return baseTableInfo.get(StringKit.firstToLower(field)) != null;
+        return !StringKit.isBlank(field) && baseTableInfo.get(StringKit.firstToLower(field)) != null;
     }
 }

@@ -140,7 +140,7 @@ public class SQLTool {
     }
 
     public String getWhereSQL() {
-        return getListSQL(whereList, " where ( ", " ) ", " AND ", EmptySplit);
+        return this.whereList.size() == 0 ? " " : getListSQL(whereList, " where ( ", " ) ", " AND ", EmptySplit);
     }
 
     public String getJoinSQL() {
@@ -252,6 +252,15 @@ public class SQLTool {
         return this;
     }
 
+    public SQLTool selectCol(String... strings) {
+        Collections.addAll(this.selectList, strings);
+        return this;
+    }
+
+    public SQLTool selectCol(Collection<String> collections) {
+        this.selectList.addAll(collections);
+        return this;
+    }
     //endregion select
 
     //region delete
@@ -395,6 +404,11 @@ public class SQLTool {
 
     public SQLTool findFirst(int size, int page) {
         this.limit = " limit 0,1 ";
+        return this;
+    }
+
+    public SQLTool limit(String limit) {
+        this.limit = limit;
         return this;
     }
 

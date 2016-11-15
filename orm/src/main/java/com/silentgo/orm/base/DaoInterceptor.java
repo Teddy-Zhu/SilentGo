@@ -4,7 +4,7 @@ import com.silentgo.orm.SilentGoOrm;
 import com.silentgo.orm.connect.ConnectManager;
 import com.silentgo.orm.infobuilder.BaseTableBuilder;
 import com.silentgo.orm.kit.DaoMethodKit;
-import com.silentgo.orm.kit.PropertyTool;
+import com.silentgo.orm.kit.PropertyKit;
 import com.silentgo.orm.sqlparser.SQLKit;
 import com.silentgo.orm.sqlparser.daoresolve.DaoResolver;
 import com.silentgo.orm.sqlparser.daoresolve.DefaultDaoResolver;
@@ -58,7 +58,7 @@ public class DaoInterceptor implements MethodInterceptor {
         List<String> parsedString;
         List<Annotation> annotations = baseTableBuilder.getMethodListMap().getOrDefault(method, new ArrayList<>());
         Class<? extends BaseDao> daoClass = (Class<? extends BaseDao>) method.getDeclaringClass();
-        if (daoClass.isInterface()) {
+        if (BaseDao.class.equals(daoClass)) {
             daoClass = getClz(o.getClass().getName());
         }
         BaseTableInfo tableInfo = baseTableBuilder.getClassTableInfoMap().get(daoClass);
@@ -137,7 +137,7 @@ public class DaoInterceptor implements MethodInterceptor {
 
     private void resolveInsertResult(BaseTableInfo tableInfos, Object[] generateKeys, Object[] params) throws InvocationTargetException, IllegalAccessException {
         if (tableInfos.getPrimaryKeys().size() == 0) return;
-        Map<String, PropertyDescriptor> propertyDescriptorMap = PropertyTool.getCachedProps(tableInfos);
+        Map<String, PropertyDescriptor> propertyDescriptorMap = PropertyKit.getCachedProps(tableInfos);
         PropertyDescriptor p = propertyDescriptorMap.get(tableInfos.getPrimaryKeys().get(0));
         for (int i = 0; i < generateKeys.length; i++) {
             p.getWriteMethod().invoke(params[i], ConvertKit.getTypeConvert(String.class, p.getPropertyType()).convert(generateKeys[i].toString()));

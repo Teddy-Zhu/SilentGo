@@ -1,9 +1,6 @@
 package com.silentgo.orm.sqlparser.daoresolve;
 
-import com.silentgo.orm.base.BaseDaoDialect;
-import com.silentgo.orm.base.BaseTableInfo;
-import com.silentgo.orm.base.SQLTool;
-import com.silentgo.orm.base.TableModel;
+import com.silentgo.orm.base.*;
 import com.silentgo.orm.sqlparser.SQLKit;
 import com.silentgo.orm.sqlparser.annotation.Select;
 
@@ -32,6 +29,7 @@ public class SelectDaoResolver implements DaoResolver {
         isHandled[0] = true;
         Select select = (Select) annotations.stream().filter(annotation -> Select.class.equals(annotation.annotationType())).findFirst().get();
         sqlTool = new SQLTool();
+        sqlTool.setType(SQLType.QUERY);
         sqlTool.setSql(SQLKit.buildParam(select.value(), objectIndex, objects, sqlTool, nameObjects));
         return sqlTool;
     }

@@ -25,6 +25,7 @@ public class DefaultDaoResolver {
         resolverList.add(new SelectDaoResolver());
         resolverList.add(new CountDaoResolver());
         resolverList.add(new SetDaoResolver());
+        resolverList.add(new LeftJoinDaoResolver());
         resolverList.add(new WhereDaoResolver());
         resolverList.add(new OrderDaoResovler());
         resolverList.add(new LimitDaoResovler());

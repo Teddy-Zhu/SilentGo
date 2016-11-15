@@ -23,10 +23,10 @@ import java.util.concurrent.ConcurrentHashMap;
  *         <p>
  *         Created by teddyzhu on 2016/10/10.
  */
-public class PropertyTool {
+public class PropertyKit {
 
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(PropertyTool.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(PropertyKit.class);
 
     private static final Map<Class<? extends TableModel>, BeanInfo> beanMap = new ConcurrentHashMap<>();
 

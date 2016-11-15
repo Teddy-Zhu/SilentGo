@@ -37,10 +37,9 @@ public class GroupDaoResovler implements DaoResolver {
         int index = parsedMethod.indexOf(DaoKeyWord.Group.innername);
         String two = DaoResolveKit.getField(parsedMethod, index + 1);
         if (DaoKeyWord.By.equals(two)) {
-            if (DaoResolveKit.isField(parsedMethod.get(index + 2), tableInfo))
+            String field = DaoResolveKit.getField(parsedMethod, index + 2);
+            if (DaoResolveKit.isField(field, tableInfo))
                 setGroup(index + 1, DaoKeyWord.And.innername, parsedMethod, tableInfo, sqlTool);
-        } else {
-            throw new RuntimeException("error syntax : after Group : " + two);
         }
         Optional<Annotation> opGroupBy = annotations.stream().filter(annotation -> annotation.annotationType().equals(GroupBy.class)).findFirst();
         if (opGroupBy.isPresent()) {

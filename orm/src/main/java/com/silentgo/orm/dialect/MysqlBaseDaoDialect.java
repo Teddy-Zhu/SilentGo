@@ -1,7 +1,7 @@
 package com.silentgo.orm.dialect;
 
 import com.silentgo.orm.base.*;
-import com.silentgo.orm.kit.PropertyTool;
+import com.silentgo.orm.kit.PropertyKit;
 import com.silentgo.utils.StringKit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +59,7 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
         sqlTool.select(table.getTableName(), table.get("*").getSelectFullName());
 
 
-        PropertyTool.getCachedProps(table).forEach((k, propertyDescriptor) -> {
+        PropertyKit.getCachedProps(table).forEach((k, propertyDescriptor) -> {
             Object target = null;
             try {
                 target = propertyDescriptor.getReadMethod().invoke(t);
@@ -84,7 +84,7 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
 
         SQLTool sqlTool = new SQLTool().insert(table.getTableName());
 
-        PropertyTool.getCachedProps(table).forEach((k, propertyDescriptor) -> {
+        PropertyKit.getCachedProps(table).forEach((k, propertyDescriptor) -> {
             Object target = null;
             try {
                 target = propertyDescriptor.getReadMethod().invoke(t);
@@ -120,7 +120,7 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
 
         while (iterator.hasNext()) {
             T cur = (T) iterator.next();
-            PropertyTool.getCachedProps(table).forEach((k, propertyDescriptor) -> {
+            PropertyKit.getCachedProps(table).forEach((k, propertyDescriptor) -> {
                 Object target = null;
                 try {
                     target = propertyDescriptor.getReadMethod().invoke(cur);
@@ -149,8 +149,8 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
 
     @Override
     public <T extends TableModel> SQLTool updateByPrimaryKey(BaseTableInfo table, T t) {
-        Map<String, PropertyDescriptor> propsMap = PropertyTool.getCachedProps(table);
-        SQLTool sqlTool = PropertyTool.getUpdateByPrimerySQLTool(table, t, propsMap);
+        Map<String, PropertyDescriptor> propsMap = PropertyKit.getCachedProps(table);
+        SQLTool sqlTool = PropertyKit.getUpdateByPrimerySQLTool(table, t, propsMap);
 
         propsMap.forEach((k, propertyDescriptor) -> {
             Object target = null;
@@ -167,8 +167,8 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
 
     @Override
     public <T extends TableModel> SQLTool updateByPrimaryKeyOptional(BaseTableInfo table, T t, Collection<String> columns) {
-        Map<String, PropertyDescriptor> propsMap = PropertyTool.getCachedProps(table);
-        SQLTool sqlTool = PropertyTool.getUpdateByPrimerySQLTool(table, t, propsMap);
+        Map<String, PropertyDescriptor> propsMap = PropertyKit.getCachedProps(table);
+        SQLTool sqlTool = PropertyKit.getUpdateByPrimerySQLTool(table, t, propsMap);
 
         propsMap.forEach((k, propertyDescriptor) -> {
             if (!columns.contains(k)) return;
@@ -188,8 +188,8 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
     @Override
     public <T extends TableModel> SQLTool updateByPrimaryKeySelective(BaseTableInfo table, T t) {
 
-        Map<String, PropertyDescriptor> propsMap = PropertyTool.getCachedProps(table);
-        SQLTool sqlTool = PropertyTool.getUpdateByPrimerySQLTool(table, t, propsMap);
+        Map<String, PropertyDescriptor> propsMap = PropertyKit.getCachedProps(table);
+        SQLTool sqlTool = PropertyKit.getUpdateByPrimerySQLTool(table, t, propsMap);
 
         propsMap.forEach((k, propertyDescriptor) -> {
             Object target = null;
