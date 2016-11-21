@@ -49,7 +49,7 @@ public final class Const {
 
     public static final String Version = "version";
 
-    public static final String configName = "application.properties";
+    public static final String configName = "silentgo.properties";
 
     public static final String ApplicationName = "framework";
 

@@ -9,6 +9,8 @@ import com.silentgo.orm.generate.TableDaoGenerate;
 import com.silentgo.orm.generate.TableMeta;
 import com.silentgo.orm.generate.TableMetaGenerate;
 import com.silentgo.utils.StringKit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
@@ -25,9 +27,12 @@ import java.util.*;
  */
 public class BaseTableInfoKit {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseTableInfoKit.class);
+
     private static final String DOT = ".";
 
     public static BaseTableInfo getTableInfo(String poolName, Connection connection, Class<? extends TableModel> table, String tableName, List<String> keys, DBType type) throws SQLException, ClassNotFoundException {
+        LOGGER.info("get table pool:{},connect:{},table:{},dbtype:{}", poolName, connection == null, tableName, type);
         BaseTableInfo info = new BaseTableInfo();
         info.setTableName(tableName);
         info.setClazz(table);
@@ -56,7 +61,7 @@ public class BaseTableInfoKit {
             all.add(nc.getSelectFullName());
         }
 
-        fullMap.put("*", new Column(tableMeta.getTableName() + DOT + "*", StringKit.join(all, ",")));
+        fullMap.put("*", new Column(tableMeta.getTableName() + DOT + "*", StringKit.join(all, ","), "*"));
 
 //        tableMeta.getColumns().forEach(column -> {
 //            Column nc = new Column();

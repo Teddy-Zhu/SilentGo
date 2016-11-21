@@ -3,6 +3,8 @@ package com.silentgo.core.action;
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.action.annotation.Action;
 import com.silentgo.servlet.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
@@ -17,6 +19,8 @@ import java.util.Map;
 @Action
 public class StaticFileAction extends ActionChain {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(StaticFileAction.class);
+
     private static final long MAX_AGE = 2764800L;
 
     @Override
@@ -26,6 +30,7 @@ public class StaticFileAction extends ActionChain {
 
     @Override
     public void doAction(ActionParam param) throws Throwable {
+        LOGGER.info("enter static action");
         SilentGo instance = SilentGo.me();
         String requestURL = param.getRequestURL();
         if (instance.getConfig().getStaticStartWith()
@@ -33,7 +38,7 @@ public class StaticFileAction extends ActionChain {
                 instance.getConfig().getStaticEndWith().stream().anyMatch(requestURL::endsWith)) {
             //handle e tag for static file
             long ims = param.getRequest().getDateHeader("If-Modified-Since");
-            long now = 0L;
+            long now;
             now = System.currentTimeMillis();
             if (ims + MAX_AGE > now) {
                 param.getResponse().setStatus(HttpStatus.NOT_MODIFIED_304);
@@ -54,7 +59,6 @@ public class StaticFileAction extends ActionChain {
                     break;
                 }
             }
-
 
 
             if (!forward)

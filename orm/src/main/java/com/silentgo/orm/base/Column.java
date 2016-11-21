@@ -29,10 +29,12 @@ public class Column {
     public Column() {
     }
 
-    public Column(String fullName, String selectfullName) {
+    public Column(String fullName, String selectfullName, String columnName) {
         this.fullName = fullName;
         this.selectFullName = selectfullName;
+        this.columnName = columnName;
     }
+
 
     public Column(String propName, String columnName, String fullName, Class<?> type) {
         this.propName = propName;

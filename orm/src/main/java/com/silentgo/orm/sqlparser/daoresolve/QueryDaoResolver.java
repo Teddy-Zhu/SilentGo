@@ -48,7 +48,7 @@ public class QueryDaoResolver implements DaoResolver {
                 sqlTool.select(tableInfo.getTableName());
                 List<String> ignorelist = Arrays.asList(columnIgnore.value());
                 tableInfo.getColumnInfo().entrySet().forEach(column -> {
-                    if (!"*".equals(column.getKey()) && !ignorelist.contains(column.getKey())) {
+                    if (!"*".equals(column.getKey()) && !ignorelist.contains(column.getValue().getColumnName())) {
                         sqlTool.selectCol(column.getValue().getSelectFullName());
                     }
                 });

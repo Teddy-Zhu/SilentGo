@@ -43,6 +43,8 @@ public class RouteAction extends ActionChain {
     @Override
     public void doAction(ActionParam param) throws Exception {
 
+        LOGGER.info("enter route action");
+
         Response response = param.getResponse();
 
         Request request = param.getRequest();
@@ -104,10 +106,10 @@ public class RouteAction extends ActionChain {
                 renderResolverFactory.render(renderFactory, adviser, request, response, returnVal);
                 LOGGER.info("render method end in :{} ", System.currentTimeMillis() - start);
             } catch (AppException e) {
-                e.printStackTrace();
+                LOGGER.error("route action AppException error", e);
                 new ErrorRener().render(request, response, e, isDev);
             } catch (Exception ex) {
-                ex.printStackTrace();
+                LOGGER.error("route action other error", ex);
                 //exception handle
                 ExceptionFactory exceptionFactory = me.getFactory(ExceptionFactory.class);
 

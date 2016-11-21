@@ -1,6 +1,8 @@
 package com.silentgo.orm.generate;
 
 import com.silentgo.utils.StringKit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -15,6 +17,8 @@ import java.util.List;
  *         Created by teddyzhu on 16/9/28.
  */
 public class TableMetaGenerate implements TableMetaGenerator {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TableMetaGenerate.class);
 
     public List<TableMeta> getTables(GenerateConfig config) throws SQLException, ClassNotFoundException {
         try {
@@ -35,6 +39,7 @@ public class TableMetaGenerate implements TableMetaGenerator {
 
     public TableMeta getTable(Connection connection, String tableName) throws SQLException, ClassNotFoundException {
 
+        LOGGER.info("MetaGenerate-connect:{},table:{}", connection, tableName);
         DatabaseMetaData dbMetData = connection.getMetaData();
 
         ResultSet rs = dbMetData.getTables(connection.getCatalog(), "%", tableName, new String[]{"TABLE", "VIEW"});

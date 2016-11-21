@@ -40,6 +40,7 @@ public class SilentGoConfig extends BaseConfig {
         setInnerPropKit(new PropKit(fileName, encoding));
         scanJars.add(Const.ApplicationName + "-" + getInnerPropKit().getValue(Const.Version) + ".jar");
         setScanJars(scanJars);
+        LOGGER.info("init silentgoconfig ,jar name :{}", scanJars.get(0));
         if (StringKit.isNotBlank(getPropfile()) && getUserProp() != null) {
             setUserProp(new PropKit(getPropfile(), encoding));
         }

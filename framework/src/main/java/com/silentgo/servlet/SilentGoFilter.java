@@ -84,7 +84,7 @@ public class SilentGoFilter implements Filter {
         LOGGER.debug("init bean factory");
         initBeanFactory(config);
 
-        LOGGER.debug("init other factoryss");
+        LOGGER.debug("init other factorys");
         buildFactory(manager, config);
 
         if (configInit != null) {
@@ -129,6 +129,7 @@ public class SilentGoFilter implements Filter {
             globalConfig.getActionChain().doAction(param);
             LOGGER.debug("action end in : {} ms", System.currentTimeMillis() - start);
         } catch (Throwable throwable) {
+            LOGGER.error("action error", throwable);
             new ErrorRener().render(request, response, HttpStatus.Code.INTERNAL_SERVER_ERROR, throwable, appContext.isDevMode());
             return;
         } finally {
@@ -171,7 +172,7 @@ public class SilentGoFilter implements Filter {
         try {
             beanFactory = config.getBeanClass().newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
+            LOGGER.error("init bean instance error", e);
         }
         config.addFactory(beanFactory);
         beanFactory.addBean(config, true, false, false);
@@ -179,6 +180,7 @@ public class SilentGoFilter implements Filter {
             beanFactory.initialize(appContext);
         } catch (AppBuildException e) {
             e.printStackTrace();
+            LOGGER.error("init bean error", e);
         }
         beanFactory.addBean(beanFactory, true, false, false);
 
@@ -194,6 +196,7 @@ public class SilentGoFilter implements Filter {
             }
 
         } catch (Exception e) {
+            LOGGER.error("get config error", e);
             throw new ServletException(e);
         }
         return configInit == null ? new Config() {

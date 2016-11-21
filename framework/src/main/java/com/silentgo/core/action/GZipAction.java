@@ -25,6 +25,8 @@ public class GZipAction extends ActionChain {
 
     @Override
     public void doAction(ActionParam param) throws Throwable {
+        LOGGER.info("enter gzip action");
+
         String ae = param.getRequest().getHeader("accept-encoding");
         //check if browser support gzip
 
