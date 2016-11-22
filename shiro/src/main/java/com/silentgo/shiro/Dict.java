@@ -34,5 +34,7 @@ public class Dict {
 
     public static final String SHIRO_SESSION_REMEMBER_COOKIENAME = "SHIRO_SESSION_REMEMBER_COOKIENAME";
 
+    public static final String SHIRO_SESSION_ACTIVE_NAME = "SHIRO_SESSION_ACTIVE_NAME";
+
 }
 

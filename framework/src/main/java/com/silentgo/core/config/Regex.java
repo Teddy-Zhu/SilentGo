@@ -9,7 +9,7 @@ package com.silentgo.core.config;
  *         Created by teddyzhu on 16/8/18.
  */
 public class Regex {
-    public static final String RoutePath = "\\{(\\w*)(?:.*?)\\}";
+    public static final String RoutePath = "\\{(\\w*)(|:\\(.*?\\))\\}";
 
     public static final String RegexAll = ".*?";
 

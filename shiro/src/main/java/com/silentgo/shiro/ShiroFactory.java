@@ -69,7 +69,7 @@ public class ShiroFactory extends BaseFactory {
         rememberMeManager.setCookie(rememberMeCookie);
 
         EnterpriseCacheSessionDAO sessionDAO = new EnterpriseCacheSessionDAO();
-        // sessionDAO.setActiveSessionsCacheName(Const.SHIRO_ACTIVE_SESSION_CACHE);
+        sessionDAO.setActiveSessionsCacheName(prop.getValue(Dict.SHIRO_SESSION_ACTIVE_NAME, "shiro-activeSessionCache"));
         sessionDAO.setSessionIdGenerator(sessionIdGenerator);
         sessionDAO.setCacheManager(ehCacheManager);
 

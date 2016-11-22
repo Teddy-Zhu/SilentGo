@@ -115,13 +115,25 @@ public class RouteFactory extends BaseFactory {
     private void buildClass(Class<?> aClass, SilentGo me) {
         Controller controller = aClass.getAnnotation(Controller.class);
         com.silentgo.core.route.annotation.Route route = aClass.getAnnotation(com.silentgo.core.route.annotation.Route.class);
-        boolean parentRegex = route != null && route.regex();
-        String path = filterPath((route != null && !Const.DEFAULT_NONE.equals(route.value())) ? route.value() : aClass.getSimpleName(), true);
         BeanFactory beanFactory = me.getFactory(me.getConfig().getBeanClass());
         MethodAOPFactory methodAOPFactory = me.getFactory(MethodAOPFactory.class);
         BeanWrapper bean = beanFactory.getBean(aClass.getName());
-
+        boolean parentRegex = route != null && route.regex();
         Pattern routePattern = Pattern.compile(Regex.RoutePath);
+
+
+        if (route == null) {
+            String path = filterPath(aClass.getSimpleName(), true);
+            buildControllerRoute(path, bean, methodAOPFactory, false, routePattern);
+        } else {
+            for (String parentPath : route.value()) {
+                String path = filterPath(parentPath, true);
+                buildControllerRoute(path, bean, methodAOPFactory, parentRegex, routePattern);
+            }
+        }
+    }
+
+    private void buildControllerRoute(String path, BeanWrapper bean, MethodAOPFactory methodAOPFactory, boolean parentRegex, Pattern routePattern) {
 
         //LOGGER.info("build route class:{}", aClass.getName());
         for (Method method : bean.getBeanClass().getDeclaredMethods()) {
@@ -129,18 +141,18 @@ public class RouteFactory extends BaseFactory {
             com.silentgo.core.route.annotation.Route an = adviser.getAnnotation(com.silentgo.core.route.annotation.Route.class);
             if (an == null) continue;
 
-            String fullPath = mergePath(path, filterPath(Const.DEFAULT_NONE.equals(an.value()) ?
-                    method.getName() : an.value(), true));
-            Matcher matcher = routePattern.matcher(fullPath);
+            for (String s : an.value()) {
+                String fullPath = mergePath(path, filterPath(Const.DEFAULT_NONE.equals(s) ?
+                        method.getName() : s, true));
+                Matcher matcher = routePattern.matcher(fullPath);
 
-            if (an.regex() || parentRegex || matcher.find()) {
-                addRoute(buildRegexRoute(fullPath, matcher, adviser));
-            } else {
-                addRoute(buildBasicRoute(fullPath, adviser));
+                if (an.regex() || parentRegex || matcher.find()) {
+                    addRoute(buildRegexRoute(fullPath, matcher, adviser));
+                } else {
+                    addRoute(buildBasicRoute(fullPath, adviser));
+                }
             }
         }
-
-
     }
 
     private BasicRoute buildBasicRoute(String path, MethodAdviser adviser) {

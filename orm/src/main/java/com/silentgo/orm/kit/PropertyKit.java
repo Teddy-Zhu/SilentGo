@@ -33,25 +33,6 @@ public class PropertyKit {
     private static final Map<Class<? extends TableModel>, Map<String, PropertyDescriptor>> cachedPropMap = new ConcurrentHashMap<>();
 
 
-    public static <T extends TableModel> SQLTool getUpdateByPrimerySQLTool(BaseTableInfo table, T t, Map<String, PropertyDescriptor> propsMap) {
-        SQLTool sqlTool = new SQLTool();
-        sqlTool.update(table.getTableName());
-
-        table.getPrimaryKeys().forEach(key -> {
-
-            PropertyDescriptor propertyDescriptor = propsMap.get(key);
-            Object target;
-            try {
-                target = propertyDescriptor.getReadMethod().invoke(t);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                target = null;
-            }
-            sqlTool.whereEquals(key).appendParam(target);
-        });
-        return sqlTool;
-    }
-
-
     public static  BeanInfo getBeanInfo(Class<? extends TableModel> t) {
         BeanInfo beanInfo = null;
         if (beanMap.containsKey(t)) {

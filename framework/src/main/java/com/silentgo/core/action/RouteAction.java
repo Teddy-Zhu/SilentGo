@@ -87,12 +87,12 @@ public class RouteAction extends ActionChain {
                     new ErrorRener().render(request, response, HttpStatus.Code.METHOD_NOT_ALLOWED, null, isDev);
                     return;
                 }
-                LOGGER.info("paramAnFactory resolve end in :{} ", System.currentTimeMillis() - start);
+                LOGGER.debug("paramAnFactory resolve end in :{} ", System.currentTimeMillis() - start);
 
                 start = System.currentTimeMillis();
                 // parameter dispatch
                 paramDispatchFactory.dispatch(parameterResolveFactory, param, ret, args);
-                LOGGER.info("paramDispatchFactory dispatch end in :{} ", System.currentTimeMillis() - start);
+                LOGGER.debug("paramDispatchFactory dispatch end in :{} ", System.currentTimeMillis() - start);
 
 
                 Object returnVal = null;
@@ -100,11 +100,11 @@ public class RouteAction extends ActionChain {
                 start = System.currentTimeMillis();
                 //controller method with interceptors
                 returnVal = adviser.getMethod().invoke(bean, args);
-                LOGGER.info("route method end in :{} ", System.currentTimeMillis() - start);
+                LOGGER.debug("route method end in :{} ", System.currentTimeMillis() - start);
                 start = System.currentTimeMillis();
                 //render
                 renderResolverFactory.render(renderFactory, adviser, request, response, returnVal);
-                LOGGER.info("render method end in :{} ", System.currentTimeMillis() - start);
+                LOGGER.debug("render method end in :{} ", System.currentTimeMillis() - start);
             } catch (AppException e) {
                 LOGGER.error("route action AppException error", e);
                 new ErrorRener().render(request, response, e, isDev);
@@ -115,11 +115,10 @@ public class RouteAction extends ActionChain {
 
                 exceptionFactory.handle(renderResolverFactory, renderFactory, beanFactory, adviser, request, response, ex);
 
-            } finally {
-                requestDispatchFactory.release(param);
             }
 
         }
+        requestDispatchFactory.release(param);
     }
 
 }

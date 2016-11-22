@@ -44,7 +44,7 @@ public class MethodAOPFactory extends BaseFactory {
     }
 
     public List<Interceptor> getBuildedMethodInterceptors(Method method) {
-        return buildedMethodInterceptors.get(method);
+        return buildedMethodInterceptors.getOrDefault(method, new ArrayList<>());
     }
 
     public boolean addBuildedInterceptor(Method name, List<Interceptor> interceptors) {
@@ -52,7 +52,7 @@ public class MethodAOPFactory extends BaseFactory {
     }
 
     public MethodAdviser getMethodAdviser(Method method) {
-        return methodAdviserMap.get(method);
+        return methodAdviserMap.getOrDefault(method, null);
     }
 
     @Override

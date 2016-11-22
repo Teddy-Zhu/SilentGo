@@ -17,7 +17,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})
 public @interface Route {
-    String value() default Const.DEFAULT_NONE;
+    String[] value() default {Const.DEFAULT_NONE};
 
     boolean regex() default false;
 
