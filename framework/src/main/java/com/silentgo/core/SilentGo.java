@@ -41,11 +41,11 @@ public class SilentGo {
     }
 
     public void releaseConnect() {
-        config.releaseConnect();
+        config.releaseConnect(config.getDbType().toLowerCase());
     }
 
     public DBConnect getConnect() {
-        return getConnect("mysql");
+        return getConnect(config.getDbType().toLowerCase());
     }
 
     public boolean isDevMode() {

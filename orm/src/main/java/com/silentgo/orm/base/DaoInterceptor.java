@@ -114,7 +114,7 @@ public class DaoInterceptor implements MethodInterceptor {
         }
 
         if (connect != null && connect.getConnect().getAutoCommit()) {
-            connect.release();
+            ConnectManager.me().releaseConnect(tableInfo.getType(), tableInfo.getPoolName());
         }
 
         return ret;

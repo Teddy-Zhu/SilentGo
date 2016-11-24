@@ -7,7 +7,7 @@
         <groupId>com.silentgo</groupId>
         <version>0.0.1</version>
     </parent>
-    <version>0.1.9</version>
+    <version>0.2.0</version>
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
 

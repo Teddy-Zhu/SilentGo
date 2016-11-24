@@ -45,8 +45,13 @@ public class JDBCManager implements DBManager {
     }
 
     @Override
+    public boolean releaseConnect(String name, DBConnect connect) {
+        return getPool(name).releaseDBConnect(connect);
+    }
+
+    @Override
     public boolean destory() {
-        poolHashMap.forEach((k,v)-> v.destory());
+        poolHashMap.forEach((k, v) -> v.destory());
         return true;
     }
 }

@@ -10,11 +10,13 @@ package com.silentgo.orm.base;
  */
 public interface DBManager {
 
-    public void initial(DBConfig...configs);
+    public void initial(DBConfig... configs);
 
     public DBPool getPool(String name);
 
     public DBConnect getConnect(String name);
+
+    public boolean releaseConnect(String name, DBConnect connect);
 
     public boolean destory();
 

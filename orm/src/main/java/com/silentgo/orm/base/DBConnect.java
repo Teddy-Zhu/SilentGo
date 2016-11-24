@@ -13,9 +13,5 @@ import java.sql.Connection;
 public interface DBConnect {
     public Connection getConnect();
 
-    public boolean use();
-
-    public boolean release();
-
     public boolean destroy();
 }

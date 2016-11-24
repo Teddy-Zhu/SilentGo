@@ -53,11 +53,11 @@ public class ConnectManager {
         }
     }
 
-    public void releaseConnect() {
+    public void releaseConnect(DBType type, String name) {
         DBConnect connect = threadConnect.get();
         if (connect != null) {
             threadConnect.remove();
-            connect.release();
+            dbManagerMap.get(type).releaseConnect(name, connect);
         }
     }
 

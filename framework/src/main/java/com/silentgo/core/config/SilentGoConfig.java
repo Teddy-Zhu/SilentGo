@@ -95,8 +95,8 @@ public class SilentGoConfig extends BaseConfig {
         return true;
     }
 
-    public void releaseConnect() {
-        ConnectManager.me().releaseConnect();
+    public void releaseConnect(String name) {
+        ConnectManager.me().releaseConnect(DBType.parse(getDbType()), name);
     }
 
     public DBConnect getConnect(String name) {

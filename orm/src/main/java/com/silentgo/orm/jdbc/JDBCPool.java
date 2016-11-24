@@ -10,10 +10,10 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Date;
+import java.util.EmptyStackException;
 import java.util.List;
-import java.util.Optional;
+import java.util.Stack;
 
 /**
  * Project : silentgo
@@ -35,7 +35,7 @@ public class JDBCPool implements DBPool {
      */
     private DataSource source;
 
-    private List<JDBCConnect> connects;
+    private Stack<JDBCConnect> connects;
 
     public JDBCPool(DataSource source) {
         this.name = source.getName();
@@ -47,19 +47,11 @@ public class JDBCPool implements DBPool {
             e.printStackTrace();
         }
         this.source = source;
-        connects = Collections.synchronizedList(new ArrayList<>());
+        connects = new Stack<>();
         for (int i = 0, len = source.getConfig().getMinActive(); i < len; i++) {
             LOGGER.info("init:{}", connects.size());
             createConnect(source.getConfig());
         }
-    }
-
-    public DataSource getSource() {
-        return source;
-    }
-
-    public void setSource(DataSource source) {
-        this.source = source;
     }
 
     @Override
@@ -68,45 +60,45 @@ public class JDBCPool implements DBPool {
     }
 
     @Override
+    public boolean releaseDBConnect(DBConnect connect) {
+        connects.push((JDBCConnect) connect);
+        return true;
+    }
+
+    @Override
     public boolean destory() {
         List<JDBCConnect> des = connects;
 
         return des.stream().allMatch(c -> {
-            c.use();
-            return c.destroy();
+            try {
+                c.getConnect().close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return true;
         });
     }
 
     public JDBCConnect useConnect() {
-        Optional<JDBCConnect> connectOptional = connects.stream()
-                .filter(connect -> !connect.isUsed()).sorted((o1, o2) -> {
-                    long x = o1.getEnd().getTime();
-                    long y = o2.getEnd().getTime();
-                    return (x < y) ? -1 : ((x == y) ? 0 : 1);
-                }).findFirst();
-        if (connectOptional.isPresent()) {
-            if (connectOptional.get().use()) {
-                return connectOptional.get();
-            } else {
-                return useConnect();
-            }
-        } else {
-            JDBCConnect connect = createConnect(source.getConfig());
+        JDBCConnect connect = null;
+        try {
+            connect = connects.pop();
             if (connect != null) {
-                if (connect.use()) {
-                    return connect;
-                } else {
-                    return useConnect();
+                if (connect.getEnd().getTime() <= new Date().getTime() || !connect.getConnect().isValid(1000)) {
+                    connect.destroy();
+                    connect = null;
                 }
-            } else {
-                LOGGER.info("wait lock connect");
-                return useConnect();
             }
+        } catch (EmptyStackException | SQLException e) {
+            connect = null;
+            //try create connect
+            createConnect(source.getConfig());
         }
+        return connect == null ? useConnect() : connect;
     }
 
     public synchronized JDBCConnect createConnect(DBConfig config) {
-        LOGGER.info("size:{}", connects.size());
+        LOGGER.debug("size:{}", connects.size());
         if (connects.size() >= source.getConfig().getMaxActive()) {
             return null;
         }
@@ -119,7 +111,7 @@ public class JDBCPool implements DBPool {
             e.printStackTrace();
         }
         JDBCConnect connect1 = new JDBCConnect(connect, config);
-        connects.add(connect1);
+        connects.push(connect1);
         return connect1;
     }
 }

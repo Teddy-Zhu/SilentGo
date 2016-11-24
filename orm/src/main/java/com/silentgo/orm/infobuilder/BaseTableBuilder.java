@@ -86,7 +86,7 @@ public class BaseTableBuilder {
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        ConnectManager.me().releaseConnect();
+        ConnectManager.me().releaseConnect(type, name);
         return null;
     }
 

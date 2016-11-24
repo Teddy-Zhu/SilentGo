@@ -27,15 +27,10 @@ public class JDBCConnect implements DBConnect {
     private Date start;
     private Date end;
 
-    private boolean used = false;
-
     private int maxIdle;
     private int timeOut;
     private Connection connection;
 
-    public boolean isUsed() {
-        return used;
-    }
 
     public JDBCConnect(Connection connection, DBConfig config) {
         this.start = new Date();
@@ -88,31 +83,10 @@ public class JDBCConnect implements DBConnect {
     }
 
     @Override
-    public synchronized boolean use() {
-        if (this.used) {
-            return false;
-        }
-        LOGGER.info("use connect :{} ", name);
-        this.used = true;
-        this.end = new Date(new Date().getTime() + maxIdle);
-        return true;
-    }
-
-    @Override
-    public boolean release() {
-        if (this.used) {
-            LOGGER.info("release connect:{}", name);
-            this.used = false;
-            return true;
-        }
-        return false;
-    }
-
-    @Override
     public boolean destroy() {
-        used = true;
         try {
-            connection.close();
+            if (connection != null && !connection.isClosed())
+                connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }

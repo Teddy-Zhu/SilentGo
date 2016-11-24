@@ -207,7 +207,7 @@ public class BaseConfig extends InterConfig {
     }
 
     public void setDbType(String dbType) {
-        this.dbType = dbType;
+        this.dbType = dbType.toLowerCase();
     }
 
     public Class<? extends BeanFactory> getBeanClass() {

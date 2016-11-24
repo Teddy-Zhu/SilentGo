@@ -11,5 +11,7 @@ package com.silentgo.orm.base;
 public interface DBPool {
     public DBConnect getDBConnect();
 
+    public boolean releaseDBConnect(DBConnect connect);
+
     public boolean destory();
 }
