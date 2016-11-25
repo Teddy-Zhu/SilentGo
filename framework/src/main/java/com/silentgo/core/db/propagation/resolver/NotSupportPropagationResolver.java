@@ -29,13 +29,13 @@ public class NotSupportPropagationResolver implements PropagationResolver {
             if (isAuto) {
                 return chain.intercept();
             } else {
-                DBType type2 = DBType.parse(me.getConfig().getDbType());
-                DBConnect newConnect2 = ConnectManager.me().getNewConnect(type2, name);
+                DBType type = DBType.parse(me.getConfig().getDbType());
+                DBConnect newConnect = ConnectManager.me().getNewConnect(type, name);
 
-                ConnectManager.me().setTheadConnect(type2, name, newConnect2);
+                ConnectManager.me().setTheadConnect(type, name, newConnect);
                 Object ret = chain.intercept();
-                ConnectManager.me().releaseNewConnect(type2, name, newConnect2);
-                ConnectManager.me().setTheadConnect(type2, name, connect);
+                ConnectManager.me().releaseNewConnect(type, name, newConnect);
+                ConnectManager.me().setTheadConnect(type, name, connect);
                 return ret;
             }
         } else {
