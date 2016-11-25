@@ -9,6 +9,8 @@ import jetbrick.template.JetEngine;
 import jetbrick.template.JetTemplate;
 import jetbrick.template.web.JetWebContext;
 import jetbrick.template.web.JetWebEngine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -23,6 +25,8 @@ import java.util.Properties;
  */
 public class JetTemplateRender implements Render {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(JetTemplateRender.class);
+
     private final JetEngine engine;
 
     public JetTemplateRender() {
@@ -36,7 +40,7 @@ public class JetTemplateRender implements Render {
 
     @Override
     public void render(Response response, Request request, Object retVal) throws AppRenderException {
-
+        Long start = System.currentTimeMillis();
         String charsetEncoding = engine.getConfig().getOutputEncoding().name();
         response.setCharacterEncoding(charsetEncoding);
         if (response.getContentType() == null) {
@@ -50,6 +54,7 @@ public class JetTemplateRender implements Render {
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
+        LOGGER.debug("end jetbrick template render : {}", System.currentTimeMillis() - start);
     }
 
     public JetEngine getEngine() {

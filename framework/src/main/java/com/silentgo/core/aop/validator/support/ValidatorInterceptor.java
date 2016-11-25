@@ -35,7 +35,7 @@ public class ValidatorInterceptor implements Interceptor {
 
     @Override
     public Object resolve(AOPPoint point) throws Throwable {
-        LOGGER.debug("start validator Intercept");
+        Long start = System.currentTimeMillis();
         MethodParam[] params = point.getAdviser().getParams();
         ValidatorFactory validatorFactory = SilentGo.me().getFactory(ValidatorFactory.class);
         Map<String, Map<Annotation, IValidator>> validateMap = validatorFactory.getParamValidatorMap(point.getAdviser().getName());
@@ -52,7 +52,7 @@ public class ValidatorInterceptor implements Interceptor {
         }
 
         Object ret = point.proceed();
-        LOGGER.debug("end validator Intercept");
+        LOGGER.debug("end validator Intercept : {}", System.currentTimeMillis() - start);
         return ret;
 
     }

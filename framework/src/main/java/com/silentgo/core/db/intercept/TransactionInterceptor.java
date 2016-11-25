@@ -4,6 +4,11 @@ import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.annotationintercept.IAnnotation;
 import com.silentgo.core.aop.annotationintercept.annotation.CustomInterceptor;
 import com.silentgo.core.aop.annotationintercept.support.AnnotationInterceptChain;
+import com.silentgo.core.config.Const;
+import com.silentgo.core.db.propagation.resolver.NotSupportPropagationResolver;
+import com.silentgo.core.db.propagation.resolver.RequiredPropagationResolver;
+import com.silentgo.core.db.propagation.resolver.RequiresNewPropagationResolver;
+import com.silentgo.core.db.propagation.resolver.SupportPropagationResolver;
 import com.silentgo.orm.base.DBConnect;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
@@ -21,32 +26,22 @@ public class TransactionInterceptor implements IAnnotation<Transaction> {
 
     @Override
     public Object intercept(AnnotationInterceptChain chain, Response response, Request request, Transaction annotation) throws Throwable {
-        DBConnect connect = SilentGo.me().getConnect();
+        SilentGo me = SilentGo.me();
+        String name = Const.DEFAULT_NONE.equals(annotation.value()) ? me.getConfig().getDbType() : annotation.value();
 
-        boolean tr = false;
-        if (connect.getConnect().getAutoCommit()) {
-            tr = true;
-            connect.getConnect().setAutoCommit(false);
+        boolean hasConnect = me.hasConnecct();
+        DBConnect connnect = me.getConnect(name);
+        switch (annotation.propagation()) {
+            case PROPAGATION_REQUIRED:
+                return new RequiredPropagationResolver().resolve(me, chain, annotation, connnect, name, hasConnect);
+            case PROPAGATION_NOT_SUPPORTED:
+                return new NotSupportPropagationResolver().resolve(me, chain, annotation, connnect, name, hasConnect);
+            case PROPAGATION_REQUIRES_NEW:
+                return new RequiresNewPropagationResolver().resolve(me, chain, annotation, connnect, name, hasConnect);
+            case PROPAGATION_SUPPORTS:
+                return new SupportPropagationResolver().resolve(me, chain, annotation, connnect, name, hasConnect);
         }
-        Object ret = null;
-        try {
-            ret = chain.intercept();
-            if (tr)
-                connect.getConnect().commit();
-        } catch (Exception e) {
-            for (Class<? extends Exception> aClass : annotation.rollback()) {
-                if (aClass.isAssignableFrom(e.getClass())) {
-                    connect.getConnect().rollback();
-                    break;
-                }
-            }
-            throw e;
-        } finally {
-            if (tr) {
-                connect.getConnect().setAutoCommit(true);
-            }
-            SilentGo.me().releaseConnect();
-        }
-        return ret;
+        return null;
     }
+
 }

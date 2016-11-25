@@ -103,6 +103,10 @@ public class SilentGoConfig extends BaseConfig {
         return ConnectManager.me().getConnect(DBType.parse(getDbType()), name);
     }
 
+    public boolean hasConnect(String name) {
+        return ConnectManager.me().getThreadConnect(DBType.parse(getDbType()), name) != null;
+    }
+
     public boolean addExtraFactory(Class<? extends BaseFactory> clz) {
         return CollectionKit.ListAdd(getFactories(), clz);
     }

@@ -3,6 +3,7 @@ package com.silentgo.core.config;
 import com.silentgo.core.action.ActionChain;
 import com.silentgo.core.cache.CacheManager;
 import com.silentgo.core.support.BaseFactory;
+import com.silentgo.orm.base.DBConnect;
 import com.silentgo.servlet.SilentGoContext;
 import com.silentgo.utils.PropKit;
 
@@ -22,6 +23,9 @@ public class InterConfig {
     private final Map<Class<? extends BaseFactory>, BaseFactory> factoryMap = new HashMap<>();
 
     private final ThreadLocal<SilentGoContext> ctx = new InheritableThreadLocal<>();
+
+    private ThreadLocal<DBConnect> threadConnect = new ThreadLocal<>();
+
     private ActionChain actionChain;
 
     private ActionChain routeAction;

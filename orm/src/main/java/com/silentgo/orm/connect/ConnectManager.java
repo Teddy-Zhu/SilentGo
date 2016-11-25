@@ -9,6 +9,8 @@ import com.silentgo.orm.jdbc.JDBCManager;
 import com.silentgo.orm.kit.configKit;
 import com.silentgo.utils.PropKit;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -21,8 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *         Created by teddyzhu on 2016/10/29.
  */
 public class ConnectManager {
-    //CONNECT INHERIT
-    private ThreadLocal<DBConnect> threadConnect = new InheritableThreadLocal<>();
+
     private Map<DBType, DBManager> dbManagerMap = new ConcurrentHashMap<>();
 
     private static class ConnectManagerHolder {
@@ -54,20 +55,27 @@ public class ConnectManager {
     }
 
     public void releaseConnect(DBType type, String name) {
-        DBConnect connect = threadConnect.get();
-        if (connect != null) {
-            threadConnect.remove();
-            dbManagerMap.get(type).releaseConnect(name, connect);
-        }
+        dbManagerMap.get(type).releaseConnect(name);
     }
 
     public DBConnect getConnect(DBType type, String name) {
-        DBConnect connect = threadConnect.get();
-        if (connect == null) {
-            connect = dbManagerMap.get(type).getConnect(name);
-            threadConnect.set(connect);
-        }
-        return connect;
+        return dbManagerMap.get(type).getConnect(name);
+    }
+
+    public DBConnect getNewConnect(DBType type, String name) {
+        return dbManagerMap.get(type).getUnSafeConnect(name);
+    }
+
+    public boolean releaseNewConnect(DBType type, String name, DBConnect connect) {
+        return dbManagerMap.get(type).releaseUnSafeConnect(name, connect);
+    }
+
+    public DBConnect getThreadConnect(DBType type, String name) {
+        return dbManagerMap.get(type).getThreadConnect(name);
+    }
+
+    public boolean setTheadConnect(DBType type, String name, DBConnect connect) {
+        return dbManagerMap.get(type).setThreadConnect(name, connect);
     }
 
 }

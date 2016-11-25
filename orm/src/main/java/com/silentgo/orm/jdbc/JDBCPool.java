@@ -1,19 +1,13 @@
 package com.silentgo.orm.jdbc;
 
-import com.silentgo.orm.base.DBConfig;
 import com.silentgo.orm.base.DBConnect;
 import com.silentgo.orm.base.DBPool;
-import com.silentgo.orm.base.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Date;
-import java.util.EmptyStackException;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * Project : silentgo
@@ -25,43 +19,42 @@ import java.util.Stack;
  */
 public class JDBCPool implements DBPool {
 
+    private ThreadLocal<DBConnect> threadConnect = new ThreadLocal<>();
+
     private static final Logger LOGGER = LoggerFactory.getLogger(JDBCPool.class);
-    /**
-     * 连接池名称
-     */
+
     private String name;
-    /**
-     * 数据源
-     */
-    private DataSource source;
 
-    private Stack<JDBCConnect> connects;
+    private JDBCDataSource source;
 
-    public JDBCPool(DataSource source) {
+    private Stack<JDBCConnect> connects = new Stack<>();
+
+    private List<JDBCConnect> unSafeConnect = Collections.synchronizedList(new ArrayList<>());
+
+    public JDBCPool(JDBCDataSource source) {
         this.name = source.getName();
-        try {
-            Class.forName(source.getConfig().getDriver());
-
-        } catch (ClassNotFoundException e) {
-            LOGGER.info("can not found mysql jdbc driver");
-            e.printStackTrace();
-        }
         this.source = source;
-        connects = new Stack<>();
         for (int i = 0, len = source.getConfig().getMinActive(); i < len; i++) {
-            LOGGER.info("init:{}", connects.size());
-            createConnect(source.getConfig());
+            LOGGER.info("init connect index :{}", connects.size());
+            createConnect();
         }
     }
 
     @Override
     public DBConnect getDBConnect() {
-        return useConnect();
+        DBConnect connect = threadConnect.get();
+        if (connect == null) {
+            connect = useConnect();
+            threadConnect.set(connect);
+        }
+        return connect;
     }
 
     @Override
-    public boolean releaseDBConnect(DBConnect connect) {
-        connects.push((JDBCConnect) connect);
+    public boolean releaseDBConnect() {
+        DBConnect connect = threadConnect.get();
+        threadConnect.remove();
+        restoreConnect(connect);
         return true;
     }
 
@@ -79,7 +72,42 @@ public class JDBCPool implements DBPool {
         });
     }
 
-    public JDBCConnect useConnect() {
+    @Override
+    public DBConnect getUnSafeDBConnect() {
+        JDBCConnect connect = useConnect();
+        unSafeConnect.add(connect);
+        return connect;
+    }
+
+    @Override
+    public boolean releaseUnSafeDBConnect(DBConnect connect) {
+        unSafeConnect.remove(connect);
+        restoreConnect(connect);
+        return false;
+    }
+
+    @Override
+    public DBConnect getThreadConnect() {
+        return threadConnect.get();
+    }
+
+    @Override
+    public boolean setThreadConnect(DBConnect connect) {
+        threadConnect.set(connect);
+        return true;
+    }
+
+    private void restoreConnect(DBConnect connect) {
+        try {
+            connect.getConnect().setAutoCommit(true);
+            connect.getConnect().setTransactionIsolation(source.getConfig().getDefaultTranscationLevel());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        connects.push((JDBCConnect) connect);
+    }
+
+    private JDBCConnect useConnect() {
         JDBCConnect connect = null;
         try {
             connect = connects.pop();
@@ -92,25 +120,23 @@ public class JDBCPool implements DBPool {
         } catch (EmptyStackException | SQLException e) {
             connect = null;
             //try create connect
-            createConnect(source.getConfig());
+            createConnect();
         }
         return connect == null ? useConnect() : connect;
     }
 
-    public synchronized JDBCConnect createConnect(DBConfig config) {
+    public synchronized JDBCConnect createConnect() {
         LOGGER.debug("size:{}", connects.size());
         if (connects.size() >= source.getConfig().getMaxActive()) {
             return null;
         }
         Connection connect = null;
         try {
-            connect = DriverManager.getConnection(source.getConfig().getUrl(),
-                    source.getConfig().getUserName(),
-                    source.getConfig().getPassword());
+            connect = source.getConnection();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        JDBCConnect connect1 = new JDBCConnect(connect, config);
+        JDBCConnect connect1 = new JDBCConnect(connect, source.getConfig());
         connects.push(connect1);
         return connect1;
     }

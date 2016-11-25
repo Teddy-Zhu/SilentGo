@@ -5,9 +5,12 @@ import com.silentgo.core.aop.AOPPoint;
 import com.silentgo.core.aop.Interceptor;
 import com.silentgo.core.aop.MethodAdviser;
 import com.silentgo.core.aop.annotation.Intercept;
+import com.silentgo.core.route.annotation.Controller;
 import com.silentgo.servlet.SilentGoContext;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -23,12 +26,16 @@ import java.util.List;
 public class AOPInterceptor implements MethodInterceptor {
     private Object target;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AOPInterceptor.class);
+
     public AOPInterceptor(Object target) {
         this.target = target;
     }
 
     @Override
     public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
+        Long start = System.currentTimeMillis();
+
         MethodAOPFactory methodAOPFactory = SilentGo.me().getFactory(MethodAOPFactory.class);
         MethodAdviser adviser = methodAOPFactory.getMethodAdviser(method);
 
@@ -43,11 +50,19 @@ public class AOPInterceptor implements MethodInterceptor {
 
         SilentGoContext ctx = SilentGo.me().getConfig().getCtx().get();
 
+        boolean isNull = ctx == null;
+
         AOPPoint point = new AOPPoint(o, method, objects, methodProxy,
-                adviser, ctx != null ? ctx.getResponse() : null, ctx != null ? ctx.getRequest() : null);
+                adviser, isNull ? null : ctx.getResponse(), isNull ? null : ctx.getRequest());
+
         InterceptChain chain = new InterceptChain(point, intercepts);
         point.setChain(chain);
-        return point.proceed();
+
+        Object returnVal = point.proceed();
+
+        LOGGER.debug("aop method speed :{}", System.currentTimeMillis() - start);
+
+        return returnVal;
     }
 
 }

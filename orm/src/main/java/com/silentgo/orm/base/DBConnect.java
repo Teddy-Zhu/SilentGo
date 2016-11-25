@@ -11,6 +11,7 @@ import java.sql.Connection;
  *         Created by teddyzhu on 16/9/13.
  */
 public interface DBConnect {
+
     public Connection getConnect();
 
     public boolean destroy();

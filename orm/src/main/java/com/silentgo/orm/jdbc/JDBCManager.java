@@ -19,13 +19,13 @@ public class JDBCManager implements DBManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JDBCManager.class);
 
-    public Map<String, DBPool> poolHashMap;
+    public Map<String, JDBCPool> poolHashMap;
 
     @Override
     public void initial(DBConfig... configs) {
         poolHashMap = new ConcurrentHashMap<>();
         for (DBConfig config : configs) {
-            DataSource source = new DataSource(config.getName(), config);
+            JDBCDataSource source = new JDBCDataSource(config.getName(), config);
             poolHashMap.put(source.getName(), new JDBCPool(source));
         }
     }
@@ -45,8 +45,28 @@ public class JDBCManager implements DBManager {
     }
 
     @Override
-    public boolean releaseConnect(String name, DBConnect connect) {
-        return getPool(name).releaseDBConnect(connect);
+    public DBConnect getUnSafeConnect(String name) {
+        return getPool(name).getUnSafeDBConnect();
+    }
+
+    @Override
+    public boolean releaseUnSafeConnect(String name, DBConnect connect) {
+        return getPool(name).releaseUnSafeDBConnect(connect);
+    }
+
+    @Override
+    public boolean releaseConnect(String name) {
+        return getPool(name).releaseDBConnect();
+    }
+
+    @Override
+    public DBConnect getThreadConnect(String name) {
+        return getPool(name).getThreadConnect();
+    }
+
+    @Override
+    public boolean setThreadConnect(String name, DBConnect connect) {
+        return getPool(name).setThreadConnect(connect);
     }
 
     @Override

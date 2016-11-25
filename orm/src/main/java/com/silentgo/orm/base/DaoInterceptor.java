@@ -39,6 +39,8 @@ public class DaoInterceptor implements MethodInterceptor {
     private static final Map<String, Class<? extends BaseDao>> cacheClz = new HashMap<>();
     private static final Map<Method, List<String>> cacheNamePaser = new HashMap<>();
 
+    private static final ArrayList EmptyList = new ArrayList<>();
+
     public static <T> T proxy(Class<T> tclz) {
         Enhancer en = new Enhancer();
         en.setSuperclass(tclz);
@@ -52,11 +54,13 @@ public class DaoInterceptor implements MethodInterceptor {
     @Override
     public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
 
+        Long start = System.currentTimeMillis();
+
         BaseTableBuilder baseTableBuilder = BaseTableBuilder.me();
         SQLTool sqlTool = new SQLTool();
         String methodName = method.getName();
         List<String> parsedString;
-        List<Annotation> annotations = baseTableBuilder.getMethodListMap().getOrDefault(method, new ArrayList<>());
+        List<Annotation> annotations = baseTableBuilder.getMethodListMap().getOrDefault(method, EmptyList);
         Class<? extends BaseDao> daoClass = (Class<? extends BaseDao>) method.getDeclaringClass();
         if (BaseDao.class.equals(daoClass)) {
             daoClass = getClz(o.getClass().getName());
@@ -117,6 +121,7 @@ public class DaoInterceptor implements MethodInterceptor {
             ConnectManager.me().releaseConnect(tableInfo.getType(), tableInfo.getPoolName());
         }
 
+        LOGGER.debug("end orm method : {}", System.currentTimeMillis() - start);
         return ret;
     }
 

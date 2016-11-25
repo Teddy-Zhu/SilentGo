@@ -47,7 +47,7 @@ public class AspectFactory extends BaseFactory {
     }
 
     public List<AspectMethod> getAspectMethod(Method name) {
-        return methodAspectMap.get(name);
+        return methodAspectMap.getOrDefault(name, new ArrayList<>());
     }
 
     public boolean addAspectMethodInMap(Method name, AspectMethod method) {

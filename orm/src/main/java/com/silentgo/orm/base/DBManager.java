@@ -16,7 +16,15 @@ public interface DBManager {
 
     public DBConnect getConnect(String name);
 
-    public boolean releaseConnect(String name, DBConnect connect);
+    public DBConnect getUnSafeConnect(String name);
+
+    public boolean releaseUnSafeConnect(String name, DBConnect connect);
+
+    public boolean releaseConnect(String name);
+
+    public DBConnect getThreadConnect(String name);
+
+    public boolean setThreadConnect(String name, DBConnect connect);
 
     public boolean destory();
 

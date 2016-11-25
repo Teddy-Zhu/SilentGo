@@ -31,6 +31,8 @@ public class ShiroAction extends ActionChain {
 
     @Override
     public void doAction(ActionParam param) throws Throwable {
+        Long start = System.currentTimeMillis();
+
         final Throwable[] t = {null};
         Request request = param.getRequest();
         Response response = param.getResponse();
@@ -47,6 +49,7 @@ public class ShiroAction extends ActionChain {
         if (t[0] != null) {
             throw t[0];
         }
+        logger.debug("end shiro action : {}", System.currentTimeMillis() - start);
     }
 
     private WebSecurityManager getSecurityManager() {

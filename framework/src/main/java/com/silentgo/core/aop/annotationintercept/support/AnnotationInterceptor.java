@@ -28,10 +28,10 @@ public class AnnotationInterceptor implements Interceptor {
     @SuppressWarnings("unchecked")
     @Override
     public Object resolve(AOPPoint point) throws Throwable {
-        LOGGER.debug("start Annotaion Intercept");
+        Long start = System.currentTimeMillis();
         AnnotationInceptFactory annotationInceptFactory = SilentGo.me().getFactory(AnnotationInceptFactory.class);
         Object ret = new AnnotationInterceptChain(point, annotationInceptFactory.getSortedAnnotationMap(point.getAdviser().getName())).intercept();
-        LOGGER.debug("end Annotaion Intercept");
+        LOGGER.debug("end Annotaion Intercept : {}", System.currentTimeMillis() - start);
         return ret;
     }
 }

@@ -45,7 +45,15 @@ public class SilentGo {
     }
 
     public DBConnect getConnect() {
-        return getConnect(config.getDbType().toLowerCase());
+        return getConnect(config.getDbType());
+    }
+
+    public boolean hasConnecct(String name) {
+        return config.hasConnect(name);
+    }
+
+    public boolean hasConnecct() {
+        return hasConnecct(config.getDbType());
     }
 
     public boolean isDevMode() {

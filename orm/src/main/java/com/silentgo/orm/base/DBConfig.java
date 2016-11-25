@@ -1,5 +1,7 @@
 package com.silentgo.orm.base;
 
+import java.sql.Connection;
+
 /**
  * Project : silentgo
  * com.silentgo.orm
@@ -15,6 +17,8 @@ public class DBConfig {
     private String url;
     private String userName;
     private String password;
+
+    private int defaultTranscationLevel = Connection.TRANSACTION_REPEATABLE_READ;
     /**
      * connect timeout time (s)
      */
@@ -125,5 +129,13 @@ public class DBConfig {
 
     public void setMaxIdle(int maxIdle) {
         this.maxIdle = maxIdle;
+    }
+
+    public int getDefaultTranscationLevel() {
+        return defaultTranscationLevel;
+    }
+
+    public void setDefaultTranscationLevel(int defaultTranscationLevel) {
+        this.defaultTranscationLevel = defaultTranscationLevel;
     }
 }

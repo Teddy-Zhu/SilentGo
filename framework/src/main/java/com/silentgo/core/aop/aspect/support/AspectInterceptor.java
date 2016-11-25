@@ -27,10 +27,10 @@ public class AspectInterceptor implements Interceptor {
 
     @Override
     public Object resolve(AOPPoint point) throws Throwable {
-        LOGGER.debug("start Aspect intercept");
+        Long start = System.currentTimeMillis();
         AspectFactory aspectFactory = SilentGo.me().getFactory(AspectFactory.class);
         Object ret = new AspectChain(point, aspectFactory.getAspectMethod(point.getAdviser().getName())).invoke();
-        LOGGER.debug("end Aspect intercept");
+        LOGGER.debug("end Aspect intercept : {}", System.currentTimeMillis() - start);
         return ret;
     }
 }
