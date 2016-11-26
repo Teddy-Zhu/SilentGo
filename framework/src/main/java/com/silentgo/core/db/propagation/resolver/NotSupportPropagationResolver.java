@@ -32,10 +32,10 @@ public class NotSupportPropagationResolver implements PropagationResolver {
                 DBType type = DBType.parse(me.getConfig().getDbType());
                 DBConnect newConnect = ConnectManager.me().getNewConnect(type, name);
 
-                ConnectManager.me().setTheadConnect(type, name, newConnect);
+                ConnectManager.me().setThreadConnect(type, name, newConnect);
                 Object ret = chain.intercept();
                 ConnectManager.me().releaseNewConnect(type, name, newConnect);
-                ConnectManager.me().setTheadConnect(type, name, connect);
+                ConnectManager.me().setThreadConnect(type, name, connect);
                 return ret;
             }
         } else {

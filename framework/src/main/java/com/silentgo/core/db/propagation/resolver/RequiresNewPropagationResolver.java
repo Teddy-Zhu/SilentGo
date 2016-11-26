@@ -32,7 +32,7 @@ public class RequiresNewPropagationResolver implements PropagationResolver {
                 DBType type = DBType.parse(me.getConfig().getDbType());
                 DBConnect newConnect = ConnectManager.me().getNewConnect(type, name);
                 Connection newInnerConnect = newConnect.getConnect();
-                ConnectManager.me().setTheadConnect(type, name, newConnect);
+                ConnectManager.me().setThreadConnect(type, name, newConnect);
 
                 newInnerConnect.setAutoCommit(false);
                 newInnerConnect.setTransactionIsolation(annotation.transcationLevel());
@@ -52,7 +52,7 @@ public class RequiresNewPropagationResolver implements PropagationResolver {
                 } finally {
                     newInnerConnect.setAutoCommit(true);
                     ConnectManager.me().releaseNewConnect(type, name, newConnect);
-                    ConnectManager.me().setTheadConnect(type, name, connect);
+                    ConnectManager.me().setThreadConnect(type, name, connect);
                 }
                 return ret;
             }

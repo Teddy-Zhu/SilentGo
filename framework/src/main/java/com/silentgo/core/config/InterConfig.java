@@ -24,8 +24,6 @@ public class InterConfig {
 
     private final ThreadLocal<SilentGoContext> ctx = new InheritableThreadLocal<>();
 
-    private ThreadLocal<DBConnect> threadConnect = new ThreadLocal<>();
-
     private ActionChain actionChain;
 
     private ActionChain routeAction;

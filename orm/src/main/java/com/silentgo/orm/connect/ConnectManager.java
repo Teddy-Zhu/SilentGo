@@ -74,7 +74,7 @@ public class ConnectManager {
         return dbManagerMap.get(type).getThreadConnect(name);
     }
 
-    public boolean setTheadConnect(DBType type, String name, DBConnect connect) {
+    public boolean setThreadConnect(DBType type, String name, DBConnect connect) {
         return dbManagerMap.get(type).setThreadConnect(name, connect);
     }
 
