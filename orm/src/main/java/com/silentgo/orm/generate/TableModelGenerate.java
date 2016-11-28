@@ -36,6 +36,9 @@ public class TableModelGenerate {
                 imports.add(BigDecimal.class.getName());
             }
             body.append(getField(column));
+        }
+
+        for (TableColumn column : table.columns) {
             body.append(getGetFunction(column));
             body.append(getSetFunction(column));
         }
