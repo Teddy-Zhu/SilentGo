@@ -1,7 +1,7 @@
 # SilentGo Framework
 a light web mvc framework.
 
-[framework CN Readme](https://github.com/Teddy-Zhu/SilentGo/tree/master/framework/ReadMe_CN.md)
+[framework CN Readme](https://github.com/Teddy-Zhu/SilentGo/tree/master/framework/ReadMe_CN.md)  
 [framework Readme](https://github.com/Teddy-Zhu/SilentGo/tree/master/framework/ReadMe.md)
 
 ### How to Use
@@ -10,7 +10,7 @@ add maven dependency
 <dependency>
     <groupId>com.silentgo</groupId>
     <artifactId>framework</artifactId>
-    <version>0.0.27</version>
+    <version>0.0.33</version>
 </dependency>
 ```
 
