@@ -33,7 +33,6 @@ public class TableMetaGenerate implements TableMetaGenerator {
 
         List<TableMeta> tableMetas = getTables(connection);
 
-        connection.close();
         return tableMetas;
     }
 

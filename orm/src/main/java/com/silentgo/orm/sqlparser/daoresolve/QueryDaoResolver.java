@@ -7,6 +7,7 @@ import com.silentgo.orm.base.TableModel;
 import com.silentgo.orm.sqlparser.SQLKit;
 import com.silentgo.orm.sqlparser.annotation.ColumnIgnore;
 import com.silentgo.orm.sqlparser.annotation.OrderBy;
+import com.silentgo.orm.sqlparser.annotation.Query;
 import com.silentgo.orm.sqlparser.funcanalyse.DaoKeyWord;
 import com.silentgo.utils.Assert;
 
@@ -40,6 +41,17 @@ public class QueryDaoResolver implements DaoResolver {
             Assert.isTrue(Collection.class.isAssignableFrom(returnType), "Method [" + methodName + "] return type should be collection");
             sqlTool.limitClear();
         }
+        boolean needColumns = true;
+
+        Optional<Annotation> opQuery = annotations.stream().filter(annotation -> annotation.annotationType().equals(Query.class)).findFirst();
+        if (opQuery.isPresent()) {
+            Query query = (Query) opQuery.get();
+            needColumns = query.includeAll();
+            for (String s : query.value()) {
+                sqlTool.selectCol(s);
+            }
+        }
+        if (!needColumns) return sqlTool;
 
         Optional<Annotation> opColumnIgnore = annotations.stream().filter(annotation -> annotation.annotationType().equals(ColumnIgnore.class)).findFirst();
         if (opColumnIgnore.isPresent()) {

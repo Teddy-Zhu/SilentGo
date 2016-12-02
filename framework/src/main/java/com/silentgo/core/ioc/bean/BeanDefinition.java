@@ -1,6 +1,7 @@
 package com.silentgo.core.ioc.bean;
 
 import com.silentgo.core.SilentGo;
+import com.silentgo.core.aop.support.MethodAOPFactory;
 import com.silentgo.core.config.Const;
 import com.silentgo.core.ioc.annotation.Component;
 import com.silentgo.core.ioc.annotation.Inject;
@@ -10,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -76,6 +78,9 @@ public class BeanDefinition extends BeanWrapper {
     }
 
     private void Create(String beanName, Class<?> clz, boolean needInject, Object target, boolean isLazy) {
+        MethodAOPFactory methodAOPFactory = SilentGo.me().getFactory(MethodAOPFactory.class);
+
+        methodAOPFactory.buildMethodAdviser(clz);
         this.needInject = needInject;
         this.beanName = beanName;
         this.clz = clz;
@@ -88,7 +93,6 @@ public class BeanDefinition extends BeanWrapper {
             proxyTarget = target;
             injectComplete = true;
         }
-
         fieldBeans = new HashMap<>();
         Field[] fields = clz.getDeclaredFields();
         for (Field field : fields) {
@@ -131,7 +135,8 @@ public class BeanDefinition extends BeanWrapper {
 
     @Override
     public Object getObject() {
-        SilentGoBeanFactory beanFactory = SilentGo.me().getFactory(SilentGoBeanFactory.class);
+        SilentGo me = SilentGo.me();
+        SilentGoBeanFactory beanFactory = me.getFactory(SilentGoBeanFactory.class);
         if (!injectComplete) {
             lazy = false;
             beanFactory.depend(this);
@@ -143,9 +148,17 @@ public class BeanDefinition extends BeanWrapper {
                 e.printStackTrace();
             }
 
-            if (needInject)
-                proxyTarget = CGLibKit.Proxy(target);
-            else
+            MethodAOPFactory methodAOPFactory = me.getFactory(MethodAOPFactory.class);
+
+            if (needInject) {
+                if (!methodAOPFactory.hasInitClass(clz))
+                    methodAOPFactory.buildMethodAdviser(clz);
+                if (methodAOPFactory.hasInterceptors(clz)) {
+                    proxyTarget = CGLibKit.Proxy(target);
+                } else {
+                    proxyTarget = target;
+                }
+            } else
                 proxyTarget = target;
 
             fieldBeans.forEach((k, v) -> {

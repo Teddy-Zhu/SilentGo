@@ -1,5 +1,7 @@
 package com.silentgo.core.aop.aspect;
 
+import com.silentgo.core.SilentGo;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -18,17 +20,19 @@ public class AspectMethod {
 
     private Method method;
 
-    private Object targetAspect;
+    private Class<?> clz;
 
     public Object invoke(Object... args) throws IllegalAccessException, InvocationTargetException {
-        return method.invoke(targetAspect, args);
+        SilentGo me = SilentGo.me();
+        Object target = me.getFactory(me.getConfig().getBeanClass()).getBean(clz.getName());
+        return method.invoke(target, args);
     }
 
-    public AspectMethod(String rule, boolean regex, Method method, Object targetAspect) {
+    public AspectMethod(String rule, boolean regex, Method method, Class<?> clz) {
         this.rule = rule;
         this.regex = regex;
         this.method = method;
-        this.targetAspect = targetAspect;
+        this.clz = clz;
     }
 
     public String getRule() {
@@ -43,7 +47,4 @@ public class AspectMethod {
         return method;
     }
 
-    public Object getTargetAspect() {
-        return targetAspect;
-    }
 }

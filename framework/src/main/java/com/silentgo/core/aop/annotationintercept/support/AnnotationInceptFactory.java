@@ -47,35 +47,31 @@ public class AnnotationInceptFactory extends BaseFactory {
         return annotationInterceptorMap.get(clz);
     }
 
-    public boolean addIAnnotation(Method name, Map<Annotation, IAnnotation> anMap) {
+    private boolean addIAnnotation(Method name, Map<Annotation, IAnnotation> anMap) {
         CollectionKit.MapAdd(iAnnotationMap, name, anMap);
         return true;
     }
 
     public List<Map.Entry<Annotation, IAnnotation>> getSortedAnnotationMap(Method name) {
-        return sortedIAnnotationMap.get(name);
+        return sortedIAnnotationMap.getOrDefault(name, new ArrayList<>());
     }
 
     public Map<Annotation, IAnnotation> getAnnotationMap(Method name) {
         return iAnnotationMap.get(name);
     }
 
-    public boolean addSortedIAnnotation(Method name, List<Map.Entry<Annotation, IAnnotation>> iAnnotationMap) {
+    private boolean addSortedIAnnotation(Method name, List<Map.Entry<Annotation, IAnnotation>> iAnnotationMap) {
         return CollectionKit.MapAdd(sortedIAnnotationMap, name, iAnnotationMap);
     }
 
 
     @Override
     public boolean initialize(SilentGo me) {
-        MethodAOPFactory methodAOPFactory = me.getFactory(MethodAOPFactory.class);
 
         me.getAnnotationManager().getClasses(CustomInterceptor.class).forEach(aClass -> buildCustomInterceptor(aClass, me));
+
         me.getConfig().getAnnotationIntecepters().forEach(aClass -> buildCustomInterceptor(aClass, me));
 
-        methodAOPFactory.getMethodAdviserMap().forEach((k, v) -> {
-            //special interceptors
-            buildIAnnotation(v);
-        });
         return true;
     }
 
@@ -102,7 +98,7 @@ public class AnnotationInceptFactory extends BaseFactory {
         }
     }
 
-    private void buildIAnnotation(MethodAdviser adviser) {
+    public void buildIAnnotation(MethodAdviser adviser) {
 
         Map<Annotation, IAnnotation> annotationIAnnotationMap = new HashMap<>();
         //build IAnnotation

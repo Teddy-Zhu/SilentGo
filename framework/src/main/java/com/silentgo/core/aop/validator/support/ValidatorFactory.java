@@ -40,9 +40,6 @@ public class ValidatorFactory extends BaseFactory {
 
     private Map<Method, Map<String, Map<Annotation, IValidator>>> methodParamValidatorMap = new HashMap<>();
 
-    public ValidatorFactory() {
-        validatorHashMap.put(RequestString.class, new StringValidator());
-    }
 
     public boolean addValidator(Class<? extends Annotation> clz, IValidator validator) {
         return CollectionKit.MapAdd(validatorHashMap, clz, validator);
@@ -58,7 +55,7 @@ public class ValidatorFactory extends BaseFactory {
 
 
     public Map<String, Map<Annotation, IValidator>> getParamValidatorMap(Method name) {
-        return methodParamValidatorMap.get(name);
+        return methodParamValidatorMap.getOrDefault(name, new HashMap<>());
     }
 
     @Override
@@ -80,9 +77,6 @@ public class ValidatorFactory extends BaseFactory {
                 }
             }
         });
-        MethodAOPFactory methodAOPFactory = me.getFactory(MethodAOPFactory.class);
-        methodAOPFactory.getMethodAdviserMap().forEach((k, v) ->
-                addMethodParamValidator(v.getName(), buildIValidator(v)));
 
         return true;
     }
@@ -92,7 +86,7 @@ public class ValidatorFactory extends BaseFactory {
         return false;
     }
 
-    private Map<String, Map<Annotation, IValidator>> buildIValidator(MethodAdviser adviser) {
+    public Map<String, Map<Annotation, IValidator>> buildIValidator(MethodAdviser adviser) {
 
         Map<String, Map<Annotation, IValidator>> methodParamsMap = new HashMap<>();
 

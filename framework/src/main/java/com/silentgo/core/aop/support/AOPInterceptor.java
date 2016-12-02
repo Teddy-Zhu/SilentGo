@@ -42,6 +42,7 @@ public class AOPInterceptor implements MethodInterceptor {
         if (adviser == null) {
             return methodProxy.invokeSuper(o, objects);
         }
+        
         List<Interceptor> intercepts = methodAOPFactory.getBuildedMethodInterceptors(adviser.getMethod());
 
         if (intercepts.size() == 0) {

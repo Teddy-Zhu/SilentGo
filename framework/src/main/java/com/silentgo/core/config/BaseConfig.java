@@ -3,6 +3,7 @@ package com.silentgo.core.config;
 import com.silentgo.core.action.ActionChain;
 import com.silentgo.core.aop.annotationintercept.IAnnotation;
 import com.silentgo.core.aop.annotationintercept.support.AnnotationInterceptor;
+import com.silentgo.core.aop.aspect.support.AspectInterceptor;
 import com.silentgo.core.aop.validator.support.ValidatorInterceptor;
 import com.silentgo.core.cache.CacheManager;
 import com.silentgo.core.cache.EhCache;
@@ -87,6 +88,7 @@ public class BaseConfig extends InterConfig {
     @SuppressWarnings("unchecked")
     private ArrayList interceptors = new ArrayList() {{
         add(new AnnotationInterceptor());
+        add(new AspectInterceptor());
         add(new ValidatorInterceptor());
     }};
 

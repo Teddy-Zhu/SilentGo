@@ -57,11 +57,8 @@ public class AspectFactory extends BaseFactory {
 
     @Override
     public boolean initialize(SilentGo me) throws AppBuildException {
-        BeanFactory beanFactory = me.getFactory(me.getConfig().getBeanClass());
 
         me.getAnnotationManager().getClasses(Aspect.class).forEach(aClass -> {
-
-            BeanWrapper beanDefinition = beanFactory.getBean(aClass.getName());
 
             Method[] methods = aClass.getDeclaredMethods();
             for (Method method : methods) {
@@ -70,49 +67,16 @@ public class AspectFactory extends BaseFactory {
                 addAspectMethod(new AspectMethod(annotation.value()
                         , annotation.regex()
                         , method
-                        , beanDefinition.getObject()
+                        , aClass
                 ));
             }
         });
-        MethodAOPFactory methodAOPFactory = me.getFactory(MethodAOPFactory.class);
-        List<String> methodNames = new ArrayList<>();
-        methodAOPFactory.getMethodAdviserMap().forEach((k, v) -> {
-            CollectionKit.ListAdd(methodNames, v.getMethodName());
-        });
 
-        //build aspect
-        aspectMethods.forEach(aspectMethod -> {
-            if (aspectMethod.getMethod().getParameterCount() != 1) {
-                LOGGER.warn("The Method [{}] ignored .", aspectMethod.getMethod().getName());
-                return;
-            }
-
-            if (aspectMethod.isRegex()) {
-                methodNames.forEach(name -> {
-                    if (name.matches(aspectMethod.getRule())) {
-                        addAspectMethod(methodAOPFactory, aspectMethod, name);
-                    }
-                });
-            } else {
-                if (methodNames.contains(aspectMethod.getRule())) {
-                    addAspectMethod(methodAOPFactory, aspectMethod, aspectMethod.getRule());
-                }
-            }
-        });
         return true;
     }
 
     @Override
     public boolean destroy(SilentGo me) throws AppReleaseException {
         return false;
-    }
-
-
-    private void addAspectMethod(MethodAOPFactory methodAOPFactory, AspectMethod aspectMethod, String methodName) {
-        methodAOPFactory.getMethodAdviserMap().forEach((k, v) -> {
-            if (v.getMethodName().equals(methodName)) {
-                addAspectMethodInMap(v.getName(), aspectMethod);
-            }
-        });
     }
 }

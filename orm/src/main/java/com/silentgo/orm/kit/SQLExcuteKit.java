@@ -28,6 +28,7 @@ public class SQLExcuteKit {
 
     public static <T> Object excute(DBConnect conn, String sql, Class<T> clz, String type, boolean isList, boolean isArray, Object[] generateKeys, Object[] params)
             throws SQLException {
+        Long start = System.currentTimeMillis();
         if (conn == null) {
             throw new SQLException("Null connection");
         }
@@ -70,8 +71,8 @@ public class SQLExcuteKit {
             return resolver.resolve(rs);
         } finally {
             finalDo(rs, stmt, conn);
+            LOGGER.debug("end excute sql in {}", System.currentTimeMillis() - start);
         }
-
     }
 
     private static IRSResolver getResolver(Class<?> clz, boolean isList, boolean isArray) {

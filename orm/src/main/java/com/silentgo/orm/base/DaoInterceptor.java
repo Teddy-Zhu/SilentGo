@@ -75,10 +75,12 @@ public class DaoInterceptor implements MethodInterceptor {
             MethodParserKit.parse(methodName, annotations, parsedString, tableInfo);
             cacheNamePaser.put(method, parsedString);
         }
+        LOGGER.debug("dao prepare for parse object , end in {}", System.currentTimeMillis() - start);
 
         Map<String, Object> namdObjects = new HashMap<>();
         Object[] newObjects = SQLKit.getNamedObject(method, objects, namdObjects);
 
+        LOGGER.debug("dao parse object end in {}ms", System.currentTimeMillis() - start);
         Class<?> methodRetType = method.getReturnType();
         boolean[] isHandled = new boolean[]{false};
         Integer[] commonIndex = new Integer[]{0};
@@ -88,6 +90,8 @@ public class DaoInterceptor implements MethodInterceptor {
                         parsedString, tableInfo, sqlTool, annotations, isHandled, daoDialect, namdObjects);
             }
         }
+
+        LOGGER.debug("dao parse sql end in {}ms", System.currentTimeMillis() - start);
 
         DBConnect connect = null;
         Object ret = null;
