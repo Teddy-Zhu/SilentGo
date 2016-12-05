@@ -36,9 +36,9 @@ public class DaoFactory extends BaseFactory {
         if (type == null) return false;
 
         //build table info
-        me.getAnnotationManager().getClasses(Table.class).forEach(tableclass -> {
-            BaseTableBuilder.me().initialBaseModel(type.getName(), tableclass, type);
-        });
+        me.getAnnotationManager().getClasses(Table.class).forEach(tableclass -> BaseTableBuilder.me().initialBaseModel(type.getName(), tableclass, type));
+
+
         return true;
     }
 

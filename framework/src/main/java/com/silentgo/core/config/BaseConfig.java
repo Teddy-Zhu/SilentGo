@@ -1,6 +1,7 @@
 package com.silentgo.core.config;
 
 import com.silentgo.core.action.ActionChain;
+import com.silentgo.core.aop.Interceptor;
 import com.silentgo.core.aop.annotationintercept.IAnnotation;
 import com.silentgo.core.aop.annotationintercept.support.AnnotationInterceptor;
 import com.silentgo.core.aop.aspect.support.AspectInterceptor;
@@ -86,11 +87,7 @@ public class BaseConfig extends InterConfig {
     }
 
     @SuppressWarnings("unchecked")
-    private ArrayList interceptors = new ArrayList() {{
-        add(new AnnotationInterceptor());
-        add(new AspectInterceptor());
-        add(new ValidatorInterceptor());
-    }};
+    private List<Interceptor> interceptors = new ArrayList<>();
 
     public List<Class<? extends BaseFactory>> getFactories() {
         return factories;
@@ -184,7 +181,7 @@ public class BaseConfig extends InterConfig {
         this.contextPathLength = contextPathLength;
     }
 
-    public ArrayList getInterceptors() {
+    public List<Interceptor> getInterceptors() {
         return interceptors;
     }
 

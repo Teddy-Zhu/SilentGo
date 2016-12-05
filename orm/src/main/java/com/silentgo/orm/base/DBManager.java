@@ -20,7 +20,7 @@ public interface DBManager {
 
     public boolean releaseUnSafeConnect(String name, DBConnect connect);
 
-    public boolean releaseConnect(String name);
+    public boolean releaseConnect(String name, DBConnect connect);
 
     public DBConnect getThreadConnect(String name);
 

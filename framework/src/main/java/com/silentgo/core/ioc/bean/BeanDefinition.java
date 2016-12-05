@@ -43,7 +43,8 @@ public class BeanDefinition extends BeanWrapper {
 
     boolean injectComplete = false;
 
-    boolean isSingle = false;
+    boolean injectField = false;
+    boolean isSingle = true;
 
     boolean needInject = false;
 
@@ -118,23 +119,9 @@ public class BeanDefinition extends BeanWrapper {
         Create(beanName, clz, needInject, obj, isLazy);
     }
 
-    private boolean containAnnotation(Field field) {
-        Class<?> clz = field.getType();
-        if (clz.getAnnotation(com.silentgo.core.route.annotation.Controller.class) != null)
-            return true;
-        if (clz.getAnnotation(Component.class) != null)
-            return true;
-        if (clz.getAnnotation(Service.class) != null)
-            return true;
-        return false;
-    }
-
-    public Map<String, FieldBean> getFieldBeans() {
-        return fieldBeans;
-    }
-
     @Override
     public Object getObject() {
+
         SilentGo me = SilentGo.me();
         SilentGoBeanFactory beanFactory = me.getFactory(SilentGoBeanFactory.class);
         if (!injectComplete) {
@@ -147,9 +134,7 @@ public class BeanDefinition extends BeanWrapper {
             } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
             }
-
             MethodAOPFactory methodAOPFactory = me.getFactory(MethodAOPFactory.class);
-
             if (needInject) {
                 if (!methodAOPFactory.hasInitClass(clz))
                     methodAOPFactory.buildMethodAdviser(clz);
@@ -160,14 +145,20 @@ public class BeanDefinition extends BeanWrapper {
                 }
             } else
                 proxyTarget = target;
-
-            fieldBeans.forEach((k, v) -> {
-                LOGGER.debug("get bean class : {}", k);
-                Object object = beanFactory.getBean(v.getBeanName()).getObject();
-                v.setValue(target, object);
-                v.setValue(proxyTarget, object);
-            });
+        } else {
+            if (injectField)
+                return proxyTarget;
         }
+
+        fieldBeans.forEach((k, v) -> {
+            if (v.getValue(target) != null) return;
+            LOGGER.debug("get bean class : {}", k);
+            BeanDefinition beanDefinition = beanFactory.getBean(v.getBeanName());
+            Object object = beanDefinition.getObject();
+            v.setValue(target, object);
+            v.setValue(proxyTarget, object);
+        });
+        injectField = true;
         return proxyTarget;
     }
 
@@ -200,4 +191,7 @@ public class BeanDefinition extends BeanWrapper {
         return lazy;
     }
 
+    public Map<String, FieldBean> getFieldBeans() {
+        return fieldBeans;
+    }
 }

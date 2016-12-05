@@ -7,9 +7,12 @@ import com.silentgo.core.aop.MethodParam;
 import com.silentgo.core.aop.annotation.Aspect;
 import com.silentgo.core.aop.annotationintercept.annotation.CustomInterceptor;
 import com.silentgo.core.aop.annotationintercept.support.AnnotationInceptFactory;
+import com.silentgo.core.aop.annotationintercept.support.AnnotationInterceptor;
 import com.silentgo.core.aop.aspect.support.AspectFactory;
+import com.silentgo.core.aop.aspect.support.AspectInterceptor;
 import com.silentgo.core.aop.validator.annotation.Validator;
 import com.silentgo.core.aop.validator.support.ValidatorFactory;
+import com.silentgo.core.aop.validator.support.ValidatorInterceptor;
 import com.silentgo.core.build.Factory;
 import com.silentgo.core.config.Const;
 import com.silentgo.core.exception.AppBuildException;
@@ -17,9 +20,6 @@ import com.silentgo.core.exception.AppReleaseException;
 import com.silentgo.core.exception.annotaion.ExceptionHandler;
 import com.silentgo.core.ioc.annotation.Component;
 import com.silentgo.core.ioc.annotation.Service;
-import com.silentgo.core.ioc.bean.BeanFactory;
-import com.silentgo.core.ioc.bean.BeanWrapper;
-import com.silentgo.core.ioc.bean.support.BeanBuildKit;
 import com.silentgo.core.route.annotation.Controller;
 import com.silentgo.core.route.annotation.RequestParam;
 import com.silentgo.core.support.BaseFactory;
@@ -120,7 +120,7 @@ public class MethodAOPFactory extends BaseFactory {
         if (clz.isInterface()) return;
 
         SilentGo me = SilentGo.me();
-        ArrayList globalInterceptors = me.getConfig().getInterceptors();
+        List<Interceptor> globalInterceptors = me.getConfig().getInterceptors();
         AnnotationInceptFactory annotationInceptFactory = me.getFactory(AnnotationInceptFactory.class);
         InterceptFactory interceptFactory = me.getFactory(InterceptFactory.class);
         AspectFactory aspectFactory = me.getFactory(AspectFactory.class);
@@ -130,7 +130,7 @@ public class MethodAOPFactory extends BaseFactory {
     }
 
 
-    public void buildMethodAdviser(ArrayList globalInterceptors, InterceptFactory interceptFactory,
+    public void buildMethodAdviser(List<Interceptor> globalInterceptors, InterceptFactory interceptFactory,
                                    AnnotationInceptFactory annotationInceptFactory, AspectFactory aspectFactory,
                                    ValidatorFactory validatorFactory, Class<?> clz) {
         List<Annotation> annotations = Arrays.asList(clz.getAnnotations());
@@ -149,21 +149,17 @@ public class MethodAOPFactory extends BaseFactory {
                 addAll(interceptFactory.getMethodInterceptors().getOrDefault(method, new ArrayList<>()));
 
             }};
-            //for filter others
-
-            if (interceptors.size() > 3) needInject = true;
-
-            //save method interceptors
-            sortInterceptrs(interceptors);
-
-            addBuildedInterceptor(method, interceptors);
-
             addMethodAdviser(methodAdviser);
+
+            if (globalInterceptors.size() > 0)
+                needInject = true;
 
             //build annotations
             annotationInceptFactory.buildIAnnotation(methodAdviser);
-            if (annotationInceptFactory.getSortedAnnotationMap(methodAdviser.getMethod()).size() > 0)
+            if (annotationInceptFactory.getSortedAnnotationMap(methodAdviser.getMethod()).size() > 0) {
+                interceptors.add(new AnnotationInterceptor());
                 needInject = true;
+            }
 
             aspectFactory.getAspectMethods().forEach(aspectMethod -> {
                 if (aspectMethod.getMethod().getParameterCount() != 1) {
@@ -180,14 +176,23 @@ public class MethodAOPFactory extends BaseFactory {
                 }
             });
 
-            if (aspectFactory.getAspectMethod(methodAdviser.getMethod()).size() > 0)
+            if (aspectFactory.getAspectMethod(methodAdviser.getMethod()).size() > 0) {
+                interceptors.add(new AspectInterceptor());
                 needInject = true;
+            }
 
             validatorFactory.addMethodParamValidator(methodAdviser.getMethod(), validatorFactory.buildIValidator(methodAdviser));
 
             if (!validatorFactory.getParamValidatorMap(methodAdviser.getMethod()).isEmpty()) {
+                interceptors.add(new ValidatorInterceptor());
                 needInject = true;
             }
+
+            //save method interceptors
+            sortInterceptrs(interceptors);
+
+            addBuildedInterceptor(method, interceptors);
+
         }
         initclz.put(clz, needInject);
     }

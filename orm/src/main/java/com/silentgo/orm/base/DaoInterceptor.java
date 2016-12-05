@@ -120,9 +120,10 @@ public class DaoInterceptor implements MethodInterceptor {
                 break;
             }
         }
+        LOGGER.debug("execute sql end");
 
         if (connect != null && connect.getConnect().getAutoCommit()) {
-            ConnectManager.me().releaseConnect(tableInfo.getType(), tableInfo.getPoolName());
+            ConnectManager.me().releaseConnect(tableInfo.getType(), tableInfo.getPoolName(), connect);
         }
 
         LOGGER.debug("end orm method : {}", System.currentTimeMillis() - start);

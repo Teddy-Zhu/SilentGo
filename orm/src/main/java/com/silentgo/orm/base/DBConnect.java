@@ -14,5 +14,5 @@ public interface DBConnect {
 
     public Connection getConnect();
 
-    public boolean destroy();
+    public boolean close();
 }

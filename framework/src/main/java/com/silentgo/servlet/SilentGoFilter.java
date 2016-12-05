@@ -125,9 +125,9 @@ public class SilentGoFilter implements Filter {
         globalConfig.getCtx().set(new SilentGoContext(param));
         try {
             long start = System.currentTimeMillis();
-            LOGGER.debug("action start");
+            LOGGER.debug("action {} start", requestPath);
             globalConfig.getActionChain().doAction(param);
-            LOGGER.debug("action end in : {} ms", System.currentTimeMillis() - start);
+            LOGGER.debug("action {} end in : {} ms", requestPath, System.currentTimeMillis() - start);
         } catch (Throwable throwable) {
             LOGGER.error("action error", throwable);
             new ErrorRener().render(request, response, HttpStatus.Code.INTERNAL_SERVER_ERROR, throwable, appContext.isDevMode());
@@ -140,7 +140,7 @@ public class SilentGoFilter implements Filter {
 
     @Override
     public void destroy() {
-        LOGGER.info("destroy filter");
+        LOGGER.info("close filter");
         globalConfig.getFactoryMap()
                 .forEach((k, v) -> {
                     try {

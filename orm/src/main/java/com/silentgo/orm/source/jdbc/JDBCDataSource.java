@@ -1,4 +1,4 @@
-package com.silentgo.orm.jdbc;
+package com.silentgo.orm.source.jdbc;
 
 import com.silentgo.orm.base.DBConfig;
 import com.silentgo.orm.base.DBDataSource;

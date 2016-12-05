@@ -1,4 +1,4 @@
-package com.silentgo.orm.jdbc;
+package com.silentgo.orm.source.jdbc;
 
 import com.silentgo.orm.base.*;
 import org.slf4j.Logger;
@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Project : silentgo
- * com.silentgo.orm.jdbc
+ * com.silentgo.orm.source.jdbc
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>
@@ -55,8 +55,8 @@ public class JDBCManager implements DBManager {
     }
 
     @Override
-    public boolean releaseConnect(String name) {
-        return getPool(name).releaseDBConnect();
+    public boolean releaseConnect(String name, DBConnect connect) {
+        return getPool(name).releaseDBConnect(connect);
     }
 
     @Override

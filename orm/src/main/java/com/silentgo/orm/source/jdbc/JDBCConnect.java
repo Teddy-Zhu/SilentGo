@@ -1,4 +1,4 @@
-package com.silentgo.orm.jdbc;
+package com.silentgo.orm.source.jdbc;
 
 import com.silentgo.orm.base.DBConfig;
 import com.silentgo.orm.base.DBConnect;
@@ -12,7 +12,7 @@ import java.util.Date;
 
 /**
  * Project : silentgo
- * com.silentgo.orm.jdbc
+ * com.silentgo.orm.source.jdbc
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
  *         <p>
@@ -83,7 +83,7 @@ public class JDBCConnect implements DBConnect {
     }
 
     @Override
-    public boolean destroy() {
+    public boolean close() {
         try {
             if (connection != null && !connection.isClosed())
                 connection.close();

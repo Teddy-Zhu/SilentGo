@@ -46,7 +46,7 @@ public class EventFactory extends BaseFactory {
                 Class<? extends Event> event = (Class<? extends Event>) ClassKit.getGenericClass(clz, 0);
                 try {
                     EventListener eventListener = (EventListener) clz.newInstance();
-                    EventExecutor eventExecutor = new EventExecutor((EventListener) beanFactory.addBean(eventListener, false, true, true).getObject());
+                    EventExecutor eventExecutor = new EventExecutor(beanFactory.addBean(eventListener, false, true, true));
                     eventExecutor.setAsync(eventListenerAn.async());
                     eventExecutor.setDelay(eventListenerAn.delayTime());
                     if (eventExecutor.isAsync()) {
@@ -63,7 +63,7 @@ public class EventFactory extends BaseFactory {
             Class<? extends Event> event = (Class<? extends Event>) ClassKit.getGenericClass(clz, 0);
             try {
                 EventListener eventListener = clz.newInstance();
-                EventExecutor eventExecutor = new EventExecutor((EventListener) beanFactory.addBean(eventListener, false, true, true).getObject());
+                EventExecutor eventExecutor = new EventExecutor(beanFactory.addBean(eventListener, false, true, true));
                 eventExecutor.setAsync(true);
                 eventExecutor.setDelay(0);
                 CollectionKit.ListMapAdd(eventSyncMap, event, eventExecutor);

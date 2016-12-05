@@ -35,7 +35,7 @@ public class PropKit {
             properties = new Properties();
             properties.load(new InputStreamReader(inputStream, encoding));
         } catch (IOException e) {
-            throw new RuntimeException("Error loading properties file.", e);
+            LOGGER.error("Error loading properties file.", e);
         } finally {
             if (inputStream != null) try {
                 inputStream.close();

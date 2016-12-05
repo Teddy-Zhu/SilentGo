@@ -39,7 +39,7 @@ public class NotSupportPropagationResolver implements PropagationResolver {
                 return ret;
             }
         } else {
-            return PropagationKit.resolve(me, chain, connect, annotation);
+            return chain.intercept();
         }
     }
 }

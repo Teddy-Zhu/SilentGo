@@ -1,5 +1,7 @@
 package com.silentgo.core.plugin.event;
 
+import com.silentgo.core.ioc.bean.BeanWrapper;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -15,23 +17,24 @@ import java.util.concurrent.FutureTask;
  */
 public class EventExecutor {
 
-    private EventListener eventListener;
+    private BeanWrapper eventListener;
     private int delay = 0;
     private boolean async = false;
 
-    public EventExecutor(EventListener eventListener) {
+    public EventExecutor(BeanWrapper eventListener) {
         this.eventListener = eventListener;
     }
 
-    public EventExecutor(EventListener eventListener, int delay, boolean async) {
+    public EventExecutor(BeanWrapper eventListener, int delay, boolean async) {
         this.eventListener = eventListener;
         this.delay = delay;
         this.async = async;
     }
 
+    @SuppressWarnings("unchecked")
     public void run(Event event) throws InterruptedException {
         Thread.sleep(delay);
-        eventListener.onEvent(event);
+        ((EventListener) eventListener.getObject()).onEvent(event);
     }
 
     public void run(Event event, ExecutorService executorService) throws ExecutionException, InterruptedException {
@@ -41,16 +44,8 @@ public class EventExecutor {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            eventListener.onEvent(event);
+            ((EventListener) eventListener.getObject()).onEvent(event);
         });
-    }
-
-    public EventListener getEventListener() {
-        return eventListener;
-    }
-
-    public void setEventListener(EventListener eventListener) {
-        this.eventListener = eventListener;
     }
 
     public int getDelay() {

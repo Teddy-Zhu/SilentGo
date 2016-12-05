@@ -213,7 +213,7 @@ public class BaseResolverKit {
                 value = Enum.valueOf(params[0].asSubclass(Enum.class), (String) value);
             }
 
-            // Don't call setter if the value object isn't the right type
+            // Don't before setter if the value object isn't the right type
             if (isCompatibleType(value, params[0])) {
                 setter.invoke(target, new Object[]{value});
             } else {

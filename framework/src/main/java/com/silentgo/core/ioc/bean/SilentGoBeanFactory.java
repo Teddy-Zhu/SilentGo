@@ -127,25 +127,30 @@ public class SilentGoBeanFactory extends BeanFactory<BeanDefinition> {
                 bean = addBean(type);
             }
             v.setBeanName(bean.getBeanName());
+
+            PropertyDescriptor pd = null;
             try {
-                PropertyDescriptor pd = new PropertyDescriptor(field.getName(),
+                pd = new PropertyDescriptor(field.getName(),
                         beanDefinition.getBeanClass(),
                         "get" + StringKit.firstToUpper(field.getName()),
-                        "setEqual" + StringKit.firstToUpper(field.getName())
+                        "set" + StringKit.firstToUpper(field.getName())
                 );
-
-                Method method = pd.getWriteMethod();
-                if (method != null) {
-                    v.setHasSet(true);
-                    v.setSetMethod(method);
-                    //method.setAccessible(true);
-                    //method.invoke(beanDefinition.getTarget(), bean);
-                }
             } catch (IntrospectionException e) {
                 LOGGER.warn("Field {} Can not find getter and setter in Class {}", field.getName(), bean.getBeanClass());
+                continue;
+            }
+
+            Method method = pd.getWriteMethod();
+            if (method != null) {
+                v.setHasSet(true);
+                v.setSetMethod(method);
+            }
+            Method readMethod = pd.getReadMethod();
+            if (readMethod != null) {
+                v.setHasGet(true);
+                v.setGetMethod(readMethod);
             }
         }
-        beanDefinition.setInjectComplete(true);
     }
 
     private static ArrayList<Class<? extends Annotation>> anList = new ArrayList() {{

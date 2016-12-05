@@ -12,6 +12,7 @@ import java.sql.Connection;
  */
 public class DBConfig {
 
+    private ManagerInitialCallBack callBack;
     private String name;
     private String driver;
     private String url;
@@ -24,6 +25,7 @@ public class DBConfig {
      */
     private int statementTimeout;
     private int maxActive;
+    private int minIdle;
     /**
      * active connect count when init
      */
@@ -38,17 +40,19 @@ public class DBConfig {
     public DBConfig() {
     }
 
-    public DBConfig(String name, int timeOut, String driver, String url, String userName, String password, int statementTimeout, int maxActive, int minActive, int maxIdle) {
+    public DBConfig(String name, String driver, String url, String userName, String password, int defaultTranscationLevel, int statementTimeout, int maxActive, int minIdle, int minActive, int maxIdle, int timeOut) {
         this.name = name;
-        this.timeOut = timeOut;
         this.driver = driver;
         this.url = url;
         this.userName = userName;
         this.password = password;
+        this.defaultTranscationLevel = defaultTranscationLevel;
         this.statementTimeout = statementTimeout;
         this.maxActive = maxActive;
+        this.minIdle = minIdle;
         this.minActive = minActive;
         this.maxIdle = maxIdle;
+        this.timeOut = timeOut;
     }
 
     public String getName() {
@@ -137,5 +141,21 @@ public class DBConfig {
 
     public void setDefaultTranscationLevel(int defaultTranscationLevel) {
         this.defaultTranscationLevel = defaultTranscationLevel;
+    }
+
+    public int getMinIdle() {
+        return minIdle;
+    }
+
+    public void setMinIdle(int minIdle) {
+        this.minIdle = minIdle;
+    }
+
+    public ManagerInitialCallBack getCallBack() {
+        return callBack;
+    }
+
+    public void setCallBack(ManagerInitialCallBack callBack) {
+        this.callBack = callBack;
     }
 }

@@ -1,9 +1,5 @@
-import com.silentgo.orm.SilentGoOrm;
-import com.silentgo.orm.base.DBConfig;
-import com.silentgo.orm.jdbc.JDBCManager;
-import com.silentgo.orm.kit.configKit;
+import com.silentgo.orm.source.jdbc.JDBCManager;
 
-import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;

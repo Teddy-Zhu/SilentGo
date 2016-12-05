@@ -30,7 +30,7 @@ public class SupportPropagationResolver implements PropagationResolver {
             }
             return chain.intercept();
         } else {
-            return PropagationKit.resolve(me, chain, connect, annotation);
+            return chain.intercept();
         }
 
     }

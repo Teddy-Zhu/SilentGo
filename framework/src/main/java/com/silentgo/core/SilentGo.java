@@ -40,8 +40,8 @@ public class SilentGo {
         return config.getConnect(name);
     }
 
-    public void releaseConnect() {
-        config.releaseConnect(config.getDbType().toLowerCase());
+    public void releaseConnect(DBConnect connect) {
+        config.releaseConnect(config.getDbType().toLowerCase(),connect);
     }
 
     public DBConnect getConnect() {

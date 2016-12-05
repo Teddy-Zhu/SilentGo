@@ -26,7 +26,7 @@ public class SQLExcuteKit {
 
     private static boolean pmdKnownBroken = false;
 
-    public static <T> Object excute(DBConnect conn, String sql, Class<T> clz, String type, boolean isList, boolean isArray, Object[] generateKeys, Object[] params)
+    public static <T> Object execute(DBConnect conn, String sql, Class<T> clz, String type, boolean isList, boolean isArray, Object[] generateKeys, Object[] params)
             throws SQLException {
         Long start = System.currentTimeMillis();
         if (conn == null) {
@@ -68,10 +68,11 @@ public class SQLExcuteKit {
             } else {
                 return stmt.executeUpdate();
             }
+            LOGGER.debug("connection execute sql end, start to parse object");
             return resolver.resolve(rs);
         } finally {
             finalDo(rs, stmt, conn);
-            LOGGER.debug("end excute sql in {}", System.currentTimeMillis() - start);
+            LOGGER.debug("end execute sql in {}", System.currentTimeMillis() - start);
         }
     }
 

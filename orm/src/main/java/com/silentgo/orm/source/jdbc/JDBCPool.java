@@ -1,4 +1,4 @@
-package com.silentgo.orm.jdbc;
+package com.silentgo.orm.source.jdbc;
 
 import com.silentgo.orm.base.DBConnect;
 import com.silentgo.orm.base.DBPool;
@@ -19,7 +19,7 @@ import java.util.*;
  */
 public class JDBCPool implements DBPool {
 
-    private ThreadLocal<DBConnect> threadConnect = new ThreadLocal<>();
+    private ThreadLocal<DBConnect> threadConnect = new InheritableThreadLocal<>();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JDBCPool.class);
 
@@ -41,7 +41,7 @@ public class JDBCPool implements DBPool {
     }
 
     @Override
-    public DBConnect getDBConnect() {
+    public synchronized DBConnect getDBConnect() {
         DBConnect connect = threadConnect.get();
         if (connect == null) {
             connect = useConnect();
@@ -51,8 +51,7 @@ public class JDBCPool implements DBPool {
     }
 
     @Override
-    public boolean releaseDBConnect() {
-        DBConnect connect = threadConnect.get();
+    public boolean releaseDBConnect(DBConnect connect) {
         threadConnect.remove();
         restoreConnect(connect);
         return true;
@@ -113,7 +112,7 @@ public class JDBCPool implements DBPool {
             connect = connects.pop();
             if (connect != null) {
                 if (connect.getEnd().getTime() <= new Date().getTime() || !connect.getConnect().isValid(1000)) {
-                    connect.destroy();
+                    connect.close();
                     connect = null;
                 }
             }

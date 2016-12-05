@@ -37,7 +37,7 @@ public class PropagationKit {
             throw throwable;
         } finally {
             innerConnect.setAutoCommit(true);
-            me.releaseConnect();
+            me.releaseConnect(connect);
         }
         return ret;
     }
