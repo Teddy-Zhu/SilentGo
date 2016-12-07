@@ -15,8 +15,17 @@ public class StringToBooleanConvertor implements ITypeConvertor<String, Boolean>
     @Override
     public Boolean convert(String source) {
         if (source == null) return null;
-        if (Const.EmptyString.equals(source.trim())) return Boolean.FALSE;
 
-        return Boolean.parseBoolean(source) || source.equalsIgnoreCase("1");
+        if ((source.equalsIgnoreCase("true")) ||
+                (source.equalsIgnoreCase("on")) ||
+                (source.equalsIgnoreCase("yes"))) {
+            return true;
+        } else if ((source.equalsIgnoreCase("false")) ||
+                (source.equalsIgnoreCase("off")) ||
+                (source.equalsIgnoreCase("no"))) {
+            return false;
+        } else {
+            throw new NumberFormatException("Parameter " + source + " can not be number");
+        }
     }
 }

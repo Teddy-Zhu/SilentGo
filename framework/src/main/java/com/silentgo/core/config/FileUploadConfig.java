@@ -14,8 +14,6 @@ public class FileUploadConfig  extends AbstractConfig{
 
     private Integer maxSize;
 
-    private int sizeThreshold;
-
     private boolean autoSave;
 
     public FileUploadConfig() {
@@ -25,10 +23,9 @@ public class FileUploadConfig  extends AbstractConfig{
         this.maxSize = maxSize;
     }
 
-    public FileUploadConfig(String uploadPath, Integer maxSize, int sizeThreshold, boolean autoSave) {
+    public FileUploadConfig(String uploadPath, Integer maxSize, boolean autoSave) {
         this.uploadPath = uploadPath;
         this.maxSize = maxSize;
-        this.sizeThreshold = sizeThreshold;
         this.autoSave = autoSave;
     }
 
@@ -38,14 +35,6 @@ public class FileUploadConfig  extends AbstractConfig{
 
     public void setAutoSave(boolean autoSave) {
         this.autoSave = autoSave;
-    }
-
-    public int getSizeThreshold() {
-        return sizeThreshold;
-    }
-
-    public void setSizeThreshold(int sizeThreshold) {
-        this.sizeThreshold = sizeThreshold;
     }
 
     public String getUploadPath() {

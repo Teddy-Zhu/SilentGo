@@ -37,7 +37,7 @@ import java.util.Map;
 public class BaseConfig extends InterConfig {
 
     Map<String, AbstractConfig> abstractConfigMap = new HashMap() {{
-        put(Const.FileUploadConfig, new FileUploadConfig(ClassKit.getWebRootPath() + "/UploadFile", -1, 10240, true));
+        put(Const.FileUploadConfig, new FileUploadConfig(ClassKit.getWebRootPath() + "/UploadFile", -1, true));
     }};
 
     private String propfile = "application.properties";

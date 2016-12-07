@@ -8,7 +8,6 @@ import com.silentgo.core.exception.AppReleaseException;
 import com.silentgo.core.exception.AppRequestParseException;
 import com.silentgo.core.route.support.requestdispatch.annotation.RequestDispatch;
 import com.silentgo.core.support.BaseFactory;
-import org.apache.commons.io.FileCleaningTracker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +22,6 @@ import java.util.List;
  */
 @Factory
 public class RequestDispatchFactory extends BaseFactory {
-    public static final String FILE_CLEANING_TRACKER_ATTRIBUTE
-            = MultiPartDispatcher.class.getName() + ".FileCleaningTracker";
 
     private List<RequestDispatcher> requestDispatchers;
 
@@ -42,8 +39,6 @@ public class RequestDispatchFactory extends BaseFactory {
 
     @Override
     public boolean initialize(SilentGo me) throws AppBuildException {
-        me.getContext().setAttribute(FILE_CLEANING_TRACKER_ATTRIBUTE, new FileCleaningTracker());
-
 
         requestDispatchers = new ArrayList<RequestDispatcher>();
 
@@ -67,7 +62,6 @@ public class RequestDispatchFactory extends BaseFactory {
 
     @Override
     public boolean destroy(SilentGo me) throws AppReleaseException {
-        ((FileCleaningTracker) me.getContext().getAttribute(FILE_CLEANING_TRACKER_ATTRIBUTE)).exitWhenFinished();
 
         return true;
     }

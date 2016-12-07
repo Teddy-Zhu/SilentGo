@@ -43,6 +43,7 @@ public class DefaultRouteParser implements RoutePaser {
                 preCount = matchCount[0];
                 continue;
             }
+            matchCount[0] += routeMatch.priority();
 
             Request request = actionParam.getRequest();
 

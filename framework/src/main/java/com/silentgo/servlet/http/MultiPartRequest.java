@@ -3,6 +3,7 @@ package com.silentgo.servlet.http;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Project : silentgo
@@ -14,8 +15,12 @@ import java.util.List;
  */
 public class MultiPartRequest extends Request {
 
-    private HashMap<String, MultiFile> files;
+    private Map<String, MultiFile> files;
 
+    public MultiPartRequest(HttpServletRequest request, Map<String, MultiFile> fileMap) {
+        super(request);
+        this.files = fileMap;
+    }
 
     public MultiPartRequest(HttpServletRequest request, List<MultiFile> orifiles) {
         super(request);
@@ -35,7 +40,7 @@ public class MultiPartRequest extends Request {
         super(request);
     }
 
-    public MultiFile getFile(String name) {
+    public MultiFile getMultiFile(String name) {
         return files.get(name);
     }
 }

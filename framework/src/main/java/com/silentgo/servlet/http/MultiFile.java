@@ -17,41 +17,16 @@ public class MultiFile {
 
     String fileName;
 
+    String tmpName;
+
     String ext;
 
-    String conetentType;
-
-    long size;
-
-    InputStream inputStream;
+    String contentType;
 
     File file;
 
-
-    public MultiFile(String formName, String fileName, String ext, String conetentType, long size, InputStream inputStream, File file) {
-        this.formName = formName;
-        this.fileName = fileName;
-        this.ext = ext;
-        this.inputStream = inputStream;
-        this.size = size;
-        this.file = file;
-        this.conetentType = conetentType;
-    }
-
-    public String getConetentType() {
-        return conetentType;
-    }
-
-    public InputStream getInputStream() {
-        return inputStream;
-    }
-
-    public File getFile() {
-        return file;
-    }
-
-    public long getSize() {
-        return size;
+    public String getContentType() {
+        return contentType;
     }
 
     public String getFormName() {
@@ -64,5 +39,37 @@ public class MultiFile {
 
     public String getExt() {
         return ext;
+    }
+
+    public void setFormName(String formName) {
+        this.formName = formName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public void setExt(String ext) {
+        this.ext = ext;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    public String getTmpName() {
+        return tmpName;
+    }
+
+    public void setTmpName(String tmpName) {
+        this.tmpName = tmpName;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
     }
 }

@@ -29,4 +29,6 @@ public @interface RouteMatch {
     String[] consumes() default {};
 
     String[] produces() default {};
+
+    int priority() default 0;
 }
