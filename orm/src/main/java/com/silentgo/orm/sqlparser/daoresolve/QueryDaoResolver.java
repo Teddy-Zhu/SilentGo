@@ -4,12 +4,12 @@ import com.silentgo.orm.base.BaseDaoDialect;
 import com.silentgo.orm.base.BaseTableInfo;
 import com.silentgo.orm.base.SQLTool;
 import com.silentgo.orm.base.TableModel;
-import com.silentgo.orm.sqlparser.SQLKit;
 import com.silentgo.orm.sqlparser.annotation.ColumnIgnore;
-import com.silentgo.orm.sqlparser.annotation.OrderBy;
 import com.silentgo.orm.sqlparser.annotation.Query;
 import com.silentgo.orm.sqlparser.funcanalyse.DaoKeyWord;
 import com.silentgo.utils.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.util.*;
@@ -23,6 +23,9 @@ import java.util.*;
  *         Created by teddyzhu on 16/9/30.
  */
 public class QueryDaoResolver implements DaoResolver {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(QueryDaoResolver.class);
+
     @Override
     public boolean handle(String methodName, List<String> parsedMethod, List<Annotation> annotations) {
         return DaoKeyWord.Query.equals(parsedMethod.get(0));
@@ -33,6 +36,7 @@ public class QueryDaoResolver implements DaoResolver {
                                                      BaseDaoDialect daoDialect, Map<String, Object> nameObjects) {
         if (isHandled[0]) return sqlTool;
         isHandled[0] = true;
+        sqlTool.select(tableInfo.getTableName());
         Integer index = 1;
         String two = DaoResolveKit.getField(parsedMethod, index);
         if (DaoKeyWord.One.equals(two)) {
@@ -48,7 +52,13 @@ public class QueryDaoResolver implements DaoResolver {
             Query query = (Query) opQuery.get();
             needColumns = query.includeAll();
             for (String s : query.value()) {
-                sqlTool.selectCol(s);
+                String column = s.trim();
+                if (tableInfo.getColumnInfo().containsKey(column))
+                    sqlTool.selectCol(tableInfo.getColumnInfo().get(column).getSelectFullName());
+                else if (tableInfo.getOriginColumn().containsKey(column))
+                    sqlTool.selectCol(tableInfo.getOriginColumn().get(column).getSelectFullName());
+                else
+                    throw new RuntimeException("error query column [" + s + "]");
             }
         }
         if (!needColumns) return sqlTool;

@@ -16,7 +16,7 @@
         <slf4j.version>1.7.12</slf4j.version>
         <servlet.version>3.1.0</servlet.version>
         <utils.version>0.1.4</utils.version>
-        <orm.version>0.2.3</orm.version>
+        <orm.version>0.2.4</orm.version>
     </properties>
 
     <dependencies>

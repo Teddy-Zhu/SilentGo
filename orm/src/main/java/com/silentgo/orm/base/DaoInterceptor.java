@@ -114,7 +114,15 @@ public class DaoInterceptor implements MethodInterceptor {
             }
             case INSERT: {
                 connect = ConnectManager.me().getConnect(tableInfo.getType(), tableInfo.getPoolName());
-                Object[] generateKeys = new Object[objects.length];
+                Object[] generateKeys;
+                if (objects.length == 1) {
+                    if (objects[0] instanceof Collection)
+                        generateKeys = new Object[((Collection) objects[0]).size()];
+                    else
+                        generateKeys = new Object[1];
+                } else {
+                    generateKeys = new Object[0];
+                }
                 ret = SilentGoOrm.insert(connect, sqlTool.getSQL(), int.class, generateKeys, args);
                 resolveInsertResult(tableInfo, generateKeys, objects);
                 break;
@@ -147,10 +155,20 @@ public class DaoInterceptor implements MethodInterceptor {
 
     private void resolveInsertResult(BaseTableInfo tableInfos, Object[] generateKeys, Object[] params) throws InvocationTargetException, IllegalAccessException {
         if (tableInfos.getPrimaryKeys().size() == 0) return;
-        Map<String, PropertyDescriptor> propertyDescriptorMap = PropertyKit.getCachedProps(tableInfos);
-        PropertyDescriptor p = propertyDescriptorMap.get(tableInfos.getPrimaryKeys().get(0));
-        for (int i = 0; i < generateKeys.length; i++) {
-            p.getWriteMethod().invoke(params[i], ConvertKit.getTypeConvert(String.class, p.getPropertyType()).convert(generateKeys[i].toString()));
+        if (params.length == 1) {
+            Map<String, PropertyDescriptor> propertyDescriptorMap = PropertyKit.getCachedProps(tableInfos);
+            PropertyDescriptor p = propertyDescriptorMap.get(tableInfos.getPrimaryKeys().get(0));
+            if (params[0] instanceof Collection) {
+                Collection objects = (Collection) params[0];
+                Iterator iterator = objects.iterator();
+                int i = 0;
+                while (iterator.hasNext() && i < generateKeys.length) {
+                    p.getWriteMethod().invoke(iterator.next(), ConvertKit.getTypeConvert(String.class, p.getPropertyType()).convert(generateKeys[i].toString()));
+                    i++;
+                }
+            } else {
+                p.getWriteMethod().invoke(params[0], ConvertKit.getTypeConvert(String.class, p.getPropertyType()).convert(generateKeys[0].toString()));
+            }
         }
     }
 

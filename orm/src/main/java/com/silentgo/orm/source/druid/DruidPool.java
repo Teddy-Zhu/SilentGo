@@ -19,7 +19,7 @@ import java.sql.SQLException;
 public class DruidPool implements DBPool {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DruidPool.class);
-    private ThreadLocal<DBConnect> threadConnect = new InheritableThreadLocal<>();
+    private ThreadLocal<DBConnect> threadConnect = new ThreadLocal<>();
 
     private DruidDataSource ds;
 
@@ -34,6 +34,11 @@ public class DruidPool implements DBPool {
             if (connect == null) {
                 connect = new DruidConnect(ds.getConnection());
                 threadConnect.set(connect);
+            } else {
+                if (!connect.getConnect().isValid(3000) || connect.getConnect().isClosed()) {
+                    connect = new DruidConnect(ds.getConnection());
+                    threadConnect.set(connect);
+                }
             }
             return connect;
         } catch (SQLException e) {

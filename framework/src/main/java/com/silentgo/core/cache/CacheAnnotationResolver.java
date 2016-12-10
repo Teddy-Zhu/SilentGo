@@ -31,8 +31,7 @@ public class CacheAnnotationResolver implements IAnnotation<Cache> {
     @Override
     public Object intercept(AnnotationInterceptChain chain, Response response, Request request, Cache cache) throws Throwable {
         Object returnValue;
-        boolean useCache;
-        Object cacheKey = null;
+        Object cacheKey;
         SilentGo instance = SilentGo.me();
         CacheManager cacheManager = instance.getConfig().getCacheManager();
         Object[] objects = chain.getPoint().getObjects();

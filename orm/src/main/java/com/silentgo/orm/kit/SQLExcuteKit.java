@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -59,9 +60,9 @@ public class SQLExcuteKit {
                 int rows = stmt.executeUpdate();
                 rs = stmt.getGeneratedKeys();
                 if (generateKeys != null) {
-                    Object[] keys = new ArrayRSResolver().resolve(rs);
-                    for (int i = 0; i < generateKeys.length && i < keys.length; i++) {
-                        generateKeys[i] = keys[i];
+                    List keys = new ListCompatibleRSResolver(Object.class).resolve(rs);
+                    for (int i = 0; i < generateKeys.length && i < keys.size(); i++) {
+                        generateKeys[i] = keys.get(i);
                     }
                 }
                 return rows;

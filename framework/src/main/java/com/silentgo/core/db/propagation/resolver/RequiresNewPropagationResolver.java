@@ -27,7 +27,7 @@ public class RequiresNewPropagationResolver implements PropagationResolver {
             boolean isAuto = innerConnect.getAutoCommit();
 
             if (isAuto) {
-                return PropagationKit.resolve(me, chain, connect, annotation);
+                return PropagationKit.resolve(me, chain, connect, annotation, name);
             } else {
                 DBType type = DBType.parse(me.getConfig().getDbType());
                 DBConnect newConnect = ConnectManager.me().getNewConnect(type, name);
@@ -57,7 +57,7 @@ public class RequiresNewPropagationResolver implements PropagationResolver {
                 return ret;
             }
         } else {
-            return PropagationKit.resolve(me, chain, connect, annotation);
+            return PropagationKit.resolve(me, chain, connect, annotation, name);
         }
     }
 }

@@ -40,6 +40,7 @@ public class BaseTableInfoKit {
         info.setType(type);
         info.setPoolName(poolName);
         Map<String, Column> fullMap = new HashMap<String, Column>();
+        Map<String, Column> originMap = new HashMap<>();
         TableMeta tableMeta = new TableMetaGenerate().getTable(connection, tableName);
 
 
@@ -58,6 +59,7 @@ public class BaseTableInfoKit {
             nc.setFullName(tableMeta.getTableName() + DOT + nc.getColumnName());
             nc.setSelectFullName(nc.getFullName() + (nc.getPropName().equals(nc.getColumnName()) ? "" : " as " + nc.getPropName()));
             fullMap.put(nc.getPropName(), nc);
+            originMap.put(nc.getColumnName(), nc);
             all.add(nc.getSelectFullName());
         }
 
@@ -78,6 +80,7 @@ public class BaseTableInfoKit {
 //        });
 
         info.setColumnInfo(fullMap);
+        info.setOriginColumn(originMap);
         return info;
     }
 }

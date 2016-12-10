@@ -4,6 +4,9 @@ import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.annotationintercept.support.AnnotationInterceptChain;
 import com.silentgo.core.db.intercept.Transaction;
 import com.silentgo.orm.base.DBConnect;
+import com.silentgo.orm.base.DBType;
+import com.silentgo.orm.connect.ConnectManager;
+import com.silentgo.utils.StringKit;
 
 import java.sql.Connection;
 
@@ -17,9 +20,10 @@ import java.sql.Connection;
  */
 public class PropagationKit {
 
-    public static Object resolve(SilentGo me, AnnotationInterceptChain chain, DBConnect connect, Transaction annotation) throws Throwable {
-        Object ret = null;
+    public static Object resolve(SilentGo me, AnnotationInterceptChain chain, DBConnect connect, Transaction annotation, String name) throws Throwable {
+        Object ret;
         Connection innerConnect = connect.getConnect();
+        DBType type = DBType.parse(me.getConfig().getDbType());
 
         innerConnect.setAutoCommit(false);
         innerConnect.setTransactionIsolation(annotation.transcationLevel());
@@ -37,7 +41,7 @@ public class PropagationKit {
             throw throwable;
         } finally {
             innerConnect.setAutoCommit(true);
-            me.releaseConnect(connect);
+            ConnectManager.me().releaseConnect(type, name, connect);
         }
         return ret;
     }

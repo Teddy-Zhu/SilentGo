@@ -19,7 +19,7 @@ import java.util.*;
  */
 public class JDBCPool implements DBPool {
 
-    private ThreadLocal<DBConnect> threadConnect = new InheritableThreadLocal<>();
+    private ThreadLocal<DBConnect> threadConnect = new ThreadLocal<>();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JDBCPool.class);
 

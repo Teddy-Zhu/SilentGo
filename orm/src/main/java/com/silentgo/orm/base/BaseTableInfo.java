@@ -2,6 +2,7 @@ package com.silentgo.orm.base;
 
 import com.silentgo.orm.base.DBType;
 import com.silentgo.orm.base.TableModel;
+import org.omg.CORBA.PUBLIC_MEMBER;
 
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,15 @@ public class BaseTableInfo {
     public String tableName;
     public List<String> primaryKeys;
     public Map<String, Column> columnInfo;
+    public Map<String, Column> originColumn;
+
+    public Map<String, Column> getOriginColumn() {
+        return originColumn;
+    }
+
+    public void setOriginColumn(Map<String, Column> originColumn) {
+        this.originColumn = originColumn;
+    }
 
     public String getPoolName() {
         return poolName;

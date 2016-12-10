@@ -26,14 +26,14 @@ public class RequiredPropagationResolver implements PropagationResolver {
             boolean isAuto = innerConnect.getAutoCommit();
 
             if (isAuto) {
-                return PropagationKit.resolve(me, chain, connect, annotation);
+                return PropagationKit.resolve(me, chain, connect, annotation,name);
             } else {
                 if (innerConnect.getTransactionIsolation() < annotation.transcationLevel())
                     innerConnect.setTransactionIsolation(annotation.transcationLevel());
                 return chain.intercept();
             }
         } else {
-            return PropagationKit.resolve(me, chain, connect, annotation);
+            return PropagationKit.resolve(me, chain, connect, annotation,name);
         }
     }
 }
