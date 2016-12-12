@@ -146,6 +146,7 @@ public class SilentGoFilter implements Filter {
                     try {
                         v.destroy(appContext);
                     } catch (AppReleaseException e) {
+                        LOGGER.error("release factory : " + v.getClass().getName() + " error", e);
                         e.printStackTrace();
                     }
                 });

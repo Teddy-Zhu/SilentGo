@@ -7,8 +7,10 @@ import com.silentgo.core.exception.AppBuildException;
 import com.silentgo.core.exception.AppReleaseException;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.utils.PropKit;
+import net.sf.ehcache.CacheManager;
 import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.codec.Base64;
+import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
 import org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator;
 import org.apache.shiro.web.env.MutableWebEnvironment;
@@ -17,8 +19,12 @@ import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
+import org.quartz.SchedulerException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContext;
+import java.util.List;
 
 /**
  * Project : SilentGo
@@ -29,9 +35,13 @@ import javax.servlet.ServletContext;
  *         Created by teddyzhu on 2016/10/10.
  */
 public class ShiroFactory extends BaseFactory {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ShiroFactory.class);
+
     public static final String Name = "Shiro";
 
     private DefaultWebSecurityManager defaultWebSecurityManager;
+    private QuartzSessionValidationScheduler sessionValidationScheduler;
 
     public DefaultWebSecurityManager getDefaultWebSecurityManager() {
         return defaultWebSecurityManager;
@@ -80,7 +90,7 @@ public class ShiroFactory extends BaseFactory {
 
         DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
 
-        QuartzSessionValidationScheduler sessionValidationScheduler = new QuartzSessionValidationScheduler(sessionManager);
+        sessionValidationScheduler = new QuartzSessionValidationScheduler(sessionManager);
         sessionValidationScheduler.setSessionValidationInterval(prop.getLong(Dict.SHIRO_SESSION_VALIDATIONINTERVAL, 1800000L));
 
         sessionManager.setGlobalSessionTimeout(prop.getLong(Dict.SHIRO_SESSION_GLOBALSESSIONTIMEOUT, 1800000L));
@@ -113,8 +123,20 @@ public class ShiroFactory extends BaseFactory {
 
     @Override
     public boolean destroy(SilentGo me) throws AppReleaseException {
-
-
-        return false;
+        List knownCacheManagers = CacheManager.ALL_CACHE_MANAGERS;
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Shutting down " + knownCacheManagers.size() + " CacheManagers.");
+        }
+        while (!knownCacheManagers.isEmpty()) {
+            CacheManager.ALL_CACHE_MANAGERS.get(0).shutdown();
+        }
+        if (sessionValidationScheduler != null) {
+            try {
+                sessionValidationScheduler.getScheduler().shutdown();
+            } catch (SchedulerException e) {
+                LOGGER.error("get session schedule error", e);
+            }
+        }
+        return true;
     }
 }

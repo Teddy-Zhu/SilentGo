@@ -53,7 +53,7 @@ public class OrderDaoResovler implements DaoResolver {
             if (DaoKeyWord.Desc.equals(sort)) {
                 sqlTool.orderByDesc(f);
                 index += 1;
-            } else if (DaoKeyWord.Asc.equals(sort)) {
+            } else {
                 sqlTool.orderByAsc(f);
                 index += 1;
             }
