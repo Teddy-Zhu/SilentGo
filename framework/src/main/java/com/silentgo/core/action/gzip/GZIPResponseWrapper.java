@@ -1,6 +1,8 @@
 package com.silentgo.core.action.gzip;
 
 import com.silentgo.servlet.http.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletOutputStream;
 import java.io.IOException;
@@ -12,6 +14,8 @@ import java.io.PrintWriter;
  */
 
 public class GZIPResponseWrapper extends Response {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GZIPResponseWrapper.class);
     protected Response origResponse = null;
     protected ServletOutputStream stream = null;
     protected PrintWriter writer = null;
@@ -21,11 +25,11 @@ public class GZIPResponseWrapper extends Response {
         origResponse = response;
     }
 
-    public ServletOutputStream createOutputStream() throws IOException {
-        return (new GZIPResponseStream(origResponse));
+    private ServletOutputStream createOutputStream() throws IOException {
+        return new GZIPResponseStream(origResponse);
     }
 
-    public void finishResponse() {
+    public void finish() {
         try {
             if (writer != null) {
                 writer.close();
@@ -35,13 +39,16 @@ public class GZIPResponseWrapper extends Response {
                 }
             }
         } catch (IOException e) {
+            LOGGER.error("close gzip response stream error", e);
         }
     }
 
+    @Override
     public void flushBuffer() throws IOException {
         stream.flush();
     }
 
+    @Override
     public ServletOutputStream getOutputStream() throws IOException {
         if (writer != null) {
             throw new IllegalStateException("getWriter() has already been called!");
@@ -49,12 +56,13 @@ public class GZIPResponseWrapper extends Response {
 
         if (stream == null)
             stream = createOutputStream();
-        return (stream);
+        return stream;
     }
 
+    @Override
     public PrintWriter getWriter() throws IOException {
         if (writer != null) {
-            return (writer);
+            return writer;
         }
 
         if (stream != null) {
@@ -63,9 +71,8 @@ public class GZIPResponseWrapper extends Response {
 
         stream = createOutputStream();
         writer = new PrintWriter(new OutputStreamWriter(stream, origResponse.getCharacterEncoding()));
-        return (writer);
+        return writer;
     }
 
-    public void setContentLength(int length) {
-    }
+
 }

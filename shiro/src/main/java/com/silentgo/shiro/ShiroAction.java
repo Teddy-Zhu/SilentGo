@@ -40,7 +40,7 @@ public class ShiroAction extends ActionChain {
         subject.execute(() -> {
             updateSessionLastAccessTime(request, response);
             try {
-                nextAction.doAction(param);
+                next(param);
             } catch (Throwable throwable) {
                 t[0] = throwable;
             }

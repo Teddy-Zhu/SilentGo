@@ -91,6 +91,11 @@ public class FieldBean {
         this.field = field;
     }
 
+    public FieldBean(Field field, String beanName) {
+        this.field = field;
+        this.beanName = beanName;
+    }
+
     public boolean isHasSet() {
         return hasSet;
     }

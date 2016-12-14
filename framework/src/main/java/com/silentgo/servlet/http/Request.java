@@ -2,6 +2,7 @@ package com.silentgo.servlet.http;
 
 
 import com.silentgo.core.SilentGo;
+import com.silentgo.core.action.ActionChain;
 
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.util.HashMap;
@@ -99,7 +100,7 @@ public class Request extends HttpServletRequestWrapper {
      */
     public void forward(String controllerName) throws Throwable {
         SilentGo instance = SilentGo.me();
-        instance.getConfig().getRouteAction().doAction(SilentGo.me().getConfig().getCtx().get().getActionParam());
+        ((ActionChain) instance.getConfig().getActionChain().getObject()).doAction(instance.getConfig().getCtx().get().getActionParam());
     }
 
 

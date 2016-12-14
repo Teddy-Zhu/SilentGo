@@ -1,6 +1,7 @@
 package com.silentgo.servlet;
 
 import com.silentgo.core.SilentGo;
+import com.silentgo.core.action.ActionChain;
 import com.silentgo.core.action.ActionParam;
 import com.silentgo.core.build.Factory;
 import com.silentgo.core.config.Config;
@@ -126,7 +127,7 @@ public class SilentGoFilter implements Filter {
         try {
             long start = System.currentTimeMillis();
             LOGGER.debug("action {} start", requestPath);
-            globalConfig.getActionChain().doAction(param);
+            ((ActionChain) globalConfig.getActionChain().getObject()).doAction(param);
             LOGGER.debug("action {} end in : {} ms", requestPath, System.currentTimeMillis() - start);
         } catch (Throwable throwable) {
             LOGGER.error("action error", throwable);

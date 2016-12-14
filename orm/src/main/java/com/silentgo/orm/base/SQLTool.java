@@ -402,7 +402,7 @@ public class SQLTool {
         return columns;
     }
 
-    public SQLTool findFirst(int size, int page) {
+    public SQLTool findFirst() {
         this.limit = " limit 0,1 ";
         return this;
     }

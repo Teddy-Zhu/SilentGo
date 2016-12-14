@@ -151,6 +151,8 @@ public class SilentGoBeanFactory extends BeanFactory<BeanDefinition> {
                 v.setGetMethod(readMethod);
             }
         }
+
+        beanDefinition.setInjectComplete(true);
     }
 
     private static ArrayList<Class<? extends Annotation>> anList = new ArrayList() {{

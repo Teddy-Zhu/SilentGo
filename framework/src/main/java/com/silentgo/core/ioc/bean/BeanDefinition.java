@@ -92,7 +92,6 @@ public class BeanDefinition extends BeanWrapper {
             proxyTarget = CGLibKit.Proxy(target);
         else {
             proxyTarget = target;
-            injectComplete = true;
         }
         fieldBeans = new HashMap<>();
         Field[] fields = clz.getDeclaredFields();
@@ -101,9 +100,9 @@ public class BeanDefinition extends BeanWrapper {
             //filter no annotation class
             if (inject != null) {
                 if (Const.DEFAULT_NONE.equals(inject.value()))
-                    fieldBeans.put(field.getType().getName(), new FieldBean(field));
+                    fieldBeans.put(field.getType().getName(), new FieldBean(field, field.getType().getName()));
                 else
-                    fieldBeans.put(inject.value(), new FieldBean(field));
+                    fieldBeans.put(inject.value(), new FieldBean(field, inject.value()));
             }
         }
     }

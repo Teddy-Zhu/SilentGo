@@ -2,9 +2,9 @@ package com.silentgo.core.config;
 
 import com.silentgo.core.action.ActionChain;
 import com.silentgo.core.cache.CacheManager;
+import com.silentgo.core.ioc.bean.BeanWrapper;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.orm.base.DBConfig;
-import com.silentgo.orm.base.DBConnect;
 import com.silentgo.servlet.SilentGoContext;
 import com.silentgo.utils.PropKit;
 
@@ -27,9 +27,7 @@ public class InterConfig {
 
     private final ThreadLocal<SilentGoContext> ctx = new InheritableThreadLocal<>();
 
-    private ActionChain actionChain;
-
-    private ActionChain routeAction;
+    private BeanWrapper actionChain;
 
     private PropKit propKit;
 
@@ -51,11 +49,11 @@ public class InterConfig {
         return ctx;
     }
 
-    public ActionChain getActionChain() {
+    public BeanWrapper getActionChain() {
         return actionChain;
     }
 
-    public void setActionChain(ActionChain actionChain) {
+    public void setActionChain(BeanWrapper actionChain) {
         this.actionChain = actionChain;
     }
 
@@ -73,14 +71,6 @@ public class InterConfig {
 
     public void setUserProp(PropKit userProp) {
         this.userProp = userProp;
-    }
-
-    public ActionChain getRouteAction() {
-        return routeAction;
-    }
-
-    public void setRouteAction(ActionChain routeAction) {
-        this.routeAction = routeAction;
     }
 
     public List<DBConfig> getDbConfigList() {

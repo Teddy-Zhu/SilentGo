@@ -7,6 +7,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.zip.GZIPOutputStream;
 
@@ -15,7 +16,7 @@ import java.util.zip.GZIPOutputStream;
  */
 
 public class GZIPResponseStream extends ServletOutputStream {
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private Logger logger = LoggerFactory.getLogger(GZIPResponseStream.class);
 
     protected ByteArrayOutputStream baos = null;
     protected GZIPOutputStream gzipstream = null;
@@ -40,13 +41,22 @@ public class GZIPResponseStream extends ServletOutputStream {
 
         byte[] bytes = baos.toByteArray();
 
-
         response.addHeader("Content-Length", Integer.toString(bytes.length));
         response.addHeader("Content-Encoding", "gzip");
         output.write(bytes);
         output.flush();
         output.close();
         closed = true;
+    }
+
+    protected byte[] compressData(byte[] data) throws IOException {
+        // do the compression
+        ByteArrayOutputStream compressed = new ByteArrayOutputStream();
+        GZIPOutputStream gzout = new GZIPOutputStream(compressed);
+        gzout.write(data);
+        gzout.flush();
+        gzout.close();
+        return compressed.toByteArray();
     }
 
     public void flush() throws IOException {
@@ -56,6 +66,7 @@ public class GZIPResponseStream extends ServletOutputStream {
         gzipstream.flush();
     }
 
+    @Override
     public void write(int b) throws IOException {
         if (closed) {
             throw new IOException("Cannot write to a closed output stream");
@@ -63,10 +74,12 @@ public class GZIPResponseStream extends ServletOutputStream {
         gzipstream.write((byte) b);
     }
 
+    @Override
     public void write(byte b[]) throws IOException {
         write(b, 0, b.length);
     }
 
+    @Override
     public void write(byte b[], int off, int len) throws IOException {
         if (closed) {
             throw new IOException("Cannot write to a closed output stream");
@@ -84,7 +97,7 @@ public class GZIPResponseStream extends ServletOutputStream {
 
     @Override
     public boolean isReady() {
-        return true;
+        return false;
     }
 
     @Override

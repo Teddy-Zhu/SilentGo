@@ -21,8 +21,6 @@ public class StaticFileAction extends ActionChain {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StaticFileAction.class);
 
-    private static final long MAX_AGE = 2764800L;
-
     @Override
     public Integer priority() {
         return Integer.MAX_VALUE - 10;
@@ -36,18 +34,6 @@ public class StaticFileAction extends ActionChain {
         if (instance.getConfig().getStaticStartWith()
                 .stream().anyMatch(requestURL::startsWith) ||
                 instance.getConfig().getStaticEndWith().stream().anyMatch(requestURL::endsWith)) {
-            //handle e tag for static file
-            long ims = param.getRequest().getDateHeader("If-Modified-Since");
-            long now;
-            now = System.currentTimeMillis();
-            if (ims + MAX_AGE > now) {
-                param.getResponse().setStatus(HttpStatus.NOT_MODIFIED_304);
-                return;
-            }
-            param.getResponse().setHeader("Cache-Control", "max-age=" + MAX_AGE);
-            param.getResponse().addDateHeader("Expires", now + MAX_AGE * 1000);
-            param.getResponse().addDateHeader("Last-Modified", now);
-
 
             // for static path mapping
             boolean forward = false;
@@ -55,7 +41,7 @@ public class StaticFileAction extends ActionChain {
                 if (requestURL.startsWith(entry.getKey())) {
                     forward = true;
                     param.getRequest().getRequestDispatcher(requestURL.replace(entry.getKey(), entry.getValue()))
-                            .forward(param.getRequest().getRequest(), param.getResponse().getResponse());
+                            .forward(param.getRequest(), param.getResponse());
                     break;
                 }
             }
@@ -65,6 +51,6 @@ public class StaticFileAction extends ActionChain {
                 param.doFilter(param.getRequest(), param.getResponse());
             return;
         }
-        nextAction.doAction(param);
+        next(param);
     }
 }
