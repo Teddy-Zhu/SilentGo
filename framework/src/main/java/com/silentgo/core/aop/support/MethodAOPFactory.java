@@ -24,7 +24,9 @@ import com.silentgo.core.route.annotation.Controller;
 import com.silentgo.core.route.annotation.RequestParam;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.utils.CollectionKit;
+import com.silentgo.utils.ReflectKit;
 import com.silentgo.utils.asm.LocalVariableTableParameterNameDiscoverer;
+import com.silentgo.utils.reflect.SGClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -133,12 +135,11 @@ public class MethodAOPFactory extends BaseFactory {
     public void buildMethodAdviser(List<Interceptor> globalInterceptors, InterceptFactory interceptFactory,
                                    AnnotationInceptFactory annotationInceptFactory, AspectFactory aspectFactory,
                                    ValidatorFactory validatorFactory, Class<?> clz) {
-        List<Annotation> annotations = Arrays.asList(clz.getAnnotations());
-        annotations = filterAnnotation(annotations);
-        Method[] methods = clz.getDeclaredMethods();
-        boolean needInject = false;
-        for (Method method : methods) {
-            MethodAdviser methodAdviser = BuildAdviser(method, annotations);
+
+        final boolean[] needInject = {false};
+        SGClass sgClass = ReflectKit.getSGClass(clz);
+        sgClass.getMethodMap().forEach((methodEntity, method) -> {
+            MethodAdviser methodAdviser = new MethodAdviser(method);
 
             List interceptors = new ArrayList<Interceptor>() {{
                 //add global
@@ -152,13 +153,13 @@ public class MethodAOPFactory extends BaseFactory {
             addMethodAdviser(methodAdviser);
 
             if (globalInterceptors.size() > 0)
-                needInject = true;
+                needInject[0] = true;
 
             //build annotations
             annotationInceptFactory.buildIAnnotation(methodAdviser);
             if (annotationInceptFactory.getSortedAnnotationMap(methodAdviser.getMethod()).size() > 0) {
                 interceptors.add(new AnnotationInterceptor());
-                needInject = true;
+                needInject[0] = true;
             }
 
             aspectFactory.getAspectMethods().forEach(aspectMethod -> {
@@ -178,23 +179,24 @@ public class MethodAOPFactory extends BaseFactory {
 
             if (aspectFactory.getAspectMethod(methodAdviser.getMethod()).size() > 0) {
                 interceptors.add(new AspectInterceptor());
-                needInject = true;
+                needInject[0] = true;
             }
 
             validatorFactory.addMethodParamValidator(methodAdviser.getMethod(), validatorFactory.buildIValidator(methodAdviser));
 
             if (!validatorFactory.getParamValidatorMap(methodAdviser.getMethod()).isEmpty()) {
                 interceptors.add(new ValidatorInterceptor());
-                needInject = true;
+                needInject[0] = true;
             }
 
             //save method interceptors
             sortInterceptrs(interceptors);
 
-            addBuildedInterceptor(method, interceptors);
+            addBuildedInterceptor(methodAdviser.getMethod(), interceptors);
 
-        }
-        initclz.put(clz, needInject);
+
+        });
+        initclz.put(clz, needInject[0]);
     }
 
     public void sortInterceptrs(List<Interceptor> interceptors) {
@@ -204,61 +206,6 @@ public class MethodAOPFactory extends BaseFactory {
             return (x < y) ? -1 : ((x == y) ? 0 : 1);
         }));
 
-    }
-
-    private MethodParam BuildParam(Parameter parameter, String name) {
-
-        Class<?> type = parameter.getType();
-        List<Annotation> annotations = Arrays.asList(parameter.getAnnotations());
-
-        Optional<Annotation> requestParam = annotations.stream().filter(annotation -> annotation.annotationType().equals(RequestParam.class)).findFirst();
-
-        if (requestParam.isPresent()) {
-            String tmpName = ((RequestParam) requestParam.get()).value();
-            name = Const.DEFAULT_NONE.equals(tmpName) ? name : tmpName;
-        }
-
-        return new MethodParam(type, name, annotations);
-    }
-
-    private MethodParam BuildParam(Parameter parameter) {
-        return BuildParam(parameter, parameter.getName());
-    }
-
-    private MethodParam[] BuildParam(Method method, Parameter[] parameter) {
-        MethodParam[] methodParams = new MethodParam[parameter.length];
-        if (parameter.length == 0) return methodParams;
-        if (parameter[0].isNamePresent()) {
-            BuildParam(methodParams, parameter);
-        } else {
-            //copy from spring, had no good ideas
-            LocalVariableTableParameterNameDiscoverer lvtd = new LocalVariableTableParameterNameDiscoverer();
-            String[] parameterNames = lvtd.getParameterNames(method);
-            if (parameterNames == null || parameterNames.length != parameter.length) {
-                BuildParam(methodParams, parameter);
-                return methodParams;
-            }
-            for (int i = 0, len = parameter.length; i < len; i++) {
-                methodParams[i] = BuildParam(parameter[i], parameterNames[i]);
-            }
-
-        }
-
-        return methodParams;
-    }
-
-    private void BuildParam(MethodParam[] params, Parameter[] parameters) {
-        for (int i = 0, len = parameters.length; i < len; i++) {
-            params[i] = BuildParam(parameters[i]);
-        }
-    }
-
-    private MethodAdviser BuildAdviser(Method method, List<Annotation> parentAnnotations) {
-        String className = method.getDeclaringClass().getName();
-        String name = className + "." + method.getName();
-
-        List<Annotation> annotations = Arrays.asList(method.getAnnotations());
-        return new MethodAdviser(className, name, method, BuildParam(method, method.getParameters()), annotations);
     }
 
     private List<Annotation> filterAnnotation(List<Annotation> annotations) {

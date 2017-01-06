@@ -109,7 +109,7 @@ public class SilentGoBeanFactory extends BeanFactory<BeanDefinition> {
             FieldBean v = entity.getValue();
             Field field = v.getField();
             Class<?> type = field.getType();
-            BeanDefinition bean = null;
+            BeanDefinition bean;
             if (type.isInterface() && k.equals(type.getName())) {
                 try {
                     bean = beansMap.entrySet().stream().filter(keyset -> keyset.getValue().getInterfaceClass().getName().equals(k))
@@ -127,29 +127,6 @@ public class SilentGoBeanFactory extends BeanFactory<BeanDefinition> {
                 bean = addBean(type);
             }
             v.setBeanName(bean.getBeanName());
-
-            PropertyDescriptor pd = null;
-            try {
-                pd = new PropertyDescriptor(field.getName(),
-                        beanDefinition.getBeanClass(),
-                        "get" + StringKit.firstToUpper(field.getName()),
-                        "set" + StringKit.firstToUpper(field.getName())
-                );
-            } catch (IntrospectionException e) {
-                LOGGER.warn("Field {} Can not find getter and setter in Class {}", field.getName(), bean.getBeanClass());
-                continue;
-            }
-
-            Method method = pd.getWriteMethod();
-            if (method != null) {
-                v.setHasSet(true);
-                v.setSetMethod(method);
-            }
-            Method readMethod = pd.getReadMethod();
-            if (readMethod != null) {
-                v.setHasGet(true);
-                v.setGetMethod(readMethod);
-            }
         }
 
         beanDefinition.setInjectComplete(true);

@@ -7,6 +7,8 @@ import com.silentgo.core.ioc.annotation.Component;
 import com.silentgo.core.ioc.annotation.Inject;
 import com.silentgo.core.ioc.annotation.Service;
 import com.silentgo.core.kit.CGLibKit;
+import com.silentgo.utils.ReflectKit;
+import com.silentgo.utils.reflect.SGClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,9 +96,11 @@ public class BeanDefinition extends BeanWrapper {
             proxyTarget = target;
         }
         fieldBeans = new HashMap<>();
-        Field[] fields = clz.getDeclaredFields();
-        for (Field field : fields) {
-            Inject inject = field.getAnnotation(Inject.class);
+
+        SGClass sgClass = ReflectKit.getSGClass(clz);
+
+        sgClass.getFieldMap().forEach((name, field) -> {
+            Inject inject = (Inject) field.getAnnotationMap().get(Inject.class);
             //filter no annotation class
             if (inject != null) {
                 if (Const.DEFAULT_NONE.equals(inject.value()))
@@ -104,7 +108,7 @@ public class BeanDefinition extends BeanWrapper {
                 else
                     fieldBeans.put(inject.value(), new FieldBean(field, inject.value()));
             }
-        }
+        });
     }
 
     private void Create(String beanName, Class<?> clz, boolean needInject, boolean isLazy) {

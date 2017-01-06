@@ -1,5 +1,6 @@
 package com.silentgo.core.ioc.bean;
 
+import com.silentgo.utils.reflect.SGField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,27 +22,20 @@ public class FieldBean {
 
     private String beanName;
 
-    private boolean hasSet = false;
-
-    private boolean hasGet = false;
-
-    private Method setMethod;
-    private Method getMethod;
-
-    private Field field;
+    private SGField field;
 
     public Object getValue(Object source) {
-        if (hasGet) {
-            getMethod.setAccessible(true);
+        if (field.getGetMethod() != null) {
+            field.getGetMethod().getMethod().setAccessible(true);
             try {
-                return getMethod.invoke(source);
+                return field.getGetMethod().getMethod().invoke(source);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 LOGGER.error("bean field invoke : {}", beanName);
             }
         } else {
-            field.setAccessible(true);
+            field.getField().setAccessible(true);
             try {
-                return field.get(source);
+                return field.getField().get(source);
             } catch (IllegalAccessException e) {
                 LOGGER.error("bean field get invoke: {}", beanName);
             }
@@ -50,18 +44,18 @@ public class FieldBean {
     }
 
     public boolean setValue(Object source, Object target) {
-        if (hasSet) {
-            setMethod.setAccessible(true);
+        if (field.getSetMethod() != null) {
+            field.getSetMethod().getMethod().setAccessible(true);
             try {
-                setMethod.invoke(source, target);
+                field.getSetMethod().getMethod().invoke(source, target);
                 return true;
             } catch (IllegalAccessException | InvocationTargetException e) {
                 LOGGER.error("bean field invoke set method failed: {}", beanName);
             }
         } else {
-            field.setAccessible(true);
+            field.getField().setAccessible(true);
             try {
-                field.set(source, target);
+                field.getField().set(source, target);
                 return true;
             } catch (IllegalAccessException e) {
                 LOGGER.error("bean field invoke set failed: {}", beanName);
@@ -71,53 +65,14 @@ public class FieldBean {
         return false;
     }
 
-    public boolean isHasGet() {
-        return hasGet;
-    }
 
-    public void setHasGet(boolean hasGet) {
-        this.hasGet = hasGet;
-    }
-
-    public Method getGetMethod() {
-        return getMethod;
-    }
-
-    public void setGetMethod(Method getMethod) {
-        this.getMethod = getMethod;
-    }
-
-    public FieldBean(Field field) {
-        this.field = field;
-    }
-
-    public FieldBean(Field field, String beanName) {
+    public FieldBean(SGField field, String beanName) {
         this.field = field;
         this.beanName = beanName;
     }
 
-    public boolean isHasSet() {
-        return hasSet;
-    }
-
-    public void setHasSet(boolean hasSet) {
-        this.hasSet = hasSet;
-    }
-
-    public Method getSetMethod() {
-        return setMethod;
-    }
-
-    public void setSetMethod(Method setMethod) {
-        this.setMethod = setMethod;
-    }
-
     public Field getField() {
-        return field;
-    }
-
-    public void setField(Field field) {
-        this.field = field;
+        return field.getField();
     }
 
     public String getBeanName() {

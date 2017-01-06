@@ -1,5 +1,6 @@
 package com.silentgo.core.aop;
 
+import com.silentgo.utils.reflect.SGParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,41 +20,29 @@ public class MethodParam {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(MethodParam.class);
 
-    private Class<?> type;
-
-    private String name;
-
-    private List<Class<? extends Annotation>> anTypes;
+    SGParameter sgParameter;
 
     private List<Annotation> annotations;
 
     public Class<?> getType() {
-        return type;
+        return sgParameter.getClz();
     }
 
     public String getName() {
-        return name;
+        return sgParameter.getName();
     }
 
-    public MethodParam(Class<?> type, String name, List<Annotation> annotations) {
-        this.type = type;
-        this.name = name;
-        this.annotations = annotations;
-        anTypes = new ArrayList<>();
-        annotations.forEach(annotation -> anTypes.add(annotation.annotationType()));
+    public MethodParam(SGParameter sgParameter) {
+        this.sgParameter = sgParameter;
+        this.annotations = new ArrayList<>(sgParameter.getAnnotationMap().values());
     }
 
     public boolean existAnnotation(Class<? extends Annotation> clz) {
-        return anTypes.contains(clz);
+        return sgParameter.getAnnotationMap().containsKey(clz);
     }
 
     public <T extends Annotation> T getAnnotation(Class<T> tClass) {
-        for (Annotation annotation : annotations) {
-            if (annotation.annotationType().equals(tClass)) {
-                return (T) annotation;
-            }
-        }
-        return null;
+        return (T) sgParameter.getAnnotationMap().get(tClass);
     }
 
     public List<Annotation> getAnnotations() {
