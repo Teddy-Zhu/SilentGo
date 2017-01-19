@@ -11,7 +11,6 @@
         <module>framework</module>
         <module>utils</module>
         <module>orm</module>
-        <module>test</module>
         <module>jetbrick</module>
         <module>shiro</module>
     </modules>
@@ -27,7 +26,6 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>4.12</junit.version>
-        <slf4j-api.version>1.7.16</slf4j-api.version>
     </properties>
 
 
@@ -38,12 +36,6 @@
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
                 <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j-api.version}</version>
-                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

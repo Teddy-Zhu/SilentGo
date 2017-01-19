@@ -5,12 +5,11 @@ import com.silentgo.orm.base.Column;
 import com.silentgo.orm.base.DBType;
 import com.silentgo.orm.base.TableModel;
 import com.silentgo.orm.common.Const;
-import com.silentgo.orm.generate.TableDaoGenerate;
 import com.silentgo.orm.generate.TableMeta;
 import com.silentgo.orm.generate.TableMetaGenerate;
 import com.silentgo.utils.StringKit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
@@ -27,7 +26,7 @@ import java.util.*;
  */
 public class BaseTableInfoKit {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseTableInfoKit.class);
+    private static final Log LOGGER = LogFactory.get();
 
     private static final String DOT = ".";
 

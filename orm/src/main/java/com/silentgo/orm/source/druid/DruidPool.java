@@ -3,8 +3,8 @@ package com.silentgo.orm.source.druid;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.silentgo.orm.base.DBConnect;
 import com.silentgo.orm.base.DBPool;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 
 import java.sql.SQLException;
 
@@ -18,7 +18,8 @@ import java.sql.SQLException;
  */
 public class DruidPool implements DBPool {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DruidPool.class);
+    private static final Log LOGGER = LogFactory.get();
+
     private ThreadLocal<DBConnect> threadConnect = new ThreadLocal<>();
 
     private DruidDataSource ds;
@@ -42,7 +43,7 @@ public class DruidPool implements DBPool {
             }
             return connect;
         } catch (SQLException e) {
-            LOGGER.error("get druid connect error", e);
+            LOGGER.error(e, "get druid connect error");
             return null;
         }
     }
@@ -66,7 +67,7 @@ public class DruidPool implements DBPool {
         try {
             return new DruidConnect(ds.getConnection());
         } catch (SQLException e) {
-            LOGGER.error("get unsafe druid connect error", e);
+            LOGGER.error(e, "get unsafe druid connect error");
             return null;
         }
     }

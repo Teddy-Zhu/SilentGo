@@ -1,8 +1,8 @@
 package com.silentgo.orm.generate;
 
 import com.silentgo.utils.StringKit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -18,8 +18,7 @@ import java.util.List;
  */
 public class TableMetaGenerate implements TableMetaGenerator {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TableMetaGenerate.class);
-
+    private static final Log LOGGER = LogFactory.get();
     public List<TableMeta> getTables(GenerateConfig config) throws SQLException, ClassNotFoundException {
         try {
             Class.forName(config.getDriver());

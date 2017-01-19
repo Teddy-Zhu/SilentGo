@@ -9,5 +9,5 @@ package com.silentgo.utils.inter;
  *         Created by teddyzhu on 16/7/26.
  */
 public interface ITypeConvertor<S, T> {
-    T convert(S source);
+    T convert(S source, Object... objects);
 }

@@ -1,7 +1,8 @@
 package com.silentgo.utils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -16,7 +17,7 @@ import java.security.NoSuchAlgorithmException;
  */
 public class EncryptKit {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EncryptKit.class);
+    private static final Log LOGGER = LogFactory.get();
 
 
     public static String getMD5Short(String sourceStr) {
@@ -40,7 +41,7 @@ public class EncryptKit {
             }
             return buf.toString();
         } catch (NoSuchAlgorithmException e) {
-            LOGGER.error("get md5 error", e);
+            LOGGER.error(e, "get md5 error");
         }
         return "";
     }

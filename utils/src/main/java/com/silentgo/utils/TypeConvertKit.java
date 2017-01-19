@@ -47,9 +47,22 @@ public class TypeConvertKit {
         return type.contains(clz) || primitiveType.contains(clz) || sqlType.contains(clz);
     }
 
+    public static Class<?> wrapperType(Class<?> clz) {
+        int pos = primitiveType.indexOf(clz);
+        if (pos == -1) {
+            return clz;
+        } else {
+            return type.get(pos);
+        }
+    }
+
 
     public static Class<?> getConvertType(Class<?> clz) {
         return type.get(primitiveType.indexOf(clz));
+    }
+
+    public static ArrayList<Class<?>> getType() {
+        return type;
     }
 
     public static boolean isBaseType(Class<?> clz) {

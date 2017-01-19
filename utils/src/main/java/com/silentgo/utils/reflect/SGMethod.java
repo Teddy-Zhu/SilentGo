@@ -1,5 +1,8 @@
 package com.silentgo.utils.reflect;
 
+import com.silentgo.utils.exception.UtilException;
+
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -50,5 +53,16 @@ public class SGMethod extends ParameterAnnotationMap {
 
     public void setClassName(String className) {
         this.className = className;
+    }
+
+    public Object invoke(Object target, Object... objects) {
+        if (!method.isAccessible()) {
+            method.setAccessible(true);
+        }
+        try {
+            return method.invoke(target, objects);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new UtilException("invoke method error", e);
+        }
     }
 }

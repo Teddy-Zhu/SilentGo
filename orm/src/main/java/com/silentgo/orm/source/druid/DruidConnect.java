@@ -2,8 +2,8 @@ package com.silentgo.orm.source.druid;
 
 import com.alibaba.druid.pool.DruidPooledConnection;
 import com.silentgo.orm.base.DBConnect;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -18,8 +18,7 @@ import java.sql.SQLException;
  */
 public class DruidConnect implements DBConnect {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DruidConnect.class);
-
+    private static final Log LOGGER = LogFactory.get();
     DruidPooledConnection connection;
 
     public DruidConnect(DruidPooledConnection connection) {
@@ -36,7 +35,7 @@ public class DruidConnect implements DBConnect {
         try {
             connection.close();
         } catch (SQLException e) {
-            LOGGER.error("druid close connect error", e);
+            LOGGER.error(e, "druid close connect error");
         }
         return true;
     }

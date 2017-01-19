@@ -75,5 +75,7 @@ public class ConvertKit {
         return false;
     }
 
-
+    public static Map<Class<?>, Map<Class<?>, ITypeConvertor>> getConvertMap() {
+        return convertMap;
+    }
 }

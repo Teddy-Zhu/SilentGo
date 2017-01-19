@@ -4,12 +4,11 @@ import com.silentgo.orm.base.DBConfig;
 import com.silentgo.orm.base.DBConnect;
 import com.silentgo.orm.base.DBManager;
 import com.silentgo.orm.base.DBType;
-import com.silentgo.orm.source.jdbc.JDBCManager;
 import com.silentgo.orm.kit.configKit;
 import com.silentgo.utils.Assert;
 import com.silentgo.utils.PropKit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,8 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ConnectManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectManager.class);
-
+    private static final Log LOGGER = LogFactory.get();
     private static Map<DBType, Class<? extends DBManager>> classMap = new HashMap<>();
     private Map<DBType, DBManager> dbManagerMap = new ConcurrentHashMap<>();
 
@@ -53,7 +51,7 @@ public class ConnectManager {
         try {
             manager = classMap.get(type).newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            LOGGER.error("init connect , create manger error");
+            LOGGER.error(e, "init connect , create manger error");
         }
         config.setName(name);
         manager.initial(config);

@@ -3,7 +3,11 @@ package com.silentgo.utils.convertor;
 
 import com.silentgo.utils.inter.ITypeConvertor;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Project : silentgo
@@ -14,8 +18,21 @@ import java.util.Date;
  *         Created by teddyzhu on 16/7/27.
  */
 public class StringToDateConvertor implements ITypeConvertor<String, Date> {
+
+    private static final Map<String, ThreadLocal<SimpleDateFormat>> timeMap = new HashMap<String, ThreadLocal<SimpleDateFormat>>() {{
+        put("default", ThreadLocal.withInitial(() -> new SimpleDateFormat()));
+        put("yyyy-MM-dd HH:mm:ss", ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")));
+    }};
+
     @Override
-    public Date convert(String source) {
-        return null;
+    public Date convert(String source, Object... objects) {
+        try {
+            if (objects.length > 0 && objects[0] instanceof String && timeMap.containsKey(objects[0])) {
+                return timeMap.get(objects[0]).get().parse(source);
+            }
+            return timeMap.get("default").get().parse(source);
+        } catch (ParseException e) {
+            return null;
+        }
     }
 }

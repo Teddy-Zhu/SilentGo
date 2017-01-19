@@ -10,7 +10,7 @@ import java.lang.reflect.Parameter;
  *         <p>
  *         Created by teddyzhu on 2017/1/5.
  */
-public class SGParameter extends AnnotaionMap {
+public class SGParameter extends AnnotationMap {
 
     private Class<?> clz;
 

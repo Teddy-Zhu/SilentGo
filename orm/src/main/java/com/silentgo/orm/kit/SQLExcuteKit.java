@@ -1,13 +1,12 @@
 package com.silentgo.orm.kit;
 
-import com.silentgo.orm.SilentGoOrm;
 import com.silentgo.orm.base.DBConnect;
 import com.silentgo.orm.common.Const;
 import com.silentgo.orm.rsresolver.IRSResolver;
 import com.silentgo.orm.rsresolver.support.*;
 import com.silentgo.utils.TypeConvertKit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 
 import java.sql.*;
 import java.util.List;
@@ -22,8 +21,7 @@ import java.util.Map;
  *         Created by teddyzhu on 2016/11/25.
  */
 public class SQLExcuteKit {
-    private static Logger LOGGER = LoggerFactory.getLogger(SQLExcuteKit.class);
-
+    private static final Log LOGGER = LogFactory.get();
 
     private static boolean pmdKnownBroken = false;
 

@@ -2,9 +2,8 @@ package com.silentgo.orm.source.jdbc;
 
 import com.silentgo.orm.base.DBConnect;
 import com.silentgo.orm.base.DBPool;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
@@ -21,8 +20,7 @@ public class JDBCPool implements DBPool {
 
     private ThreadLocal<DBConnect> threadConnect = new ThreadLocal<>();
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JDBCPool.class);
-
+    private static final Log LOGGER = LogFactory.get();
     private String name;
 
     private JDBCDataSource source;

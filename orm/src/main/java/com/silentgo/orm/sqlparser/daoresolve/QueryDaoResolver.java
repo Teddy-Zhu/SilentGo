@@ -8,8 +8,8 @@ import com.silentgo.orm.sqlparser.annotation.ColumnIgnore;
 import com.silentgo.orm.sqlparser.annotation.Query;
 import com.silentgo.orm.sqlparser.funcanalyse.DaoKeyWord;
 import com.silentgo.utils.Assert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 
 import java.lang.annotation.Annotation;
 import java.util.*;
@@ -24,8 +24,7 @@ import java.util.*;
  */
 public class QueryDaoResolver implements DaoResolver {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(QueryDaoResolver.class);
-
+    private static final Log LOGGER = LogFactory.get();
     @Override
     public boolean handle(String methodName, List<String> parsedMethod, List<Annotation> annotations) {
         return DaoKeyWord.Query.equals(parsedMethod.get(0));

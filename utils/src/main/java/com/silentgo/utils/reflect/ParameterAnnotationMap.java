@@ -10,7 +10,7 @@ import java.util.Map;
  *         <p>
  *         Created by teddyzhu on 2017/1/5.
  */
-public class ParameterAnnotationMap extends AnnotaionMap {
+public class ParameterAnnotationMap extends AnnotationMap {
 
     private String[] parameterNames;
 

@@ -11,10 +11,9 @@
 
     <artifactId>shiro</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.8</version>
+    <version>0.0.9</version>
 
     <properties>
-        <slf4j.version>1.7.12</slf4j.version>
         <frame.version>0.0.38</frame.version>
     </properties>
     <dependencies>
@@ -60,12 +59,6 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j.version}</version>
-            <scope>provided</scope>
-        </dependency>
 
     </dependencies>
 </project>

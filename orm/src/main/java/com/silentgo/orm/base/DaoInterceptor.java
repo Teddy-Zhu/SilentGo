@@ -11,8 +11,8 @@ import com.silentgo.orm.sqlparser.daoresolve.DefaultDaoResolver;
 import com.silentgo.orm.sqlparser.methodnameparser.MethodParserKit;
 import com.silentgo.utils.ClassKit;
 import com.silentgo.utils.ConvertKit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
@@ -34,8 +34,7 @@ import java.util.*;
  */
 public class DaoInterceptor implements MethodInterceptor {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DaoInterceptor.class);
-
+    private static final Log LOGGER = LogFactory.get();
     private static final Map<String, Class<? extends BaseDao>> cacheClz = new HashMap<>();
     private static final Map<Method, List<String>> cacheNamePaser = new HashMap<>();
 

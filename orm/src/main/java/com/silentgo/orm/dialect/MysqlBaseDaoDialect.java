@@ -3,8 +3,8 @@ package com.silentgo.orm.dialect;
 import com.silentgo.orm.base.*;
 import com.silentgo.orm.kit.PropertyKit;
 import com.silentgo.utils.StringKit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
@@ -22,8 +22,7 @@ import java.util.Map;
  */
 public class MysqlBaseDaoDialect implements BaseDaoDialect {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MysqlBaseDaoDialect.class);
-
+    private static final Log LOGGER = LogFactory.get();
 
     @Override
     public SQLTool queryByPrimaryKey(BaseTableInfo table, Object id) {

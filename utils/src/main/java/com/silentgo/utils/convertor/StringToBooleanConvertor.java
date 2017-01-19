@@ -13,7 +13,7 @@ import com.silentgo.utils.inter.ITypeConvertor;
  */
 public class StringToBooleanConvertor implements ITypeConvertor<String, Boolean> {
     @Override
-    public Boolean convert(String source) {
+    public Boolean convert(String source, Object... objects) {
         if (source == null) return null;
 
         if ((source.equalsIgnoreCase("true")) ||

@@ -2,9 +2,8 @@ package com.silentgo.orm.kit;
 
 import com.silentgo.orm.base.BaseTableInfo;
 import com.silentgo.orm.base.TableModel;
-import com.silentgo.orm.base.SQLTool;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -26,14 +25,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PropertyKit {
 
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(PropertyKit.class);
+    public static final Log LOGGER = LogFactory.get();
 
     private static final Map<Class<? extends TableModel>, BeanInfo> beanMap = new ConcurrentHashMap<>();
 
     private static final Map<Class<? extends TableModel>, Map<String, PropertyDescriptor>> cachedPropMap = new ConcurrentHashMap<>();
 
 
-    public static  BeanInfo getBeanInfo(Class<? extends TableModel> t) {
+    public static BeanInfo getBeanInfo(Class<? extends TableModel> t) {
         BeanInfo beanInfo = null;
         if (beanMap.containsKey(t)) {
             beanInfo = beanMap.get(t);
@@ -50,7 +49,7 @@ public class PropertyKit {
     }
 
 
-    public static  Map<String, PropertyDescriptor> getCachedProps(BaseTableInfo tableInfo) {
+    public static Map<String, PropertyDescriptor> getCachedProps(BaseTableInfo tableInfo) {
         BeanInfo beanInfo = getBeanInfo(tableInfo.getClazz());
         if (cachedPropMap.containsKey(tableInfo.getClazz())) {
             return cachedPropMap.get(tableInfo.getClazz());
@@ -61,7 +60,7 @@ public class PropertyKit {
         }
     }
 
-    public static  Map<String, PropertyDescriptor> getProps(BeanInfo beanInfo, BaseTableInfo tableInfo) {
+    public static Map<String, PropertyDescriptor> getProps(BeanInfo beanInfo, BaseTableInfo tableInfo) {
         Map<String, PropertyDescriptor> propsMap = new HashMap<>();
         for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
             if (tableInfo.getColumnInfo().containsKey(propertyDescriptor.getName())) {

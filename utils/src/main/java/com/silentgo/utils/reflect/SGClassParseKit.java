@@ -1,7 +1,7 @@
 package com.silentgo.utils.reflect;
 
 import com.silentgo.utils.StringKit;
-import com.silentgo.utils.asm.NameDiscover;
+import com.silentgo.utils.asm.ParameterNameUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
@@ -81,12 +81,40 @@ public class SGClassParseKit {
             findGetSetMethod(sgClass.getMethodMap(), sgField);
         }
 
+        sgClass.getMethodMap().forEach(((method, sgMethod) -> {
+            String name = methodNameToFieldName(method.getName());
+            if (name != null && !sgClass.getFieldMap().containsKey(name)) {
+                SGField field = new SGField();
+                field.setGetMethod(sgMethod);
+                sgClass.getFieldMap().put(name, field);
+            }
+        }));
         return sgClass;
+    }
+
+    private static String methodNameToFieldName(String methodName) {
+        if (methodName.startsWith("get") && methodName.length() > 3) {
+            return methodNameToFieldName0(methodName, 3);
+        } else if (methodName.startsWith("is") && methodName.length() > 2) {
+            return methodNameToFieldName0(methodName, 2);
+        }
+        return null;
+    }
+
+    private static String methodNameToFieldName0(String methodName, int index) {
+        if (Character.isUpperCase(methodName.charAt(index))) {
+            if (methodName.length() > index + 1 && Character.isUpperCase(methodName.charAt(index + 1))) {
+                return methodName.substring(index);
+            } else {
+                return StringKit.firstToLower(methodName.substring(index));
+            }
+        }
+        return methodName.substring(index);
     }
 
     private static void findMethodParameterName(Map<Method, SGMethod> methodMap) {
         methodMap.forEach((s, sgMethod) -> {
-            String[] parameterNames = NameDiscover.lvtd.getParameterNames(sgMethod.getMethod());
+            String[] parameterNames = ParameterNameUtils.getMethodParameterNames(sgMethod.getMethod());
             String[] preParameterNames = sgMethod.getParameterNames();
             if (parameterNames != null && parameterNames.length == preParameterNames.length) {
                 for (int i = 0; i < preParameterNames.length; i++) {

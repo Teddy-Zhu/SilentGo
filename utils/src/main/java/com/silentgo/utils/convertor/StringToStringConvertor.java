@@ -14,7 +14,7 @@ public class StringToStringConvertor implements ITypeConvertor<String, String> {
 
 
     @Override
-    public String convert(String source) {
+    public String convert(String source, Object... objects) {
         return source;
     }
 }

@@ -12,7 +12,7 @@ import java.util.Map;
  *         <p>
  *         Created by teddyzhu on 2017/1/5.
  */
-public class SGClass extends AnnotaionMap {
+public class SGClass extends AnnotationMap {
 
     private Class<?> clz;
 
@@ -64,4 +64,8 @@ public class SGClass extends AnnotaionMap {
         this.constructors = constructors;
     }
 
+
+    public SGField getField(String name) {
+        return fieldMap.get(name);
+    }
 }

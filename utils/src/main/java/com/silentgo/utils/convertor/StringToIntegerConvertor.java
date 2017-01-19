@@ -2,8 +2,6 @@ package com.silentgo.utils.convertor;
 
 
 import com.silentgo.utils.inter.ITypeConvertor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Project : silentgo
@@ -15,17 +13,8 @@ import org.slf4j.LoggerFactory;
  */
 public class StringToIntegerConvertor implements ITypeConvertor<String, Integer> {
 
-    private Logger LOGGER = LoggerFactory.getLogger(StringToIntegerConvertor.class);
-
     @Override
-    public Integer convert(String source) {
-        Integer target = null;
-        try {
-            target = Integer.valueOf(source);
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-            LOGGER.error(e.getMessage());
-        }
-        return target;
+    public Integer convert(String source, Object... objects) {
+        return Integer.valueOf(source);
     }
 }

@@ -1,5 +1,4 @@
-import com.silentgo.utils.ReflectKit;
-import com.silentgo.utils.reflect.SGClass;
+import com.silentgo.utils.asm.ParameterNameUtils;
 
 /**
  * Project : SilentGo
@@ -11,9 +10,19 @@ import com.silentgo.utils.reflect.SGClass;
  */
 public class Test {
 
-    public static void main(String[] args) {
-        SGClass sgClass = ReflectKit.getSGClass(intera.class);
 
-        System.out.println(sgClass);
+    public static void adxxxads(String xxazxcz) {
+
+    }
+
+    public void adads(String azxcz) {
+
+    }
+
+    public static void main(String[] args) throws NoSuchMethodException {
+
+        String[] names = ParameterNameUtils.getMethodParameterNames(Test.class, Test.class.getMethod("adads", String.class));
+
+        System.out.println(names);
     }
 }

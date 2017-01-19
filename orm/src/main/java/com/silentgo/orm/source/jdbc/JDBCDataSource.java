@@ -2,7 +2,8 @@ package com.silentgo.orm.source.jdbc;
 
 import com.silentgo.orm.base.DBConfig;
 import com.silentgo.orm.base.DBDataSource;
-import org.slf4j.LoggerFactory;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -20,8 +21,8 @@ import java.util.logging.Logger;
  *         Created by teddyzhu on 16/9/13.
  */
 public class JDBCDataSource implements DBDataSource {
-    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(JDBCDataSource.class);
 
+    private static final Log LOGGER = LogFactory.get();
     private String name;
 
     private DBConfig config;

@@ -3,8 +3,8 @@ package com.silentgo.orm;
 import com.silentgo.orm.base.DBConnect;
 import com.silentgo.orm.common.Const;
 import com.silentgo.orm.kit.SQLExcuteKit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 
 import java.sql.*;
 import java.util.List;
@@ -18,8 +18,7 @@ import java.util.List;
  *         Created by teddyzhu on 16/9/20.
  */
 public class SilentGoOrm {
-    private static Logger LOGGER = LoggerFactory.getLogger(SilentGoOrm.class);
-
+    private static final Log LOGGER = LogFactory.get();
     public static <T> int updateOrDelete(DBConnect conn, String sql, String type, Class<T> clz, Object[] params) throws SQLException {
         return (int) SQLExcuteKit.execute(conn, sql, clz, type, false, false, null, params);
     }

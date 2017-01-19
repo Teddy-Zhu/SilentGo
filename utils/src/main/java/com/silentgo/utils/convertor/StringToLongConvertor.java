@@ -2,8 +2,6 @@ package com.silentgo.utils.convertor;
 
 
 import com.silentgo.utils.inter.ITypeConvertor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Project : silentgo
@@ -15,16 +13,8 @@ import org.slf4j.LoggerFactory;
  */
 public class StringToLongConvertor implements ITypeConvertor<String, Long> {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(StringToLongConvertor.class);
-
     @Override
-    public Long convert(String source) {
-        Long result = null;
-        try {
-            result = Long.parseLong(source);
-        } catch (NumberFormatException e) {
-            LOGGER.error(e.getMessage());
-        }
-        return result;
+    public Long convert(String source, Object... objects) {
+        return Long.valueOf(source);
     }
 }

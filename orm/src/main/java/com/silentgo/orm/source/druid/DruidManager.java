@@ -7,8 +7,8 @@ import com.silentgo.orm.base.DBConnect;
 import com.silentgo.orm.base.DBManager;
 import com.silentgo.orm.base.DBPool;
 import com.silentgo.utils.StringKit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DruidManager implements DBManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DruidManager.class);
+    private static final Log LOGGER = LogFactory.get();
 
     // 配置获取连接等待超时的时间
     private long maxWait = DruidDataSource.DEFAULT_MAX_WAIT;
@@ -89,7 +89,7 @@ public class DruidManager implements DBManager {
                 try {
                     ds.setFilters(filters);
                 } catch (SQLException e) {
-                    LOGGER.error("druid set filters error", e);
+                    LOGGER.error(e, "druid set filters error");
                     throw new RuntimeException(e);
                 }
 

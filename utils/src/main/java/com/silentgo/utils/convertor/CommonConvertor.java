@@ -13,7 +13,7 @@ import com.silentgo.utils.inter.ITypeConvertor;
  */
 public class CommonConvertor implements ITypeConvertor<Object, Object> {
     @Override
-    public Object convert(Object source) {
+    public Object convert(Object source, Object... objects) {
         return source;
     }
 }
