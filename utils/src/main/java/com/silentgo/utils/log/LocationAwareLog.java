@@ -1,6 +1,11 @@
 package com.silentgo.utils.log;
 
 import com.silentgo.utils.log.level.Level;
+/**
+ * from Looly
+ * LICENSE : Apache 2.0
+ * https://raw.githubusercontent.com/looly/hutool/master/LICENSE.txt
+ */
 
 /**
  * 位置感知日志接口，此接口用于通过传入当前全类名的方式来感知日志打印的行号<br>

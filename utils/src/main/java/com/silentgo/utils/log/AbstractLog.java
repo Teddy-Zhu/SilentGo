@@ -4,6 +4,11 @@ import java.io.Serializable;
 
 import com.silentgo.utils.StringKit;
 import com.silentgo.utils.log.level.Level;
+/**
+ * from looly
+ * LICENSE : Apache 2.0
+ * https://raw.githubusercontent.com/looly/hutool/master/LICENSE.txt
+ */
 
 /**
  * 抽象日志类<br>

@@ -2,6 +2,11 @@ package com.silentgo.utils.log;
 
 import com.silentgo.utils.StringKit;
 import com.silentgo.utils.log.level.Level;
+/**
+ * from looly
+ * LICENSE : Apache 2.0
+ * https://raw.githubusercontent.com/looly/hutool/master/LICENSE.txt
+ */
 
 /**
  * 静态日志类，用于在不引入日志对象的情况下打印日志

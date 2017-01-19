@@ -6,6 +6,11 @@ import com.silentgo.utils.log.level.InfoLog;
 import com.silentgo.utils.log.level.Level;
 import com.silentgo.utils.log.level.TraceLog;
 import com.silentgo.utils.log.level.WarnLog;
+/**
+ * from looly
+ * LICENSE : Apache 2.0
+ * https://raw.githubusercontent.com/looly/hutool/master/LICENSE.txt
+ */
 
 /**
  * 日志统一接口

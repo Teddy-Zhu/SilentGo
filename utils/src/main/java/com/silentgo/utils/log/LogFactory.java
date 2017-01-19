@@ -5,6 +5,11 @@ import com.silentgo.utils.log.dialect.jdk.JdkLogFactory;
 import com.silentgo.utils.log.dialect.log4j.Log4jLogFactory;
 import com.silentgo.utils.log.dialect.log4j2.Log4j2LogFactory;
 import com.silentgo.utils.log.dialect.slf4j.Slf4jLogFactory;
+/**
+ * from looly
+ * LICENSE : Apache 2.0
+ * https://raw.githubusercontent.com/looly/hutool/master/LICENSE.txt
+ */
 
 /**
  * 日志工厂类
