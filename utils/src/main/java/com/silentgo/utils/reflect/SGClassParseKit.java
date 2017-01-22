@@ -65,6 +65,7 @@ public class SGClassParseKit {
                 continue;
             }
             SGField sgField = parseField(field);
+            sgField.setName(field.getName());
             sgClass.getFieldMap().put(field.getName(), sgField);
             findGetSetMethod(sgClass.getMethodMap(), sgField);
         }
@@ -77,6 +78,7 @@ public class SGClassParseKit {
             if (sgClass.getFieldMap().containsKey(field.getName()))
                 continue;
             SGField sgField = parseField(field);
+            sgField.setName(field.getName());
             sgClass.getFieldMap().put(field.getName(), sgField);
             findGetSetMethod(sgClass.getMethodMap(), sgField);
         }
@@ -86,6 +88,8 @@ public class SGClassParseKit {
             if (name != null && !sgClass.getFieldMap().containsKey(name)) {
                 SGField field = new SGField();
                 field.setGetMethod(sgMethod);
+                field.setName(name);
+                field.setType(sgMethod.getMethod().getReturnType());
                 sgClass.getFieldMap().put(name, field);
             }
         }));

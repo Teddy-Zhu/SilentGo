@@ -14,12 +14,21 @@ import java.lang.reflect.Field;
  */
 public class SGField extends AnnotationMap {
 
+    private String name;
     private SGMethod getMethod;
     private SGMethod setMethod;
 
     private Class<?> type;
 
     private Field field;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public SGMethod getGetMethod() {
         return getMethod;
