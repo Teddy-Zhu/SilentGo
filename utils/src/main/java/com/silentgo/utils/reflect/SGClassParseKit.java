@@ -89,6 +89,7 @@ public class SGClassParseKit {
                 SGField field = new SGField();
                 field.setGetMethod(sgMethod);
                 field.setName(name);
+                field.setAnnotationMap(new HashMap<>());
                 field.setType(sgMethod.getMethod().getReturnType());
                 sgClass.getFieldMap().put(name, field);
             }

@@ -23,9 +23,9 @@ import com.silentgo.core.route.annotation.Controller;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.utils.CollectionKit;
 import com.silentgo.utils.ReflectKit;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 import com.silentgo.utils.reflect.SGClass;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -46,7 +46,8 @@ import java.util.stream.Collectors;
 @Factory
 public class MethodAOPFactory extends BaseFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MethodAOPFactory.class);
+
+    private static final Log LOGGER = LogFactory.get();
 
     private Map<Method, MethodAdviser> methodAdviserMap = new HashMap<>();
 

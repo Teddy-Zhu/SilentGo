@@ -18,8 +18,8 @@ import com.silentgo.servlet.http.HttpStatus;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
 import com.silentgo.utils.StringKit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -31,8 +31,7 @@ import java.io.IOException;
  */
 public class SilentGoFilter implements Filter {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(SilentGoFilter.class);
-
+    private static final Log LOGGER = LogFactory.get();
     private static Config configInit = null;
 
     private static SilentGo appContext = SilentGo.me();

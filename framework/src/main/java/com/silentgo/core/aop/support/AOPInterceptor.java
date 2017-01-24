@@ -7,10 +7,10 @@ import com.silentgo.core.aop.MethodAdviser;
 import com.silentgo.core.aop.annotation.Intercept;
 import com.silentgo.core.route.annotation.Controller;
 import com.silentgo.servlet.SilentGoContext;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -26,8 +26,7 @@ import java.util.List;
 public class AOPInterceptor implements MethodInterceptor {
     private Object target;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AOPInterceptor.class);
-
+    private static final Log LOGGER = LogFactory.get();
     public AOPInterceptor(Object target) {
         this.target = target;
     }

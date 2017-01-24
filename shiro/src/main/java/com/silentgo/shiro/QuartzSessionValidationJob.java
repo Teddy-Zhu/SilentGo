@@ -1,12 +1,12 @@
 package com.silentgo.shiro;
 
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 import org.apache.shiro.session.mgt.ValidatingSessionManager;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Created by teddyzhu on 16/4/13.
@@ -19,8 +19,7 @@ public class QuartzSessionValidationJob implements Job {
     public static final String SESSION_MANAGER_KEY = "sessionManager";
 
 
-    private static final Logger log = LoggerFactory.getLogger(QuartzSessionValidationJob.class);
-
+    private static final Log LOGGER = LogFactory.get();
 
     /**
      * Called when the job is executed by quartz. This method delegates to the <tt>validateSessions()</tt> method on the
@@ -33,14 +32,14 @@ public class QuartzSessionValidationJob implements Job {
         JobDataMap jobDataMap = context.getMergedJobDataMap();
         ValidatingSessionManager sessionManager = (ValidatingSessionManager) jobDataMap.get(SESSION_MANAGER_KEY);
 
-        if (log.isDebugEnabled()) {
-            log.debug("Executing session validation Quartz job...");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Executing session validation Quartz job...");
         }
 
         sessionManager.validateSessions();
 
-        if (log.isDebugEnabled()) {
-            log.debug("Session validation Quartz job complete.");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Session validation Quartz job complete.");
         }
     }
 }

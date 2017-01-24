@@ -8,8 +8,8 @@ import com.silentgo.core.aop.annotation.Intercept;
 import com.silentgo.core.aop.annotationintercept.support.AnnotationInterceptor;
 import com.silentgo.core.aop.validator.IValidator;
 import com.silentgo.core.aop.validator.exception.ValidateException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 
 import java.lang.annotation.Annotation;
 import java.util.Map;
@@ -25,8 +25,7 @@ import java.util.Map;
 @Intercept
 public class ValidatorInterceptor implements Interceptor {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AnnotationInterceptor.class);
-
+    private static final Log LOGGER = LogFactory.get();
 
     @Override
     public int priority() {

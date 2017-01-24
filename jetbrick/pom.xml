@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
     <artifactId>jetbrick</artifactId>
-    <version>0.0.4</version>
+    <version>0.0.5</version>
     <properties>
         <frame.version>0.0.32</frame.version>
     </properties>
@@ -33,6 +33,12 @@
             <artifactId>javax.servlet-api</artifactId>
             <version>3.1.0</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.silentgo</groupId>
+            <artifactId>utils</artifactId>
+            <version>0.1.7</version>
         </dependency>
     </dependencies>
 </project>

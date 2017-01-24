@@ -8,8 +8,8 @@ import com.silentgo.core.route.Route;
 import com.silentgo.core.route.support.paramdispatcher.annotation.ParamDispatcher;
 import com.silentgo.core.route.support.paramresolver.ParameterResolveFactory;
 import com.silentgo.utils.CollectionKit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,8 +25,7 @@ import java.util.Map;
 @ParamDispatcher
 public class CommonParamDispatch implements ParameterDispatcher {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(CommonParamDispatch.class);
-
+    private static final Log LOGGER = LogFactory.get();
 
     @Override
     public Integer priority() {

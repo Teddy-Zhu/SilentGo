@@ -15,15 +15,11 @@ import com.silentgo.core.ioc.bean.support.BeanBuildKit;
 import com.silentgo.core.ioc.bean.support.BeanHandleFactory;
 import com.silentgo.core.route.annotation.Controller;
 import com.silentgo.utils.CollectionKit;
-import com.silentgo.utils.StringKit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 
-import java.beans.IntrospectionException;
-import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -37,7 +33,7 @@ import java.util.*;
 @Factory
 public class SilentGoBeanFactory extends BeanFactory<BeanDefinition> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SilentGoBeanFactory.class);
+    private static final Log LOGGER = LogFactory.get();
 
     private Map<String, BeanDefinition> beansMap = new HashMap<>();
 

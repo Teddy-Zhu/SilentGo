@@ -10,8 +10,8 @@ import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.oreilly.MultipartRequestParser;
 import com.silentgo.servlet.oreilly.multipart.AutoSaveFilePolicy;
 import com.silentgo.servlet.oreilly.multipart.DefaultFileRenamePolicy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,8 +28,7 @@ import java.util.Locale;
 @RequestDispatch
 public class MultiPartDispatcher implements RequestDispatcher {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MultiPartDispatcher.class);
-
+    private static final Log LOGGER = LogFactory.get();
     @Override
     public void release(ActionParam param) {
         if (param.getRequest() instanceof MultiPartRequest) {

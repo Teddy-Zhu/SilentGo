@@ -1,5 +1,7 @@
 package com.silentgo.shiro;
 
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.config.ResourceConfigurable;
 import org.apache.shiro.util.ClassUtils;
@@ -10,9 +12,6 @@ import org.apache.shiro.web.env.EnvironmentLoader;
 import org.apache.shiro.web.env.IniWebEnvironment;
 import org.apache.shiro.web.env.MutableWebEnvironment;
 import org.apache.shiro.web.env.WebEnvironment;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.servlet.ServletContext;
 
 /**
@@ -28,8 +27,8 @@ public class ShiroLoader {
 
     public static final String ENVIRONMENT_ATTRIBUTE_KEY = EnvironmentLoader.class.getName() + ".ENVIRONMENT_ATTRIBUTE_KEY";
 
-    private static final Logger log = LoggerFactory.getLogger(EnvironmentLoader.class);
 
+    private static final Log LOGGER = LogFactory.get();
 
     public WebEnvironment initEnvironment(ServletContext servletContext) throws IllegalStateException {
 
@@ -40,7 +39,7 @@ public class ShiroLoader {
         }
 
         servletContext.log("Initializing Shiro environment");
-        log.info("Starting Shiro environment initialization.");
+        LOGGER.info("Starting Shiro environment initialization.");
 
         long startTime = System.currentTimeMillis();
 
@@ -48,21 +47,21 @@ public class ShiroLoader {
             WebEnvironment environment = createEnvironment(servletContext);
             servletContext.setAttribute(ENVIRONMENT_ATTRIBUTE_KEY, environment);
 
-            log.debug("Published WebEnvironment as ServletContext attribute with name [{}]",
+            LOGGER.debug("Published WebEnvironment as ServletContext attribute with name [{}]",
                     ENVIRONMENT_ATTRIBUTE_KEY);
 
-            if (log.isInfoEnabled()) {
+            if (LOGGER.isInfoEnabled()) {
                 long elapsed = System.currentTimeMillis() - startTime;
-                log.info("Shiro environment initialized in {} ms.", elapsed);
+                LOGGER.info("Shiro environment initialized in {} ms.", elapsed);
             }
 
             return environment;
         } catch (RuntimeException ex) {
-            log.error("Shiro environment initialization failed", ex);
+            LOGGER.error("Shiro environment initialization failed", ex);
             servletContext.setAttribute(ENVIRONMENT_ATTRIBUTE_KEY, ex);
             throw ex;
         } catch (Error err) {
-            log.error("Shiro environment initialization failed", err);
+            LOGGER.error("Shiro environment initialization failed", err);
             servletContext.setAttribute(ENVIRONMENT_ATTRIBUTE_KEY, err);
             throw err;
         }

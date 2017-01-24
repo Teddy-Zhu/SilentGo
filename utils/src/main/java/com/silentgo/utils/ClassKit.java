@@ -1,12 +1,11 @@
 package com.silentgo.utils;
 
-import com.alibaba.fastjson.JSONException;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.*;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -246,7 +245,8 @@ public class ClassKit {
 
     public static Class<?> getActualType(Type clz, int index) {
         ParameterizedType type = (ParameterizedType) clz;
-        return (Class<?>) type.getActualTypeArguments()[index];
+        Type tmp = type.getActualTypeArguments()[index];
+        return tmp instanceof TypeVariable ? Object.class : (Class<?>) type.getActualTypeArguments()[index];
     }
 
     public static Type[] getGenericClass(Class<?> clz) {
@@ -264,7 +264,7 @@ public class ClassKit {
         } else if (type instanceof ParameterizedType) {
             return getRawClass(((ParameterizedType) type).getRawType());
         } else {
-            throw new JSONException("TODO");
+            throw new RuntimeException("TODO");
         }
     }
 

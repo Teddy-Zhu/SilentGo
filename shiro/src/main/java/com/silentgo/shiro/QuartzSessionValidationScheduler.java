@@ -1,12 +1,12 @@
 package com.silentgo.shiro;
 
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.session.mgt.SessionValidationScheduler;
 import org.apache.shiro.session.mgt.ValidatingSessionManager;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Created by teddyzhu on 16/4/13.
@@ -14,7 +14,8 @@ import org.slf4j.LoggerFactory;
 public class QuartzSessionValidationScheduler implements SessionValidationScheduler {
     public static final long DEFAULT_SESSION_VALIDATION_INTERVAL = DefaultSessionManager.DEFAULT_SESSION_VALIDATION_INTERVAL;
     private static final String JOB_NAME = "SessionValidationJob";
-    private static final Logger log = LoggerFactory.getLogger(QuartzSessionValidationScheduler.class);
+
+    private static final Log LOGGER = LogFactory.get();
     private static final String SESSION_MANAGER_KEY = QuartzSessionValidationJob.SESSION_MANAGER_KEY;
     private Scheduler scheduler;
     private boolean schedulerImplicitlyCreated = false;
@@ -55,8 +56,8 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
     }
 
     public void enableSessionValidation() {
-        if (log.isDebugEnabled()) {
-            log.debug("Scheduling session validation job using Quartz with session validation interval of ["
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Scheduling session validation job using Quartz with session validation interval of ["
                     + this.sessionValidationInterval + "]ms...");
         }
 
@@ -73,47 +74,47 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
             scheduler.scheduleJob(detail, trigger);
             if (this.schedulerImplicitlyCreated) {
                 scheduler.start();
-                if (log.isDebugEnabled()) {
-                    log.debug("Successfully started implicitly created Quartz Scheduler instance.");
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Successfully started implicitly created Quartz Scheduler instance.");
                 }
             }
             this.enabled = true;
 
-            if (log.isDebugEnabled())
-                log.debug("Session validation job successfully scheduled with Quartz.");
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("Session validation job successfully scheduled with Quartz.");
         } catch (SchedulerException e) {
-            if (log.isErrorEnabled())
-                log.error("Error starting the Quartz session validation job.  Session validation may not occur.", e);
+            if (LOGGER.isErrorEnabled())
+                LOGGER.error("Error starting the Quartz session validation job.  Session validation may not occur.", e);
         }
     }
 
     public void disableSessionValidation() {
-        if (log.isDebugEnabled()) {
-            log.debug("Stopping Quartz session validation job...");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Stopping Quartz session validation job...");
         }
         Scheduler scheduler;
         try {
             scheduler = getScheduler();
             if (scheduler == null) {
-                if (log.isWarnEnabled()) {
-                    log.warn("getScheduler() method returned a null Quartz scheduler, which is unexpected.  Please check your configuration and/or implementation.  Returning quietly since there is no validation job to remove (scheduler does not exist).");
+                if (LOGGER.isWarnEnabled()) {
+                    LOGGER.warn("getScheduler() method returned a null Quartz scheduler, which is unexpected.  Please check your configuration and/or implementation.  Returning quietly since there is no validation job to remove (scheduler does not exist).");
                 }
 
                 return;
             }
         } catch (SchedulerException e) {
-            if (log.isWarnEnabled()) {
-                log.warn("Unable to acquire Quartz Scheduler.  Ignoring and returning (already stopped?)", e);
+            if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn("Unable to acquire Quartz Scheduler.  Ignoring and returning (already stopped?)", e);
             }
             return;
         }
         try {
             scheduler.unscheduleJob(new TriggerKey("SessionValidationJob", "DEFAULT"));
-            if (log.isDebugEnabled())
-                log.debug("Quartz session validation job stopped successfully.");
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("Quartz session validation job stopped successfully.");
         } catch (SchedulerException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Could not cleanly remove SessionValidationJob from Quartz scheduler.  Ignoring and stopping.", e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Could not cleanly remove SessionValidationJob from Quartz scheduler.  Ignoring and stopping.", e);
             }
 
         }
@@ -124,8 +125,8 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
             try {
                 scheduler.shutdown();
             } catch (SchedulerException e) {
-                if (log.isWarnEnabled())
-                    log.warn("Unable to cleanly shutdown implicitly created Quartz Scheduler instance.", e);
+                if (LOGGER.isWarnEnabled())
+                    LOGGER.warn("Unable to cleanly shutdown implicitly created Quartz Scheduler instance.", e);
             } finally {
                 setScheduler(null);
                 this.schedulerImplicitlyCreated = false;

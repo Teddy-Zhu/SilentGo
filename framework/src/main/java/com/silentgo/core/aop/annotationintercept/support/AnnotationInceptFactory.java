@@ -10,8 +10,8 @@ import com.silentgo.core.exception.AppReleaseException;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.utils.ClassKit;
 import com.silentgo.utils.CollectionKit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -28,7 +28,7 @@ import java.util.*;
 @Factory
 public class AnnotationInceptFactory extends BaseFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AnnotationInceptFactory.class);
+    private static final Log LOGGER = LogFactory.get();
     /**
      * Key : Method Name  Value : Sorted AnnotationInterceptor
      */

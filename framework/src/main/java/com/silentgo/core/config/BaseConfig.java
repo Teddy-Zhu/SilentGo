@@ -18,6 +18,7 @@ import com.silentgo.orm.base.DBConnect;
 import com.silentgo.orm.base.DBType;
 import com.silentgo.utils.ClassKit;
 import com.silentgo.utils.CollectionKit;
+import com.silentgo.utils.JSONKit;
 import com.silentgo.utils.json.GsonPaser;
 import com.silentgo.utils.json.JsonPaser;
 
@@ -46,7 +47,7 @@ public class BaseConfig extends InterConfig {
 
     private List<Class<? extends IAnnotation>> annotationIntecepters = new ArrayList<>();
 
-    private JsonPaser jsonPaser = new GsonPaser();
+    private JsonPaser jsonPaser = JSONKit.getJSONParser();
 
     private RoutePaser routePaser = new DefaultRouteParser();
 

@@ -2,9 +2,8 @@ package com.silentgo.core.action;
 
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.action.annotation.Action;
-import com.silentgo.servlet.http.HttpStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 
 import java.util.Map;
 
@@ -19,8 +18,8 @@ import java.util.Map;
 @Action
 public class StaticFileAction extends ActionChain {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(StaticFileAction.class);
 
+    private static final Log LOGGER = LogFactory.get();
     @Override
     public Integer priority() {
         return Integer.MAX_VALUE - 10;

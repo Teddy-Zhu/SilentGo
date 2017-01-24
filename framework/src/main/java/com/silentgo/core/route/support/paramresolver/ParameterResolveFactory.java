@@ -14,8 +14,8 @@ import com.silentgo.core.support.BaseFactory;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
 import com.silentgo.utils.CollectionKit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,8 +32,8 @@ import java.util.List;
 @Factory
 public class ParameterResolveFactory extends BaseFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ParameterResolveFactory.class);
 
+    private static final Log LOGGER = LogFactory.get();
     private ParameterValueResolver defaultResolver = new DefaultParamResolver();
 
     private List<ParameterValueResolver> parameterValueResolverList = new ArrayList<>();

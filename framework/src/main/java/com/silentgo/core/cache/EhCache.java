@@ -1,7 +1,7 @@
 package com.silentgo.core.cache;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.Configuration;
@@ -21,10 +21,10 @@ import java.util.List;
  */
 public class EhCache implements CacheManager {
 
+    private static final Log LOGGER = LogFactory.get();
 
     private net.sf.ehcache.CacheManager cacheManager;
     private volatile Object locker = new Object();
-    private static final Logger log = LoggerFactory.getLogger(EhCache.class);
 
     public net.sf.ehcache.CacheManager getCacheManager() {
         return cacheManager;
@@ -61,10 +61,10 @@ public class EhCache implements CacheManager {
             synchronized (locker) {
                 cache = cacheManager.getCache(cacheName);
                 if (cache == null) {
-                    log.warn("Could not find cache config [" + cacheName + "], using default.");
+                    LOGGER.warn("Could not find cache config [" + cacheName + "], using default.");
                     cacheManager.addCacheIfAbsent(cacheName);
                     cache = cacheManager.getCache(cacheName);
-                    log.debug("Cache [" + cacheName + "] started.");
+                    LOGGER.debug("Cache [" + cacheName + "] started.");
                 }
             }
         }

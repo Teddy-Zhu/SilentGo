@@ -18,8 +18,8 @@ import com.silentgo.core.route.support.requestdispatch.RequestDispatchFactory;
 import com.silentgo.servlet.http.HttpStatus;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 
 
 /**
@@ -33,8 +33,8 @@ import org.slf4j.LoggerFactory;
 @Action
 public class RouteAction extends ActionChain {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(RouteAction.class);
 
+    private static final Log LOGGER = LogFactory.get();
     @Override
     public Integer priority() {
         return Integer.MAX_VALUE;

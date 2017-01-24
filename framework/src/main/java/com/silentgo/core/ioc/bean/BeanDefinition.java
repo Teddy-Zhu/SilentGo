@@ -8,9 +8,9 @@ import com.silentgo.core.ioc.annotation.Inject;
 import com.silentgo.core.ioc.annotation.Service;
 import com.silentgo.core.kit.CGLibKit;
 import com.silentgo.utils.ReflectKit;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 import com.silentgo.utils.reflect.SGClass;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -27,8 +27,7 @@ import java.util.Map;
  */
 public class BeanDefinition extends BeanWrapper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BeanDefinition.class);
-
+    private static final Log LOGGER = LogFactory.get();
     String beanName;
 
     Class<?> interfaceClass;

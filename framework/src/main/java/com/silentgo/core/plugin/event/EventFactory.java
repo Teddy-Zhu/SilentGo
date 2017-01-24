@@ -9,8 +9,8 @@ import com.silentgo.core.plugin.event.annotation.EventListen;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.utils.ClassKit;
 import com.silentgo.utils.CollectionKit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,8 +28,8 @@ import java.util.concurrent.*;
  */
 @Factory
 public class EventFactory extends BaseFactory {
-    private static final Logger LOGGER = LoggerFactory.getLogger(EventFactory.class);
 
+    private static final Log LOGGER = LogFactory.get();
     private ExecutorService executorService = Executors.newFixedThreadPool(10);
 
     private Map<Class<? extends Event>, List<EventExecutor>> eventSyncMap = new HashMap<>();

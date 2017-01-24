@@ -5,8 +5,8 @@ import com.silentgo.core.action.ActionChain;
 import com.silentgo.core.action.ActionParam;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
@@ -26,8 +26,7 @@ import javax.servlet.ServletResponse;
  */
 public class ShiroAction extends ActionChain {
 
-    private static final Logger logger = LoggerFactory.getLogger(ShiroAction.class);
-
+    private static final Log LOGGER = LogFactory.get();
 
     @Override
     public void doAction(ActionParam param) throws Throwable {
@@ -49,7 +48,7 @@ public class ShiroAction extends ActionChain {
         if (t[0] != null) {
             throw t[0];
         }
-        logger.debug("end shiro action : {}", System.currentTimeMillis() - start);
+        LOGGER.debug("end shiro action : {}", System.currentTimeMillis() - start);
     }
 
     private WebSecurityManager getSecurityManager() {
@@ -74,7 +73,7 @@ public class ShiroAction extends ActionChain {
                     try {
                         session.touch();
                     } catch (Throwable t) {
-                        logger.error("session.touch() method invocation has failed.  Unable to update" +
+                        LOGGER.error("session.touch() method invocation has failed.  Unable to update" +
                                 "the corresponding session's last access time based on the incoming request.", t);
                     }
                 }

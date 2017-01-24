@@ -39,7 +39,7 @@ public class ParameterNameUtils {
     public static String[] getMethodParameterNames(Class<?> clazz, final Method method) {
         final Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes == null || parameterTypes.length == 0) {
-            return null;
+            return new String[0];
         }
         final Type[] types = new Type[parameterTypes.length];
         for (int i = 0; i < parameterTypes.length; i++) {
@@ -74,7 +74,7 @@ public class ParameterNameUtils {
                             // 静态方法第一个参数就是方法的参数，如果是实例方法，第一个参数是this
                             if (Modifier.isStatic(method.getModifiers())) {
                                 finalParameterNames[index] = name;
-                            } else if (index > 0) {
+                            } else if (index > 0 && index <= finalParameterNames.length) {
                                 finalParameterNames[index - 1] = name;
                             }
                         }

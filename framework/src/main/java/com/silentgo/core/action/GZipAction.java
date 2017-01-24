@@ -2,8 +2,9 @@ package com.silentgo.core.action;
 
 import com.silentgo.core.action.annotation.Action;
 import com.silentgo.core.action.gzip.GZIPResponseWrapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
+
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -21,8 +22,8 @@ import java.util.zip.GZIPOutputStream;
 @Action
 public class GZipAction extends ActionChain {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GZipAction.class);
 
+    private static final Log LOGGER = LogFactory.get();
     public static final String ACCEPT_ENCODING = "Accept-Encoding";
 
 

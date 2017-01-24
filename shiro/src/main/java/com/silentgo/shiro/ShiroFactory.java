@@ -7,6 +7,8 @@ import com.silentgo.core.exception.AppBuildException;
 import com.silentgo.core.exception.AppReleaseException;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.utils.PropKit;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 import net.sf.ehcache.CacheManager;
 import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.codec.Base64;
@@ -20,8 +22,6 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.quartz.SchedulerException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContext;
 import java.util.List;
@@ -36,7 +36,7 @@ import java.util.List;
  */
 public class ShiroFactory extends BaseFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ShiroFactory.class);
+    private static final Log LOGGER = LogFactory.get();
 
     public static final String Name = "Shiro";
 

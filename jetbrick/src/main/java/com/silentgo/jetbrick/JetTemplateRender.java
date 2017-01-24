@@ -5,12 +5,12 @@ import com.silentgo.core.exception.AppRenderException;
 import com.silentgo.core.render.Render;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 import jetbrick.template.JetEngine;
 import jetbrick.template.JetTemplate;
 import jetbrick.template.web.JetWebContext;
 import jetbrick.template.web.JetWebEngine;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -25,7 +25,8 @@ import java.util.Properties;
  */
 public class JetTemplateRender implements Render {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JetTemplateRender.class);
+
+    private static final Log LOGGER = LogFactory.get();
 
     private final JetEngine engine;
 

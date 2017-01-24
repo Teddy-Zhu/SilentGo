@@ -1,9 +1,8 @@
 package com.silentgo.core.action.gzip;
 
 import com.silentgo.servlet.http.Response;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 import javax.servlet.ServletOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -14,8 +13,7 @@ import java.io.PrintWriter;
  */
 
 public class GZIPResponseWrapper extends Response {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(GZIPResponseWrapper.class);
+    private static final Log LOGGER = LogFactory.get();
     protected Response origResponse = null;
     protected ServletOutputStream stream = null;
     protected PrintWriter writer = null;

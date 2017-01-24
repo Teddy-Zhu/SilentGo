@@ -1,8 +1,8 @@
 package com.silentgo.core.ioc.bean;
 
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 import com.silentgo.utils.reflect.SGField;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -18,7 +18,7 @@ import java.lang.reflect.Method;
  */
 public class FieldBean {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FieldBean.class);
+    private static final Log LOGGER = LogFactory.get();
 
     private String beanName;
 

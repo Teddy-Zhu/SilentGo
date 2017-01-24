@@ -11,7 +11,7 @@
 
     <artifactId>shiro</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.9</version>
+    <version>0.1.0</version>
 
     <properties>
         <frame.version>0.0.38</frame.version>
@@ -59,6 +59,11 @@
             </exclusions>
         </dependency>
 
+        <dependency>
+            <groupId>com.silentgo</groupId>
+            <artifactId>utils</artifactId>
+            <version>0.1.7</version>
+        </dependency>
 
     </dependencies>
 </project>
