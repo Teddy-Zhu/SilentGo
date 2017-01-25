@@ -31,7 +31,7 @@ public class AnnotationInterceptor implements Interceptor {
         Long start = System.currentTimeMillis();
         AnnotationInceptFactory annotationInceptFactory = SilentGo.me().getFactory(AnnotationInceptFactory.class);
         Object ret = new AnnotationInterceptChain(point, annotationInceptFactory.getSortedAnnotationMap(point.getAdviser().getName())).intercept();
-        LOGGER.debug("end Annotaion Intercept : {}", System.currentTimeMillis() - start);
+        LOGGER.debug("end annotation Intercept : {}", System.currentTimeMillis() - start);
         return ret;
     }
 }

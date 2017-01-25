@@ -24,9 +24,8 @@ public class NotSupportPropagationResolver implements PropagationResolver {
     public Object resolve(SilentGo me, AnnotationInterceptChain chain, Transaction annotation, DBConnect connect, String name, boolean hasConnect) throws Throwable {
         if (hasConnect) {
             Connection innerConnect = connect.getConnect();
-            boolean isAuto = innerConnect.getAutoCommit();
 
-            if (isAuto) {
+            if (innerConnect.getAutoCommit()) {
                 return chain.intercept();
             } else {
                 DBType type = DBType.parse(me.getConfig().getDbType());

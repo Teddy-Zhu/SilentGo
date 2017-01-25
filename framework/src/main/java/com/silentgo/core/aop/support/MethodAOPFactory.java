@@ -158,7 +158,7 @@ public class MethodAOPFactory extends BaseFactory {
             //build annotations
             annotationInceptFactory.buildIAnnotation(methodAdviser);
             if (annotationInceptFactory.getSortedAnnotationMap(methodAdviser.getMethod()).size() > 0) {
-                interceptors.add(new AnnotationInterceptor());
+                interceptors.add(interceptFactory.getInterceptor(AnnotationInterceptor.class));
                 needInject[0] = true;
             }
 
@@ -178,14 +178,14 @@ public class MethodAOPFactory extends BaseFactory {
             });
 
             if (aspectFactory.getAspectMethod(methodAdviser.getMethod()).size() > 0) {
-                interceptors.add(new AspectInterceptor());
+                interceptors.add(interceptFactory.getInterceptor(AspectInterceptor.class));
                 needInject[0] = true;
             }
 
             validatorFactory.addMethodParamValidator(methodAdviser.getMethod(), validatorFactory.buildIValidator(methodAdviser));
 
             if (!validatorFactory.getParamValidatorMap(methodAdviser.getMethod()).isEmpty()) {
-                interceptors.add(new ValidatorInterceptor());
+                interceptors.add(interceptFactory.getInterceptor(ValidatorInterceptor.class));
                 needInject[0] = true;
             }
 

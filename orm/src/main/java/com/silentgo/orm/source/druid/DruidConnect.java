@@ -33,6 +33,7 @@ public class DruidConnect implements DBConnect {
     @Override
     public boolean close() {
         try {
+            LOGGER.info("druid debug ------ close connect : {} ", this);
             connection.close();
         } catch (SQLException e) {
             LOGGER.error(e, "druid close connect error");

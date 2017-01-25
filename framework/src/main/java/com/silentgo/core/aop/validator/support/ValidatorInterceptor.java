@@ -5,7 +5,6 @@ import com.silentgo.core.aop.AOPPoint;
 import com.silentgo.core.aop.Interceptor;
 import com.silentgo.core.aop.MethodParam;
 import com.silentgo.core.aop.annotation.Intercept;
-import com.silentgo.core.aop.annotationintercept.support.AnnotationInterceptor;
 import com.silentgo.core.aop.validator.IValidator;
 import com.silentgo.core.aop.validator.exception.ValidateException;
 import com.silentgo.utils.log.Log;
@@ -38,16 +37,24 @@ public class ValidatorInterceptor implements Interceptor {
         MethodParam[] params = point.getAdviser().getParams();
         ValidatorFactory validatorFactory = SilentGo.me().getFactory(ValidatorFactory.class);
         Map<String, Map<Annotation, IValidator>> validateMap = validatorFactory.getParamValidatorMap(point.getAdviser().getName());
-        for (int i = 0, len = params.length; i < len; i++) {
-            MethodParam param = params[i];
-            Map<Annotation, IValidator> map = validateMap.get(param.getName());
-            for (Map.Entry<Annotation, IValidator> entry : map.entrySet()) {
-                Annotation annotation = entry.getKey();
-                IValidator validator = entry.getValue();
-                if (!validator.validate(point.getResponse(), point.getRequest(), annotation, point.getObjects()[i], i, point.getObjects())) {
-                    throw new ValidateException(String.format("Parameter [%s] validate error", param.getName()));
+        if (validateMap != null) {
+            for (int i = 0, len = params.length; i < len; i++) {
+                MethodParam param = params[i];
+                Map<Annotation, IValidator> map = validateMap.get(param.getName());
+                if (map == null) {
+                    LOGGER.debug("param:{}, ivalidator not found", param.getName());
+                    continue;
+                }
+                for (Map.Entry<Annotation, IValidator> entry : map.entrySet()) {
+                    Annotation annotation = entry.getKey();
+                    IValidator validator = entry.getValue();
+                    if (!validator.validate(point.getResponse(), point.getRequest(), annotation, point.getObjects()[i], i, point.getObjects())) {
+                        throw new ValidateException(String.format("Parameter [%s] validate error", param.getName()));
+                    }
                 }
             }
+        } else {
+            LOGGER.debug("method :{} , validatorMap not found");
         }
 
         Object ret = point.proceed();

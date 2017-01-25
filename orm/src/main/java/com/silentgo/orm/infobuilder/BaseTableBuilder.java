@@ -6,10 +6,11 @@ import com.silentgo.orm.connect.ConnectManager;
 import com.silentgo.orm.dialect.DialectManager;
 import com.silentgo.orm.kit.BaseTableInfoKit;
 import com.silentgo.utils.ClassKit;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -25,6 +26,9 @@ import java.util.Map;
  *         Created by teddyzhu on 2016/10/29.
  */
 public class BaseTableBuilder {
+
+    private static final Log LOGGER = LogFactory.get();
+
     //model - tableInfo
     private Map<Class<? extends TableModel>, BaseTableInfo> tableInfoMap = new HashMap<>();
 
@@ -73,6 +77,7 @@ public class BaseTableBuilder {
     public Object initialBaseModel(String name, Class<? extends TableModel> tableclass, DBType type) {
         if (type == null) return null;
 
+        LOGGER.info(" build base model :{}", name);
         DBConnect connect = ConnectManager.me().getConnect(type, name);
 
         //build table info
@@ -85,8 +90,10 @@ public class BaseTableBuilder {
             tableInfoMap.put(tableclass, info);
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
+            LOGGER.error(e);
+        } finally {
+            ConnectManager.me().releaseConnect(type, name, connect);
         }
-        ConnectManager.me().releaseConnect(type, name, connect);
         return null;
     }
 

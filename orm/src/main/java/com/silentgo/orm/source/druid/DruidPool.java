@@ -34,10 +34,12 @@ public class DruidPool implements DBPool {
             DBConnect connect = threadConnect.get();
             if (connect == null) {
                 connect = new DruidConnect(ds.getConnection());
+                LOGGER.info("druid debug ------ create common connect : {}", connect);
                 threadConnect.set(connect);
             } else {
                 if (!connect.getConnect().isValid(3000) || connect.getConnect().isClosed()) {
                     connect = new DruidConnect(ds.getConnection());
+                    LOGGER.info("druid debug ------ create common connect : {}", connect);
                     threadConnect.set(connect);
                 }
             }
@@ -65,7 +67,9 @@ public class DruidPool implements DBPool {
     @Override
     public DBConnect getUnSafeDBConnect() {
         try {
-            return new DruidConnect(ds.getConnection());
+            DBConnect connect = new DruidConnect(ds.getConnection());
+            LOGGER.info("druid debug ------ create unsafe connect : {}", connect);
+            return connect;
         } catch (SQLException e) {
             LOGGER.error(e, "get unsafe druid connect error");
             return null;

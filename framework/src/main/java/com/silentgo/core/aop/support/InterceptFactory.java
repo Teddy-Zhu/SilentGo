@@ -3,6 +3,9 @@ package com.silentgo.core.aop.support;
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.Interceptor;
 import com.silentgo.core.aop.annotation.Intercept;
+import com.silentgo.core.aop.annotationintercept.support.AnnotationInterceptor;
+import com.silentgo.core.aop.aspect.support.AspectInterceptor;
+import com.silentgo.core.aop.validator.support.ValidatorInterceptor;
 import com.silentgo.core.build.Factory;
 import com.silentgo.core.exception.AppBuildException;
 import com.silentgo.core.exception.AppReleaseException;
@@ -47,6 +50,10 @@ public class InterceptFactory extends BaseFactory {
         return methodInterceptors;
     }
 
+    public boolean addInterceptor(Interceptor interceptor) {
+        return CollectionKit.MapAdd(allInterceptors, interceptor.getClass(), interceptor);
+    }
+
     public boolean addAllInterceltor(Class<? extends Interceptor> name) throws IllegalAccessException, InstantiationException {
         return CollectionKit.MapAdd(allInterceptors, name, name.newInstance());
     }
@@ -79,6 +86,9 @@ public class InterceptFactory extends BaseFactory {
 
     @Override
     public boolean initialize(SilentGo me) throws AppBuildException {
+        addInterceptor(new AnnotationInterceptor());
+        addInterceptor(new ValidatorInterceptor());
+        addInterceptor(new AspectInterceptor());
 
         //build global interceptors
         List<Interceptor> globalInterceptors = me.getConfig().getInterceptors();

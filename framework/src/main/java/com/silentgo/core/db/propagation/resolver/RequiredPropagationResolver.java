@@ -23,17 +23,15 @@ public class RequiredPropagationResolver implements PropagationResolver {
     public Object resolve(SilentGo me, AnnotationInterceptChain chain, Transaction annotation, DBConnect connect, String name, boolean hasConnect) throws Throwable {
         if (hasConnect) {
             Connection innerConnect = connect.getConnect();
-            boolean isAuto = innerConnect.getAutoCommit();
-
-            if (isAuto) {
-                return PropagationKit.resolve(me, chain, connect, annotation,name);
+            if (innerConnect.getAutoCommit()) {
+                return PropagationKit.resolve(me, chain, connect, annotation, name);
             } else {
                 if (innerConnect.getTransactionIsolation() < annotation.transcationLevel())
                     innerConnect.setTransactionIsolation(annotation.transcationLevel());
                 return chain.intercept();
             }
         } else {
-            return PropagationKit.resolve(me, chain, connect, annotation,name);
+            return PropagationKit.resolve(me, chain, connect, annotation, name);
         }
     }
 }

@@ -54,6 +54,7 @@ public class DaoInterceptor implements MethodInterceptor {
     public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
 
         Long start = System.currentTimeMillis();
+        DBConnect connect = null;
 
         BaseTableBuilder baseTableBuilder = BaseTableBuilder.me();
         SQLTool sqlTool = new SQLTool();
@@ -92,47 +93,52 @@ public class DaoInterceptor implements MethodInterceptor {
 
         LOGGER.debug("dao parse sql end in {}ms", System.currentTimeMillis() - start);
 
-        DBConnect connect = null;
         Object ret = null;
 
-        SQLType type = sqlTool.getType();
-        Object[] args = sqlTool.getParams();
-        switch (type) {
-            case QUERY:
-            case COUNT: {
-                DaoMethod daoMethod = getDaoMethod(method, daoClass, baseTableBuilder.getReflectMap().get(daoClass));
-                connect = ConnectManager.me().getConnect(tableInfo.getType(), tableInfo.getPoolName());
-                ret = excuteQuery(sqlTool, args, connect, daoMethod);
-                break;
-            }
-            case DELETE:
-            case UPDATE: {
-                connect = ConnectManager.me().getConnect(tableInfo.getType(), tableInfo.getPoolName());
-                ret = SilentGoOrm.updateOrDelete(connect, sqlTool.getSQL(), type.name(), int.class, args);
-                break;
-            }
-            case INSERT: {
-                connect = ConnectManager.me().getConnect(tableInfo.getType(), tableInfo.getPoolName());
-                Object[] generateKeys;
-                if (objects.length == 1) {
-                    if (objects[0] instanceof Collection)
-                        generateKeys = new Object[((Collection) objects[0]).size()];
-                    else
-                        generateKeys = new Object[1];
-                } else {
-                    generateKeys = new Object[0];
+        try {
+
+            SQLType type = sqlTool.getType();
+            Object[] args = sqlTool.getParams();
+            switch (type) {
+                case QUERY:
+                case COUNT: {
+                    DaoMethod daoMethod = getDaoMethod(method, daoClass, baseTableBuilder.getReflectMap().get(daoClass));
+                    connect = ConnectManager.me().getConnect(tableInfo.getType(), tableInfo.getPoolName());
+                    ret = excuteQuery(sqlTool, args, connect, daoMethod);
+                    break;
                 }
-                ret = SilentGoOrm.insert(connect, sqlTool.getSQL(), int.class, generateKeys, args);
-                resolveInsertResult(tableInfo, generateKeys, objects);
-                break;
+                case DELETE:
+                case UPDATE: {
+                    connect = ConnectManager.me().getConnect(tableInfo.getType(), tableInfo.getPoolName());
+                    ret = SilentGoOrm.updateOrDelete(connect, sqlTool.getSQL(), type.name(), int.class, args);
+                    break;
+                }
+                case INSERT: {
+                    connect = ConnectManager.me().getConnect(tableInfo.getType(), tableInfo.getPoolName());
+                    Object[] generateKeys;
+                    if (objects.length == 1) {
+                        if (objects[0] instanceof Collection)
+                            generateKeys = new Object[((Collection) objects[0]).size()];
+                        else
+                            generateKeys = new Object[1];
+                    } else {
+                        generateKeys = new Object[0];
+                    }
+                    ret = SilentGoOrm.insert(connect, sqlTool.getSQL(), int.class, generateKeys, args);
+                    resolveInsertResult(tableInfo, generateKeys, objects);
+                    break;
+                }
+            }
+            LOGGER.debug("execute sql end");
+
+        } catch (Exception e) {
+            LOGGER.error(e);
+        } finally {
+            if (connect != null && connect.getConnect().getAutoCommit()) {
+                ConnectManager.me().releaseConnect(tableInfo.getType(), tableInfo.getPoolName(), connect);
             }
         }
-        LOGGER.debug("execute sql end");
-
-        if (connect != null && connect.getConnect().getAutoCommit()) {
-            ConnectManager.me().releaseConnect(tableInfo.getType(), tableInfo.getPoolName(), connect);
-        }
-
+        
         LOGGER.debug("end orm method : {}", System.currentTimeMillis() - start);
         return ret;
     }

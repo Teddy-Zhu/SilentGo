@@ -2,6 +2,8 @@ package com.silentgo.utils.reflect;
 
 import com.silentgo.utils.StringKit;
 import com.silentgo.utils.asm.ParameterNameUtils;
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
@@ -18,7 +20,7 @@ import java.util.Map;
  *         Created by teddyzhu on 2017/1/5.
  */
 public class SGClassParseKit {
-
+    private static final Log LOGGER = LogFactory.get();
 
     public static SGClass parse(Class<?> clz) {
         SGClass sgClass = new SGClass();
@@ -43,7 +45,12 @@ public class SGClassParseKit {
         for (Method method : methods) {
             int modifier = method.getModifiers();
 
-            if (Modifier.isStatic(modifier) || Modifier.isNative(modifier) || method.getDeclaringClass().equals(Object.class)) {
+            if (method.isBridge()) {
+                continue;
+            }
+            if (Modifier.isStatic(modifier)
+                    || Modifier.isNative(modifier)
+                    || method.getDeclaringClass().equals(Object.class)) {
                 continue;
             }
             if (method.getParameters().length > 0 && !method.getParameters()[0].isNamePresent()) {
