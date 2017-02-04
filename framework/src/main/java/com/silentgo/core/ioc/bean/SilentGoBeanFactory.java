@@ -112,7 +112,7 @@ public class SilentGoBeanFactory extends BeanFactory<BeanDefinition> {
                             .findFirst().get().getValue();
                 } catch (NoSuchElementException ex) {
                     ex.printStackTrace();
-                    LOGGER.error("Can not find [{}] find implemented class bean", k);
+                    LOGGER.error(ex, "Can not find [{}] find implemented class bean", k);
                     return;
                 }
 

@@ -73,8 +73,8 @@ public class ShiroAction extends ActionChain {
                     try {
                         session.touch();
                     } catch (Throwable t) {
-                        LOGGER.error("session.touch() method invocation has failed.  Unable to update" +
-                                "the corresponding session's last access time based on the incoming request.", t);
+                        LOGGER.error(t, "session.touch() method invocation has failed.  Unable to update" +
+                                "the corresponding session's last access time based on the incoming request.");
                     }
                 }
             }

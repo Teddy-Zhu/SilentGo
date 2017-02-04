@@ -84,7 +84,7 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
                 LOGGER.debug("Session validation job successfully scheduled with Quartz.");
         } catch (SchedulerException e) {
             if (LOGGER.isErrorEnabled())
-                LOGGER.error("Error starting the Quartz session validation job.  Session validation may not occur.", e);
+                LOGGER.error(e, "Error starting the Quartz session validation job.  Session validation may not occur.");
         }
     }
 

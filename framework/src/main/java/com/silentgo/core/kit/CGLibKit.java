@@ -18,6 +18,7 @@ import java.lang.reflect.Field;
 public class CGLibKit {
 
     private static final Log LOGGER = LogFactory.get();
+
     @SuppressWarnings("unchecked")
     public static <T> T getTarget(T target) {
         if (target.getClass().getName().contains("CGLIB$")) {
@@ -34,6 +35,7 @@ public class CGLibKit {
                 return (T) targetField.get(aoptarget);
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 e.printStackTrace();
+                LOGGER.error(e);
             }
         } else
             LOGGER.error("The object [{}] is not Acc cglib-proxy class", target.getClass().getName());

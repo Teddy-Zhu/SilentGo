@@ -3,6 +3,7 @@ package com.silentgo.core.action.gzip;
 import com.silentgo.servlet.http.Response;
 import com.silentgo.utils.log.Log;
 import com.silentgo.utils.log.LogFactory;
+
 import javax.servlet.ServletOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -37,7 +38,7 @@ public class GZIPResponseWrapper extends Response {
                 }
             }
         } catch (IOException e) {
-            LOGGER.error("close gzip response stream error", e);
+            LOGGER.error(e, "close gzip response stream error");
         }
     }
 

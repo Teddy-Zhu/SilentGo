@@ -4,7 +4,6 @@ import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.MethodAdviser;
 import com.silentgo.core.aop.annotationintercept.IAnnotation;
 import com.silentgo.core.aop.annotationintercept.annotation.CustomInterceptor;
-import com.silentgo.core.aop.support.MethodAOPFactory;
 import com.silentgo.core.build.Factory;
 import com.silentgo.core.exception.AppReleaseException;
 import com.silentgo.core.support.BaseFactory;
@@ -94,6 +93,7 @@ public class AnnotationInceptFactory extends BaseFactory {
                 }
             } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
+                LOGGER.error(e);
             }
         }
     }

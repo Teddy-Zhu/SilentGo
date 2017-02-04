@@ -129,7 +129,7 @@ public class SilentGoFilter implements Filter {
             ((ActionChain) globalConfig.getActionChain().getObject()).doAction(param);
             LOGGER.debug("action {} end in : {} ms", requestPath, System.currentTimeMillis() - start);
         } catch (Throwable throwable) {
-            LOGGER.error("action error", throwable);
+            LOGGER.error(throwable, "action error");
             new ErrorRener().render(request, response, HttpStatus.Code.INTERNAL_SERVER_ERROR, throwable, appContext.isDevMode());
             return;
         } finally {
@@ -146,7 +146,7 @@ public class SilentGoFilter implements Filter {
                     try {
                         v.destroy(appContext);
                     } catch (AppReleaseException e) {
-                        LOGGER.error("release factory : " + v.getClass().getName() + " error", e);
+                        LOGGER.error(e, "release factory : {} error", v.getClass().getName());
                         e.printStackTrace();
                     }
                 });
@@ -173,7 +173,7 @@ public class SilentGoFilter implements Filter {
         try {
             beanFactory = config.getBeanClass().newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            LOGGER.error("init bean instance error", e);
+            LOGGER.error(e, "init bean instance error");
         }
         config.addFactory(beanFactory);
         beanFactory.addBean(config, true, false, false);
@@ -181,7 +181,7 @@ public class SilentGoFilter implements Filter {
             beanFactory.initialize(appContext);
         } catch (AppBuildException e) {
             e.printStackTrace();
-            LOGGER.error("init bean error", e);
+            LOGGER.error(e, "init bean error");
         }
         beanFactory.addBean(beanFactory, true, false, false);
 
@@ -197,7 +197,7 @@ public class SilentGoFilter implements Filter {
             }
 
         } catch (Exception e) {
-            LOGGER.error("get config error", e);
+            LOGGER.error(e, "get config error");
             throw new ServletException(e);
         }
         return configInit == null ? new Config() {

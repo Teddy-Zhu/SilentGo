@@ -12,7 +12,6 @@ import com.silentgo.utils.log.LogFactory;
 import net.sf.ehcache.CacheManager;
 import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.codec.Base64;
-import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
 import org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator;
 import org.apache.shiro.web.env.MutableWebEnvironment;
@@ -134,7 +133,7 @@ public class ShiroFactory extends BaseFactory {
             try {
                 sessionValidationScheduler.getScheduler().shutdown();
             } catch (SchedulerException e) {
-                LOGGER.error("get session schedule error", e);
+                LOGGER.error(e, "get session schedule error");
             }
         }
         return true;

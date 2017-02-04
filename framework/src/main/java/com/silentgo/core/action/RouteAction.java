@@ -35,6 +35,7 @@ public class RouteAction extends ActionChain {
 
 
     private static final Log LOGGER = LogFactory.get();
+
     @Override
     public Integer priority() {
         return Integer.MAX_VALUE;
@@ -106,10 +107,10 @@ public class RouteAction extends ActionChain {
                 renderResolverFactory.render(renderFactory, adviser, request, response, returnVal);
                 LOGGER.debug("render method end in :{} ", System.currentTimeMillis() - start);
             } catch (AppException e) {
-                LOGGER.error("route action AppException error", e);
+                LOGGER.error(e, "route action AppException error");
                 new ErrorRener().render(request, response, e, isDev);
             } catch (Exception ex) {
-                LOGGER.error("route action other error", ex);
+                LOGGER.error(ex,"route action other error");
                 //exception handle
                 ExceptionFactory exceptionFactory = me.getFactory(ExceptionFactory.class);
 

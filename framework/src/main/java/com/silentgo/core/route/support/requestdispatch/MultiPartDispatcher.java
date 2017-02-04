@@ -29,6 +29,7 @@ import java.util.Locale;
 public class MultiPartDispatcher implements RequestDispatcher {
 
     private static final Log LOGGER = LogFactory.get();
+
     @Override
     public void release(ActionParam param) {
         if (param.getRequest() instanceof MultiPartRequest) {
@@ -54,7 +55,7 @@ public class MultiPartDispatcher implements RequestDispatcher {
             multiPartRequest = MultipartRequestParser.parseMultiPartRequest(request, System.getProperty("java.io.tmpdir") + File.separator + "temp", config.getMaxSize(), request.getCharacterEncoding(), config.isAutoSave() ? new AutoSaveFilePolicy() : new DefaultFileRenamePolicy());
             param.setRequest(multiPartRequest);
         } catch (IOException e) {
-            LOGGER.error("create multipartRequest failed", e);
+            LOGGER.error(e, "create multipartRequest failed");
             e.printStackTrace();
         }
 

@@ -12,6 +12,7 @@ import org.apache.shiro.web.env.EnvironmentLoader;
 import org.apache.shiro.web.env.IniWebEnvironment;
 import org.apache.shiro.web.env.MutableWebEnvironment;
 import org.apache.shiro.web.env.WebEnvironment;
+
 import javax.servlet.ServletContext;
 
 /**
@@ -57,11 +58,11 @@ public class ShiroLoader {
 
             return environment;
         } catch (RuntimeException ex) {
-            LOGGER.error("Shiro environment initialization failed", ex);
+            LOGGER.error(ex, "Shiro environment initialization failed");
             servletContext.setAttribute(ENVIRONMENT_ATTRIBUTE_KEY, ex);
             throw ex;
         } catch (Error err) {
-            LOGGER.error("Shiro environment initialization failed", err);
+            LOGGER.error(err, "Shiro environment initialization failed");
             servletContext.setAttribute(ENVIRONMENT_ATTRIBUTE_KEY, err);
             throw err;
         }
