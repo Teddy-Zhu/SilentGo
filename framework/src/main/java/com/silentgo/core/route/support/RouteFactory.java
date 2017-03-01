@@ -143,6 +143,7 @@ public class RouteFactory extends BaseFactory {
             for (String s : an.value()) {
                 String fullPath = mergePath(path, filterPath(Const.DEFAULT_NONE.equals(s) ?
                         method.getName() : s, true));
+                fullPath = fullPath.length() > 1 && fullPath.endsWith(Const.Slash) ? fullPath.substring(0, fullPath.length() - 1) : fullPath;
                 Matcher matcher = routePattern.matcher(fullPath);
 
                 if (an.regex() || parentRegex || matcher.find()) {

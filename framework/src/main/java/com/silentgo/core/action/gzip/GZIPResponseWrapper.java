@@ -38,7 +38,7 @@ public class GZIPResponseWrapper extends Response {
                 }
             }
         } catch (IOException e) {
-            LOGGER.error(e, "close gzip response stream error");
+            LOGGER.warn(e, "close gzip response stream error");
         }
     }
 

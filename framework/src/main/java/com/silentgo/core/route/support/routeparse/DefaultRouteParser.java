@@ -116,6 +116,8 @@ public class DefaultRouteParser implements RoutePaser {
     }
 
     private boolean validateParams(String[] params, Request request, Double[] count) {
+
+        //TODO 缓存split结果
         for (String param : params) {
             String[] paramh = StringKit.getLeftRight(param, eq);
             if (StringKit.isBlank(paramh[0])) return false;

@@ -95,12 +95,9 @@ public class RouteAction extends ActionChain {
                 paramDispatchFactory.dispatch(parameterResolveFactory, param, ret, args);
                 LOGGER.debug("paramDispatchFactory dispatch end in :{} ", System.currentTimeMillis() - start);
 
-
-                Object returnVal = null;
-
                 start = System.currentTimeMillis();
                 //controller method with interceptors
-                returnVal = adviser.getMethod().invoke(bean, args);
+                Object returnVal = adviser.getMethod().invoke(bean, args);
                 LOGGER.debug("route method end in :{} ", System.currentTimeMillis() - start);
                 start = System.currentTimeMillis();
                 //render
