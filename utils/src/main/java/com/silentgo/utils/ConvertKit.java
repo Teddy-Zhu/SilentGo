@@ -4,6 +4,7 @@ import com.silentgo.utils.convertor.*;
 import com.silentgo.utils.inter.ITypeConvertor;
 
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +29,11 @@ public class ConvertKit {
         t.put(Integer.class, new StringToIntegerConvertor());
         t.put(Date.class, new StringToDateConvertor());
         t.put(Boolean.class, new StringToBooleanConvertor());
+        t.put(BigDecimal.class, (source, objects) -> source == null ? "null" : source.toString());
         convertMap.put(String.class, t);
+        convertMap.put(Date.class, new HashMap<Class<?>, ITypeConvertor>() {{
+            put(String.class, new DateToStringConvertor());
+        }});
     }
 
 
