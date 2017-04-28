@@ -79,6 +79,39 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
     }
 
     @Override
+    public <T extends TableModel> SQLTool queryByModelMap(BaseTableInfo table, Map<String, Object> t) {
+
+        SQLTool sqlTool = new SQLTool();
+        sqlTool.select(table.getTableName(), table.get("*").getSelectFullName());
+
+        PropertyKit.getCachedProps(table).forEach((k, propertyDescriptor) -> {
+            Object target = t.get(k);
+
+            if (target == null) {
+                return;
+            }
+            if (target instanceof String && StringKit.isBlank(target.toString())) {
+                return;
+            }
+            sqlTool.whereEquals(table.get(k).getFullName()).appendParam(target);
+        });
+
+        Object orderBy = t.get("orderBy");
+
+        if (orderBy != null && orderBy instanceof String) {
+            sqlTool.orderBy(String.valueOf(orderBy));
+        }
+
+        Object limitBy = t.get("limitBy");
+
+        if (limitBy != null && limitBy instanceof String) {
+            sqlTool.limit(String.valueOf(limitBy));
+        }
+
+        return sqlTool;
+    }
+
+    @Override
     public <T extends TableModel> SQLTool insertByRow(BaseTableInfo table, T t) {
 
         SQLTool sqlTool = new SQLTool().insert(table.getTableName());

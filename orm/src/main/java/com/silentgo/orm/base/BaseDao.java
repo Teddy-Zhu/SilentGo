@@ -1,9 +1,7 @@
 package com.silentgo.orm.base;
 
-import com.silentgo.orm.base.SQLTool;
-import com.silentgo.orm.base.TableModel;
-
 import java.util.List;
+import java.util.Map;
 
 /**
  * Project : silentgo
@@ -25,6 +23,8 @@ public interface BaseDao<T extends TableModel> {
     public <S extends T> List<S> queryByPrimaryKeys(List<Object> ids);
 
     public <S extends T> List<S> queryByModelSelective(S t);
+
+    public <S extends T> List<S> queryByModelMap(Map<String, Object> map);
 
     //ADD
     public <S extends T> int insertByRow(S t);

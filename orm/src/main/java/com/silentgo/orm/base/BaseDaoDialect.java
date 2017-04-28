@@ -1,6 +1,7 @@
 package com.silentgo.orm.base;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * Project : silentgo
@@ -17,6 +18,8 @@ public interface BaseDaoDialect {
     public SQLTool queryByPrimaryKeys(BaseTableInfo table, Collection<Object> ids);
 
     public <T extends TableModel> SQLTool queryByModelSelective(BaseTableInfo table, T t);
+
+    public <T extends TableModel> SQLTool queryByModelMap(BaseTableInfo table, Map<String, Object> t);
 
     //ADD
     public <T extends TableModel> SQLTool insertByRow(BaseTableInfo table, T t);

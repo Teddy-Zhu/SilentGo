@@ -1,4 +1,7 @@
-import com.silentgo.utils.asm.ParameterNameUtils;
+import com.google.gson.Gson;
+import com.silentgo.utils.ReflectKit;
+
+import java.util.Map;
 
 /**
  * Project : SilentGo
@@ -21,8 +24,12 @@ public class Test {
 
     public static void main(String[] args) throws NoSuchMethodException {
 
-        String[] names = ParameterNameUtils.getMethodParameterNames(Test.class, Test.class.getMethod("adads", String.class));
+        Gson json = new Gson();
 
-        System.out.println(names);
+        hello aaa = json.fromJson("{\"aaa\":\"adsa\"}", hello.class);
+
+        Map<String,Object> map = ReflectKit.beanToMap(aaa);
+
+        System.out.println(map);
     }
 }

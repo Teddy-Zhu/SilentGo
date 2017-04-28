@@ -1,6 +1,9 @@
 package com.silentgo.orm.sqlparser.daoresolve;
 
-import com.silentgo.orm.base.*;
+import com.silentgo.orm.base.BaseDaoDialect;
+import com.silentgo.orm.base.BaseTableInfo;
+import com.silentgo.orm.base.SQLTool;
+import com.silentgo.orm.base.TableModel;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -21,6 +24,7 @@ public class CommonDaoResolver implements DaoResolver {
         add("queryByPrimaryKey");
         add("queryByPrimaryKeys");
         add("queryByModelSelective");
+        add("queryByModelMap");
         add("insertByRow");
         add("insertByRows");
         add("updateByPrimaryKey");
@@ -51,6 +55,9 @@ public class CommonDaoResolver implements DaoResolver {
             }
             case "queryByModelSelective": {
                 return daoDialect.queryByModelSelective(tableInfo, (T) objects[0]);
+            }
+            case "queryByModelMap": {
+                return daoDialect.queryByModelMap(tableInfo, (Map<String, Object>) objects[0]);
             }
             case "insertByRow": {
                 return daoDialect.insertByRow(tableInfo, (T) objects[0]);

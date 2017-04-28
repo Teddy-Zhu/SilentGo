@@ -26,4 +26,23 @@ public class ReflectKit {
         cachedSGClass.put(clz, sgClass);
         return sgClass;
     }
+
+
+    public static Map<String, Object> beanToMap(Object object) {
+        if (TypeConvertKit.isBaseType(object.getClass())) {
+            throw new RuntimeException("convert bean failed,because the clz is base type");
+        }
+
+        SGClass sgClass = getSGClass(object.getClass());
+
+        Map<String, Object> map = new HashMap<>();
+
+        sgClass.getFieldMap().forEach((k, v) -> {
+            if (v.hasGet()) {
+                map.put(k, v.get(object));
+            }
+        });
+
+        return map;
+    }
 }

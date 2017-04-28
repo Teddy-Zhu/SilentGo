@@ -7,66 +7,44 @@
  *         Created by teddyzhu on 2016/11/30.
  */
 public class hello {
-    void say() {
-        System.out.println("say");
+
+    private String aaa;
+
+    private String ccc;
+
+    public Boolean test;
+
+    public hello cccx;
+
+    public hello getCccx() {
+        return cccx;
     }
 
-    String sid() {
-        System.out.println("xxxxx");
-        return "xx";
+    public void setCccx(hello cccx) {
+        this.cccx = cccx;
     }
 
-    public String ccc(String zxs) {
-        return "";
+    public String getAaa() {
+        return aaa;
     }
 
-
-    private String a;
-
-    public hello() {
-
+    public void setAaa(String aaa) {
+        this.aaa = aaa;
     }
 
-    @Deprecated
-    public hello(@Deprecated String a) {
-        this.a = a;
+    public String getCcc() {
+        return ccc;
     }
 
-    private String aSS;
-
-    private String Ana;
-
-    public boolean sas;
-
-    public boolean isSas() {
-        return sas;
+    public void setCcc(String ccc) {
+        this.ccc = ccc;
     }
 
-    public void setSas(boolean sas) {
-        this.sas = sas;
+    public Boolean getTest() {
+        return test;
     }
 
-    public String getAna() {
-        return Ana;
-    }
-
-    public void setAna(String ana) {
-        Ana = ana;
-    }
-
-    public String getaSS() {
-        return aSS;
-    }
-
-    public void setaSS(String aSS) {
-        this.aSS = aSS;
-    }
-
-    public String getA() {
-        return a;
-    }
-
-    public void setA(String a) {
-        this.a = a;
+    public void setTest(Boolean test) {
+        this.test = test;
     }
 }
