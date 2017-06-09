@@ -21,7 +21,6 @@ import java.util.Map;
  *         <p>
  *         Created by  on 16/7/18.
  */
-@Intercept
 public class ValidatorInterceptor implements Interceptor {
 
     private static final Log LOGGER = LogFactory.get();

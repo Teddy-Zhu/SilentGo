@@ -119,8 +119,12 @@ public class SilentGoBeanFactory extends BeanFactory<BeanDefinition> {
             } else {
                 bean = beansMap.get(k);
             }
+            Lazy lazy = field.getAnnotation(Lazy.class);
             if (bean == null) {
-                bean = addBean(type);
+                if (lazy == null)
+                    bean = addBean(type);
+                else
+                    bean = addBean(null, true, false, true);
             }
             v.setBeanName(bean.getBeanName());
         }

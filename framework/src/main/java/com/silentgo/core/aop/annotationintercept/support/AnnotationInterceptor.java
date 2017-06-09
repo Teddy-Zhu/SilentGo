@@ -15,7 +15,6 @@ import com.silentgo.utils.log.LogFactory;
  *         <p>
  *         Created by teddyzhu on 16/7/20.
  */
-@Intercept
 public class AnnotationInterceptor implements Interceptor {
 
 

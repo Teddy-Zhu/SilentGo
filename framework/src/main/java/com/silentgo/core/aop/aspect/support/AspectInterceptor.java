@@ -15,7 +15,6 @@ import com.silentgo.utils.log.LogFactory;
  *         <p>
  *         Created by teddyzhu on 16/7/29.
  */
-@Intercept
 public class AspectInterceptor implements Interceptor {
 
     private static final Log LOGGER = LogFactory.get();

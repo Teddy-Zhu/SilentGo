@@ -13,9 +13,11 @@ import java.util.Map;
  */
 public interface BaseDao<T extends TableModel> {
 
-    public <S extends T> int countCustom(SQLTool sqlTool);
+    public int countCustom(SQLTool sqlTool);
 
-    public <S extends T> List<T> queryCustom(SQLTool sqlTool);
+    public int countByModelMap(Map<String,Object> map);
+
+    public List<T> queryCustom(SQLTool sqlTool);
 
     //QUERY
     public <S extends T> T queryByPrimaryKey(Object id);

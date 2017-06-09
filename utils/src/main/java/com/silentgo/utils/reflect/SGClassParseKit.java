@@ -7,9 +7,7 @@ import com.silentgo.utils.log.LogFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Project : SilentGo
@@ -64,9 +62,12 @@ public class SGClassParseKit {
         }
 
         sgClass.setFieldMap(new HashMap<>());
-        Field[] fields = clz.getFields();
+        Field[] fields = clz.getDeclaredFields();
+        List<Field> fieldList = new ArrayList<>();
+        fieldList.addAll(Arrays.asList(fields));
+        searchField(fieldList, clz.getSuperclass());
 
-        for (Field field : fields) {
+        for (Field field : fieldList) {
             int modifier = field.getModifiers();
             if (Modifier.isStatic(modifier) || Modifier.isNative(modifier) || Modifier.isFinal(modifier)) {
                 continue;
@@ -79,6 +80,9 @@ public class SGClassParseKit {
 
         fields = clz.getDeclaredFields();
         for (Field field : fields) {
+            if (sgClass.getFieldMap().containsKey(field.getName())) {
+                continue;
+            }
             if (Modifier.isStatic(field.getModifiers())) {
                 continue;
             }
@@ -102,6 +106,19 @@ public class SGClassParseKit {
             }
         }));
         return sgClass;
+    }
+
+    private static void searchField(List<Field> fieldList, Class<?> clz) {
+        if (clz == null || Object.class.equals(clz)) {
+            return;
+        }
+
+        Field[] fields = clz.getDeclaredFields();
+
+        for (Field field : fields) {
+            fieldList.add(field);
+        }
+        searchField(fieldList, clz.getSuperclass());
     }
 
     private static String methodNameToFieldName(String methodName) {

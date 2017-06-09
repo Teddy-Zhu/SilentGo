@@ -105,7 +105,7 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
         Object limitBy = t.get("limitBy");
 
         if (limitBy != null && limitBy instanceof String) {
-            sqlTool.limit(String.valueOf(limitBy));
+            sqlTool.limit("limit " + String.valueOf(limitBy));
         }
 
         return sqlTool;
@@ -274,6 +274,32 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
     @Override
     public SQLTool deleteAll(BaseTableInfo tableInfo) {
         return new SQLTool().delete(tableInfo.tableName);
+    }
+
+    @Override
+    public SQLTool countByModelMap(BaseTableInfo table, Map<String, Object> t) {
+        SQLTool sqlTool = new SQLTool();
+        sqlTool.count(table.getTableName());
+
+        PropertyKit.getCachedProps(table).forEach((k, propertyDescriptor) -> {
+            Object target = t.get(k);
+
+            if (target == null) {
+                return;
+            }
+            if (target instanceof String && StringKit.isBlank(target.toString())) {
+                return;
+            }
+            sqlTool.whereEquals(table.get(k).getFullName()).appendParam(target);
+        });
+
+        Object limitBy = t.get("limitBy");
+
+        if (limitBy != null && limitBy instanceof String) {
+            sqlTool.limit("limit " + String.valueOf(limitBy));
+        }
+
+        return sqlTool;
     }
 
 

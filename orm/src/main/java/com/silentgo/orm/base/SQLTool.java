@@ -60,7 +60,7 @@ public class SQLTool {
     }
 
     public String getCountRight() {
-        return " from " + tableName + getJoinSQL() + getWhereSQL() + getGroupSQL();
+        return " from " + tableName + getJoinSQL() + getWhereSQL() + getLimit();
     }
 
     public String getExceptSQL() {
@@ -408,7 +408,7 @@ public class SQLTool {
     }
 
     public SQLTool limit(String limit) {
-        this.limit = limit;
+        this.limit = " " + limit;
         return this;
     }
 

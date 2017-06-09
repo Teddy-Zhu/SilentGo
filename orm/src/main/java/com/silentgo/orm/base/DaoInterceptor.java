@@ -138,7 +138,7 @@ public class DaoInterceptor implements MethodInterceptor {
                 ConnectManager.me().releaseConnect(tableInfo.getType(), tableInfo.getPoolName(), connect);
             }
         }
-        
+
         LOGGER.debug("end orm method : {}", System.currentTimeMillis() - start);
         return ret;
     }
@@ -192,7 +192,7 @@ public class DaoInterceptor implements MethodInterceptor {
     }
 
     private DaoMethod getDaoMethod(Method method, Class<?> daoClass, Class<? extends TableModel> modelClass) {
-        DaoMethod daoMethod = DaoMethodKit.getDaoMethod(method);
+        DaoMethod daoMethod = BaseDao.class.equals(method.getDeclaringClass()) ? null : DaoMethodKit.getDaoMethod(method);
         if (daoMethod == null) {
             daoMethod = new DaoMethod();
             DaoMethodKit.addDaoMethod(method, daoMethod);
@@ -212,7 +212,11 @@ public class DaoInterceptor implements MethodInterceptor {
                     return daoMethod;
                 }
             } else {
-                daoMethod.setType(modelClass);
+                if (int.class.equals(method.getReturnType())) {
+                    daoMethod.setType(int.class);
+                } else {
+                    daoMethod.setType(modelClass);
+                }
                 if (Collection.class.isAssignableFrom(method.getReturnType())) {
                     daoMethod.setList(true);
                 }

@@ -12,8 +12,6 @@ import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
 import com.silentgo.utils.json.JsonPaser;
 
-import java.util.Map;
-
 /**
  * Project : silentgo
  * com.silentgo.core.route.support.paramresolver
@@ -45,7 +43,7 @@ public class RequestParamOrCommonParamResolver implements ParameterValueResolver
         ret = parser.toObject(methodParam.getName(), context.getHashObject(), methodParam.getType());
         if (ret == null && (requestParam == null || Const.DEFAULT_NONE.equals(requestParam.value()))) {
             try {
-                ret = me.json().toObject(context.getHashString(), methodParam.getType());
+                ret = parser.toObject(null, context.getHashObject(), methodParam.getType());
             } catch (Exception e) {
                 ret = null;
             }

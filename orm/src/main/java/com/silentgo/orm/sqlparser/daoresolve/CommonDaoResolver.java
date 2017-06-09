@@ -36,6 +36,7 @@ public class CommonDaoResolver implements DaoResolver {
         add("deleteAll");
         add("queryCustom");
         add("countCustom");
+        add("countByModelMap");
     }};
 
     @Override
@@ -92,6 +93,9 @@ public class CommonDaoResolver implements DaoResolver {
             }
             case "countCustom": {
                 return (SQLTool) objects[0];
+            }
+            case "countByModelMap": {
+                return daoDialect.countByModelMap(tableInfo, (Map<String, Object>) objects[0]);
             }
         }
         isHandled[0] = false;

@@ -6,7 +6,6 @@ import com.silentgo.utils.reflect.SGField;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 /**
  * Project : silentgo
@@ -19,6 +18,8 @@ import java.lang.reflect.Method;
 public class FieldBean {
 
     private static final Log LOGGER = LogFactory.get();
+
+    private Boolean isLazy;
 
     private String beanName;
 
@@ -65,10 +66,24 @@ public class FieldBean {
         return false;
     }
 
-
     public FieldBean(SGField field, String beanName) {
         this.field = field;
+        this.isLazy = false;
         this.beanName = beanName;
+    }
+
+    public FieldBean(SGField field, String beanName, Boolean isLazy) {
+        this.field = field;
+        this.beanName = beanName;
+        this.isLazy = isLazy;
+    }
+
+    public Boolean getLazy() {
+        return isLazy;
+    }
+
+    public void setLazy(Boolean lazy) {
+        isLazy = lazy;
     }
 
     public Field getField() {

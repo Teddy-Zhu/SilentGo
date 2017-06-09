@@ -41,4 +41,8 @@ public interface BaseDaoDialect {
     public SQLTool queryAll(BaseTableInfo tableInfo);
 
     public SQLTool deleteAll(BaseTableInfo tableInfo);
+
+    //Count
+    public SQLTool countByModelMap(BaseTableInfo table, Map<String, Object> t);
+
 }

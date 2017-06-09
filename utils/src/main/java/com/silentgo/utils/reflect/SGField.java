@@ -63,6 +63,10 @@ public class SGField extends AnnotationMap {
     }
 
     public void set(Object target, Object value) {
+        if (setMethod != null) {
+            invokeSetMethod(target, value);
+            return;
+        }
         if (!field.isAccessible()) {
             field.setAccessible(true);
         }
@@ -74,6 +78,9 @@ public class SGField extends AnnotationMap {
     }
 
     public Object get(Object target) {
+        if (getMethod != null) {
+            return invokeGetMethod(target);
+        }
         if (!field.isAccessible()) {
             field.setAccessible(true);
         }

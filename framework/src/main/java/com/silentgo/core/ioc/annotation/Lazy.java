@@ -13,6 +13,6 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
+@Target({ElementType.TYPE, ElementType.LOCAL_VARIABLE})
 public @interface Lazy {
 }

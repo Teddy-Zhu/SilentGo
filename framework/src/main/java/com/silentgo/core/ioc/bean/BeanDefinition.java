@@ -3,17 +3,14 @@ package com.silentgo.core.ioc.bean;
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.support.MethodAOPFactory;
 import com.silentgo.core.config.Const;
-import com.silentgo.core.ioc.annotation.Component;
 import com.silentgo.core.ioc.annotation.Inject;
-import com.silentgo.core.ioc.annotation.Service;
+import com.silentgo.core.ioc.annotation.Lazy;
 import com.silentgo.core.kit.CGLibKit;
 import com.silentgo.utils.ReflectKit;
 import com.silentgo.utils.log.Log;
 import com.silentgo.utils.log.LogFactory;
 import com.silentgo.utils.reflect.SGClass;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -99,13 +96,14 @@ public class BeanDefinition extends BeanWrapper {
         SGClass sgClass = ReflectKit.getSGClass(clz);
 
         sgClass.getFieldMap().forEach((name, field) -> {
-            Inject inject = (Inject) field.getAnnotationMap().get(Inject.class);
+            Inject inject = (Inject) field.getAnnotation(Inject.class);
+            Lazy lazy = (Lazy) field.getAnnotation(Lazy.class);
             //filter no annotation class
             if (inject != null) {
                 if (Const.DEFAULT_NONE.equals(inject.value()))
-                    fieldBeans.put(field.getType().getName(), new FieldBean(field, field.getType().getName()));
+                    fieldBeans.put(field.getType().getName(), new FieldBean(field, field.getType().getName(), lazy != null));
                 else
-                    fieldBeans.put(inject.value(), new FieldBean(field, inject.value()));
+                    fieldBeans.put(inject.value(), new FieldBean(field, inject.value(), lazy != null));
             }
         });
     }
@@ -120,6 +118,7 @@ public class BeanDefinition extends BeanWrapper {
         }
         Create(beanName, clz, needInject, obj, isLazy);
     }
+
 
     @Override
     public Object getObject() {
@@ -153,7 +152,9 @@ public class BeanDefinition extends BeanWrapper {
         }
 
         fieldBeans.forEach((k, v) -> {
-            if (v.getValue(target) != null) return;
+
+            if (!v.getLazy() && v.getValue(target) != null) return;
+
             LOGGER.debug("get bean class : {}", k);
             BeanDefinition beanDefinition = beanFactory.getBean(v.getBeanName());
             Object object = beanDefinition.getObject();
@@ -178,6 +179,11 @@ public class BeanDefinition extends BeanWrapper {
     @Override
     public Class<?> getInterfaceClass() {
         return interfaceClass;
+    }
+
+    @Override
+    public Object getOriginObject() {
+        return target;
     }
 
     public Object getTarget() {
