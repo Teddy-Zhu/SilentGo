@@ -3,6 +3,7 @@ a light web mvc framework.
 
 [framework CN Readme](https://github.com/Teddy-Zhu/SilentGo/tree/master/framework/ReadMe_CN.md)  
 [framework Readme](https://github.com/Teddy-Zhu/SilentGo/tree/master/framework/ReadMe.md)
+[Demo](https://github.com/Teddy-Zhu/lc4e)
 
 ### How to Use
 add maven dependency
