@@ -7,6 +7,7 @@ import com.silentgo.orm.base.SQLTool;
 import com.silentgo.orm.sqlparser.funcanalyse.DaoKeyWord;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +29,7 @@ public class CountDaoResolver implements DaoResolver {
     public <T extends TableModel> SQLTool processSQL(String methodName, Class<?> returnType,
                                                      Object[] objects, Integer[] objectIndex, List<String> parsedMethod, BaseTableInfo tableInfo,
                                                      SQLTool sqlTool, List<Annotation> annotations,
-                                                     boolean[] isHandled, BaseDaoDialect daoDialect, Map<String, Object> nameObjects) {
+                                                     boolean[] isHandled, BaseDaoDialect daoDialect, Map<String, Object> nameObjects, Method method) {
         if (isHandled[0]) return sqlTool;
         isHandled[0] = true;
         sqlTool.count(tableInfo.getTableName());

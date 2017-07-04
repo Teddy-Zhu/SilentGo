@@ -7,6 +7,7 @@ import com.silentgo.orm.base.TableModel;
 import com.silentgo.orm.sqlparser.funcanalyse.DaoKeyWord;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +30,7 @@ public class DeleteDaoResolver implements DaoResolver {
                                                      Object[] objects, Integer[] objectIndex, List<String> parsedMethod,
                                                      BaseTableInfo tableInfo, SQLTool sqlTool,
                                                      List<Annotation> annotations,
-                                                     boolean[] isHandled, BaseDaoDialect baseDaoDialect, Map<String, Object> nameObjects) {
+                                                     boolean[] isHandled, BaseDaoDialect baseDaoDialect, Map<String, Object> nameObjects, Method method) {
         if (isHandled[0]) return sqlTool;
         isHandled[0] = true;
         return sqlTool.delete(tableInfo.getTableName());

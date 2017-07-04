@@ -8,10 +8,12 @@ import com.silentgo.orm.sqlparser.annotation.ColumnIgnore;
 import com.silentgo.orm.sqlparser.annotation.Query;
 import com.silentgo.orm.sqlparser.funcanalyse.DaoKeyWord;
 import com.silentgo.utils.Assert;
+import com.silentgo.utils.CollectionKit;
 import com.silentgo.utils.log.Log;
 import com.silentgo.utils.log.LogFactory;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -25,6 +27,10 @@ import java.util.*;
 public class QueryDaoResolver implements DaoResolver {
 
     private static final Log LOGGER = LogFactory.get();
+
+    private static final Map<Method, List<String>> queryColumns = new HashMap<>();
+
+
     @Override
     public boolean handle(String methodName, List<String> parsedMethod, List<Annotation> annotations) {
         return DaoKeyWord.Query.equals(parsedMethod.get(0));
@@ -32,7 +38,7 @@ public class QueryDaoResolver implements DaoResolver {
 
     @Override
     public <T extends TableModel> SQLTool processSQL(String methodName, Class<?> returnType, Object[] objects, Integer[] objectIndex, List<String> parsedMethod, BaseTableInfo tableInfo, SQLTool sqlTool, List<Annotation> annotations, boolean[] isHandled,
-                                                     BaseDaoDialect daoDialect, Map<String, Object> nameObjects) {
+                                                     BaseDaoDialect daoDialect, Map<String, Object> nameObjects, Method method) {
         if (isHandled[0]) return sqlTool;
         isHandled[0] = true;
         sqlTool.select(tableInfo.getTableName());
@@ -57,28 +63,45 @@ public class QueryDaoResolver implements DaoResolver {
                 else if (tableInfo.getOriginColumn().containsKey(column))
                     sqlTool.selectCol(tableInfo.getOriginColumn().get(column).getSelectFullName());
                 else
-                    throw new RuntimeException("error query column [" + s + "]");
+                    sqlTool.selectCol(column);
             }
         }
         if (!needColumns) return sqlTool;
 
-        Optional<Annotation> opColumnIgnore = annotations.stream().filter(annotation -> annotation.annotationType().equals(ColumnIgnore.class)).findFirst();
-        if (opColumnIgnore.isPresent()) {
-            ColumnIgnore columnIgnore = (ColumnIgnore) opColumnIgnore.get();
-            if (columnIgnore.value().length > 0) {
-                sqlTool.select(tableInfo.getTableName());
-                List<String> ignorelist = Arrays.asList(columnIgnore.value());
-                tableInfo.getColumnInfo().entrySet().forEach(column -> {
-                    if (!"*".equals(column.getKey()) && !ignorelist.contains(column.getValue().getColumnName())) {
-                        sqlTool.selectCol(column.getValue().getSelectFullName());
-                    }
-                });
-            } else {
-                sqlTool.select(tableInfo.getTableName(), tableInfo.get("*").getSelectFullName());
+
+        List<String> queryColumnList = queryColumns.get(method);
+
+        if (!CollectionKit.isEmpty(queryColumnList)) {
+            for (String s : queryColumnList) {
+                sqlTool.selectCol(s);
             }
         } else {
-            sqlTool.select(tableInfo.getTableName(), tableInfo.get("*").getSelectFullName());
+            queryColumnList = new ArrayList<>();
+            queryColumns.put(method, queryColumnList);
+
+            Optional<Annotation> opColumnIgnore = annotations.stream().filter(annotation -> annotation.annotationType().equals(ColumnIgnore.class)).findFirst();
+            if (opColumnIgnore.isPresent()) {
+                ColumnIgnore columnIgnore = (ColumnIgnore) opColumnIgnore.get();
+                if (columnIgnore.value().length > 0) {
+                    sqlTool.select(tableInfo.getTableName());
+                    List<String> ignorelist = Arrays.asList(columnIgnore.value());
+                    List<String> finalQueryColumnList = queryColumnList;
+                    tableInfo.getColumnInfo().forEach((key, value) -> {
+                        if (!"*".equals(key) && !ignorelist.contains(value.getColumnName())) {
+                            finalQueryColumnList.add(value.getSelectFullName());
+                            sqlTool.selectCol(value.getSelectFullName());
+                        }
+                    });
+                } else {
+                    sqlTool.selectCol(tableInfo.get("*").getSelectFullName());
+                    queryColumnList.add(tableInfo.get("*").getSelectFullName());
+                }
+            } else {
+                sqlTool.selectCol(tableInfo.get("*").getSelectFullName());
+                queryColumnList.add(tableInfo.get("*").getSelectFullName());
+            }
         }
+
         return sqlTool;
     }
 

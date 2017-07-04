@@ -1,6 +1,7 @@
 package com.silentgo.core;
 
 import com.silentgo.core.config.SilentGoConfig;
+import com.silentgo.core.ioc.bean.BeanFactory;
 import com.silentgo.core.support.AnnotationManager;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.orm.base.DBConnect;
@@ -41,7 +42,7 @@ public class SilentGo {
     }
 
     public void releaseConnect(DBConnect connect) {
-        config.releaseConnect(config.getDbType().toLowerCase(),connect);
+        config.releaseConnect(config.getDbType().toLowerCase(), connect);
     }
 
     public DBConnect getConnect() {
@@ -82,6 +83,10 @@ public class SilentGo {
 
     public <T extends BaseFactory> T getFactory(Class<T> t) {
         return config.getFactory(t, me());
+    }
+
+    public BeanFactory getBeanFactory() {
+        return config.getFactory(config.getBeanClass(), me());
     }
 
     public JsonPaser json() {

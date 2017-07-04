@@ -78,6 +78,14 @@ public class SilentGoBeanFactory extends BeanFactory<BeanDefinition> {
     }
 
     @Override
+    public BeanDefinition addBean(Class<?> target, boolean isSingle, boolean needInject, boolean isLazy) {
+        BeanDefinition beanDefinition = new BeanDefinition(target, false, true);
+        beansMap.put(target.getName(), beanDefinition);
+        depend(beanDefinition);
+        return beanDefinition;
+    }
+
+    @Override
     public BeanDefinition addBean(Object target, boolean isSingle, boolean needInject, boolean isLazy) {
         BeanDefinition beanDefinition = new BeanDefinition(target.getClass(), target, needInject, isSingle, isLazy);
         beansMap.put(beanDefinition.getBeanName(), beanDefinition);
@@ -124,7 +132,7 @@ public class SilentGoBeanFactory extends BeanFactory<BeanDefinition> {
                 if (lazy == null)
                     bean = addBean(type);
                 else
-                    bean = addBean(null, true, false, true);
+                    bean = addBean(type, true, false, true);
             }
             v.setBeanName(bean.getBeanName());
         }

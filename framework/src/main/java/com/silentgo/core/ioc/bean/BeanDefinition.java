@@ -113,7 +113,6 @@ public class BeanDefinition extends BeanWrapper {
         try {
             obj = clz.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
             LOGGER.info("clz {} instance error", clz.getName());
         }
         Create(beanName, clz, needInject, obj, isLazy);
@@ -146,9 +145,6 @@ public class BeanDefinition extends BeanWrapper {
                 }
             } else
                 proxyTarget = target;
-        } else {
-            if (injectField)
-                return proxyTarget;
         }
 
         fieldBeans.forEach((k, v) -> {
@@ -161,7 +157,6 @@ public class BeanDefinition extends BeanWrapper {
             v.setValue(target, object);
             v.setValue(proxyTarget, object);
         });
-        injectField = true;
         return proxyTarget;
     }
 

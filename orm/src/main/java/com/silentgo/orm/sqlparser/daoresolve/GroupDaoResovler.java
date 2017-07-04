@@ -6,10 +6,10 @@ import com.silentgo.orm.base.SQLTool;
 import com.silentgo.orm.base.TableModel;
 import com.silentgo.orm.sqlparser.SQLKit;
 import com.silentgo.orm.sqlparser.annotation.GroupBy;
-import com.silentgo.orm.sqlparser.annotation.OrderBy;
 import com.silentgo.orm.sqlparser.funcanalyse.DaoKeyWord;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -33,7 +33,7 @@ public class GroupDaoResovler implements DaoResolver {
                                                      Object[] objects, Integer[] objectIndex, List<String> parsedMethod,
                                                      BaseTableInfo tableInfo, SQLTool sqlTool,
                                                      List<Annotation> annotations, boolean[] isHandled,
-                                                     BaseDaoDialect baseDaoDialect, Map<String, Object> nameObjects) {
+                                                     BaseDaoDialect baseDaoDialect, Map<String, Object> nameObjects, Method method) {
         int index = parsedMethod.indexOf(DaoKeyWord.Group.innername);
         String two = DaoResolveKit.getField(parsedMethod, index + 1);
         if (DaoKeyWord.By.equals(two)) {

@@ -5,7 +5,7 @@ import com.silentgo.orm.sqlparser.SQLKit;
 import com.silentgo.orm.sqlparser.annotation.Select;
 
 import java.lang.annotation.Annotation;
-import java.util.Arrays;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +25,7 @@ public class SelectDaoResolver implements DaoResolver {
 
     @Override
     public <T extends TableModel> SQLTool processSQL(String methodName, Class<?> returnType, Object[] objects, Integer[] objectIndex, List<String> parsedMethod, BaseTableInfo tableInfo, SQLTool sqlTool, List<Annotation> annotations, boolean[] isHandled,
-                                                     BaseDaoDialect daoDialect, Map<String, Object> nameObjects) {
+                                                     BaseDaoDialect daoDialect, Map<String, Object> nameObjects, Method method) {
         isHandled[0] = true;
         Select select = (Select) annotations.stream().filter(annotation -> Select.class.equals(annotation.annotationType())).findFirst().get();
         sqlTool = new SQLTool();

@@ -9,6 +9,7 @@ import com.silentgo.orm.base.SQLTool;
 import com.silentgo.orm.base.TableModel;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -28,7 +29,7 @@ public class OrderDaoResovler implements DaoResolver {
     }
 
     @Override
-    public <T extends TableModel> SQLTool processSQL(String methodName, Class<?> returnType, Object[] objects, Integer[] objectIndex, List<String> parsedMethod, BaseTableInfo tableInfo, SQLTool sqlTool, List<Annotation> annotations, boolean[] isHandled, BaseDaoDialect baseDaoDialect, Map<String, Object> nameObjects) {
+    public <T extends TableModel> SQLTool processSQL(String methodName, Class<?> returnType, Object[] objects, Integer[] objectIndex, List<String> parsedMethod, BaseTableInfo tableInfo, SQLTool sqlTool, List<Annotation> annotations, boolean[] isHandled, BaseDaoDialect baseDaoDialect, Map<String, Object> nameObjects, Method method) {
         int index = parsedMethod.indexOf(DaoKeyWord.Order.innername);
         String two = DaoResolveKit.getField(parsedMethod, index + 1);
         if (DaoKeyWord.By.equals(two)) {

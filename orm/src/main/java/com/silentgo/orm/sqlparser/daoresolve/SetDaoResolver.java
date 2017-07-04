@@ -9,11 +9,10 @@ import com.silentgo.orm.sqlparser.annotation.Set;
 import com.silentgo.orm.sqlparser.funcanalyse.DaoKeyWord;
 
 import java.lang.annotation.Annotation;
-import java.util.Collection;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.regex.Matcher;
 
 /**
  * Project : SilentGo
@@ -31,7 +30,7 @@ public class SetDaoResolver implements DaoResolver {
 
     @Override
     public <T extends TableModel> SQLTool processSQL(String methodName, Class<?> returnType, Object[] objects, Integer[] objectIndex, List<String> parsedMethod, BaseTableInfo tableInfo, SQLTool sqlTool, List<Annotation> annotations, boolean[] isHandled,
-                                                     BaseDaoDialect daoDialect, Map<String, Object> nameObjects) {
+                                                     BaseDaoDialect daoDialect, Map<String, Object> nameObjects, Method method) {
         int set = parsedMethod.indexOf(DaoKeyWord.Set.innername);
         String filed = DaoResolveKit.getField(parsedMethod, set + 1);
         if (DaoResolveKit.isField(filed, tableInfo))

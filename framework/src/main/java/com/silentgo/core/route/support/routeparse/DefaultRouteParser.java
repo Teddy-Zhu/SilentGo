@@ -157,6 +157,10 @@ public class DefaultRouteParser implements RoutePaser {
     }
 
     private boolean validateRequestMethod(RequestMethod[] methods, Request request, Double[] count) {
+
+        //allow all method
+        if (methods.length == 0) return true;
+
         RequestMethod method = RequestMethod.prase(request.getMethod());
         for (RequestMethod requestMethod : methods) {
             if (method.equals(requestMethod)) {

@@ -87,7 +87,7 @@ public class DaoInterceptor implements MethodInterceptor {
         for (DaoResolver daoResolver : daoResolveFactory.getResolverList()) {
             if (daoResolver.handle(methodName, parsedString, annotations)) {
                 sqlTool = daoResolver.processSQL(methodName, methodRetType, newObjects, commonIndex,
-                        parsedString, tableInfo, sqlTool, annotations, isHandled, daoDialect, namdObjects);
+                        parsedString, tableInfo, sqlTool, annotations, isHandled, daoDialect, namdObjects, method);
             }
         }
 

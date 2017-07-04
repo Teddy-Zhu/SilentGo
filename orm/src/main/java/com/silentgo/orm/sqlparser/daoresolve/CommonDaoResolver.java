@@ -6,6 +6,7 @@ import com.silentgo.orm.base.SQLTool;
 import com.silentgo.orm.base.TableModel;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -45,7 +46,7 @@ public class CommonDaoResolver implements DaoResolver {
     }
 
     @Override
-    public <T extends TableModel> SQLTool processSQL(String methodName, Class<?> returnType, Object[] objects, Integer[] objectIndex, List<String> parsedMethod, BaseTableInfo tableInfo, SQLTool sqlTool, List<Annotation> annotations, boolean[] isHandled, BaseDaoDialect daoDialect, Map<String, Object> nameObjects) {
+    public <T extends TableModel> SQLTool processSQL(String methodName, Class<?> returnType, Object[] objects, Integer[] objectIndex, List<String> parsedMethod, BaseTableInfo tableInfo, SQLTool sqlTool, List<Annotation> annotations, boolean[] isHandled, BaseDaoDialect daoDialect, Map<String, Object> nameObjects, Method method) {
         isHandled[0] = true;
         switch (methodName) {
             case "queryByPrimaryKey": {
