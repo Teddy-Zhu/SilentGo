@@ -1,10 +1,10 @@
 package com.silentgo.orm.sqlparser;
 
-import com.silentgo.orm.base.NameParam;
 import com.silentgo.orm.base.SQLTool;
 import com.silentgo.orm.base.annotation.Param;
 import com.silentgo.utils.StringKit;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
@@ -16,8 +16,8 @@ import java.util.regex.Pattern;
  * Package : com.silentgo.orm.sqlparser
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
- *         <p>
- *         Created by teddyzhu on 2016/10/28.
+ * <p>
+ * Created by teddyzhu on 2016/10/28.
  */
 public class SQLKit {
     public static final String nameRegex = "<#(.*?)/>";
@@ -62,7 +62,9 @@ public class SQLKit {
         for (int i = 0; i < size - 1; i++) {
             sb.append("?,");
         }
-        sb.append("? ");
+        if (size > 0) {
+            sb.append("? ");
+        }
         return sb.toString();
     }
 
@@ -108,6 +110,12 @@ public class SQLKit {
                 if (arg instanceof Collection) {
                     sb.append(SQLKit.buildParamString(((Collection) arg).size()));
                     ((Collection) arg).forEach(sqlTool::appendParam);
+                } else if (arg != null && arg.getClass().isArray()) {
+                    int length = Array.getLength(arg);
+                    sb.append(SQLKit.buildParamString(length));
+                    for (int i = 0; i < length; i++) {
+                        sqlTool.appendParam(Array.get(arg, i));
+                    }
                 } else {
                     sb.append(pd);
                     sqlTool.appendParam(arg);
@@ -118,6 +126,12 @@ public class SQLKit {
                 if (arg instanceof Collection) {
                     sb.append(SQLKit.buildParamString(((Collection) arg).size()));
                     ((Collection) arg).forEach(sqlTool::appendParam);
+                } else if (arg != null && arg.getClass().isArray()) {
+                    int length = Array.getLength(arg);
+                    sb.append(SQLKit.buildParamString(length));
+                    for (int i = 0; i < length; i++) {
+                        sqlTool.appendParam(Array.get(arg, i));
+                    }
                 } else {
                     sb.append("?");
                     sqlTool.appendParam(arg);

@@ -15,6 +15,14 @@ import java.util.Map;
  */
 public class CollectionKit {
 
+
+    public static boolean isNotEmpty(Collection<?> collection) {
+        return collection != null && collection.size() != 0;
+    }
+    public static boolean isNotEmpty(Object[] collection) {
+        return collection != null && collection.length != 0;
+    }
+
     public static boolean isEmpty(Object[] collection) {
         return collection == null || collection.length == 0;
     }

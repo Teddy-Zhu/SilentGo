@@ -29,8 +29,8 @@ import java.util.*;
  * com.silentgo.core.plugin.db.bridge
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
- *         <p>
- *         Created by teddyzhu on 16/9/22.
+ * <p>
+ * Created by teddyzhu on 16/9/22.
  */
 public class DaoInterceptor implements MethodInterceptor {
 
@@ -75,12 +75,12 @@ public class DaoInterceptor implements MethodInterceptor {
             MethodParserKit.parse(methodName, annotations, parsedString, tableInfo);
             cacheNamePaser.put(method, parsedString);
         }
-        LOGGER.debug("dao prepare for parse object , end in {}", System.currentTimeMillis() - start);
+        LOGGER.debug("dao prepare for parse object , end in {} ms", System.currentTimeMillis() - start);
 
         Map<String, Object> namdObjects = new HashMap<>();
         Object[] newObjects = SQLKit.getNamedObject(method, objects, namdObjects);
 
-        LOGGER.debug("dao parse object end in {}ms", System.currentTimeMillis() - start);
+        LOGGER.debug("dao parse object end in {} ms", System.currentTimeMillis() - start);
         Class<?> methodRetType = method.getReturnType();
         boolean[] isHandled = new boolean[]{false};
         Integer[] commonIndex = new Integer[]{0};
@@ -91,7 +91,7 @@ public class DaoInterceptor implements MethodInterceptor {
             }
         }
 
-        LOGGER.debug("dao parse sql end in {}ms", System.currentTimeMillis() - start);
+        LOGGER.debug("dao parse sql end in {} ms", System.currentTimeMillis() - start);
 
         Object ret = null;
 
@@ -133,6 +133,7 @@ public class DaoInterceptor implements MethodInterceptor {
 
         } catch (Exception e) {
             LOGGER.error(e);
+            throw e;
         } finally {
             if (connect != null && connect.getConnect().getAutoCommit()) {
                 ConnectManager.me().releaseConnect(tableInfo.getType(), tableInfo.getPoolName(), connect);

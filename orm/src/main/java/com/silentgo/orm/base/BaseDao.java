@@ -11,44 +11,44 @@ import java.util.Map;
  *         <p>
  *         Created by teddyzhu on 16/9/22.
  */
-public interface BaseDao<T extends TableModel> {
+public interface BaseDao<T extends TableModel, K> {
 
     public int countCustom(SQLTool sqlTool);
 
-    public int countByModelMap(Map<String,Object> map);
+    public int countByModelMap(Map<String, Object> map);
 
     public List<T> queryCustom(SQLTool sqlTool);
 
     //QUERY
-    public <S extends T> T queryByPrimaryKey(Object id);
+    public T queryByPrimaryKey(K id);
 
-    public <S extends T> List<S> queryByPrimaryKeys(List<Object> ids);
+    public List<T> queryByPrimaryKeys(List<K> ids);
 
-    public <S extends T> List<S> queryByModelSelective(S t);
+    public List<T> queryByModelSelective(T t);
 
-    public <S extends T> List<S> queryByModelMap(Map<String, Object> map);
+    public List<T> queryByModelMap(Map<String, Object> map);
 
     //ADD
-    public <S extends T> int insertByRow(S t);
+    public int insertByRow(T t);
 
-    public <S extends T> int insertByRows(List<S> t);
+    public int insertByRows(List<T> t);
 
     //UPDATE
-    public <S extends T> int updateByPrimaryKey(S t);
+    public int updateByPrimaryKey(T t);
 
-    public <S extends T> int updateByPrimaryKeyOptional(S t, List<String> columns);
+    public int updateByPrimaryKeyOptional(T t, List<String> columns);
 
     public int updateByPrimaryKeySelective(T t);
 
     //DELETE
-    public int deleteByPrimaryKey(Object t);
+    public int deleteByPrimaryKey(K t);
 
-    public int deleteByPrimaryKeys(List<Object> t);
+    public int deleteByPrimaryKeys(List<K> t);
 
 
     //Query All
-    public <S extends T> List<S> queryAll();
+    public List<T> queryAll();
 
     //Delete All
-    public <S extends T> List<S> deleteAll();
+    public List<T> deleteAll();
 }

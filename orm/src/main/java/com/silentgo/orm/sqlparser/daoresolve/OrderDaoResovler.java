@@ -1,12 +1,12 @@
 package com.silentgo.orm.sqlparser.daoresolve;
 
 import com.silentgo.orm.base.BaseDaoDialect;
-import com.silentgo.orm.sqlparser.SQLKit;
-import com.silentgo.orm.sqlparser.annotation.OrderBy;
-import com.silentgo.orm.sqlparser.funcanalyse.DaoKeyWord;
 import com.silentgo.orm.base.BaseTableInfo;
 import com.silentgo.orm.base.SQLTool;
 import com.silentgo.orm.base.TableModel;
+import com.silentgo.orm.sqlparser.SQLKit;
+import com.silentgo.orm.sqlparser.annotation.OrderBy;
+import com.silentgo.orm.sqlparser.funcanalyse.DaoKeyWord;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -25,18 +25,17 @@ import java.util.Optional;
 public class OrderDaoResovler implements DaoResolver {
     @Override
     public boolean handle(String methodName, List<String> parsedMethod, List<Annotation> annotations) {
-        return parsedMethod.contains(DaoKeyWord.Order.innername);
+        return parsedMethod.contains(DaoKeyWord.OrderBy.innername);
     }
 
     @Override
     public <T extends TableModel> SQLTool processSQL(String methodName, Class<?> returnType, Object[] objects, Integer[] objectIndex, List<String> parsedMethod, BaseTableInfo tableInfo, SQLTool sqlTool, List<Annotation> annotations, boolean[] isHandled, BaseDaoDialect baseDaoDialect, Map<String, Object> nameObjects, Method method) {
-        int index = parsedMethod.indexOf(DaoKeyWord.Order.innername);
-        String two = DaoResolveKit.getField(parsedMethod, index + 1);
-        if (DaoKeyWord.By.equals(two)) {
-            String field = DaoResolveKit.getField(parsedMethod, index + 2);
-            if (DaoResolveKit.isField(field, tableInfo))
-                setOrder(index + 1, DaoKeyWord.And.innername, parsedMethod, tableInfo, sqlTool);
-        }
+        int index = parsedMethod.indexOf(DaoKeyWord.OrderBy.innername);
+        String nextToken = DaoResolveKit.getField(parsedMethod, index + 1);
+
+        if (DaoResolveKit.isField(nextToken, tableInfo))
+            setOrder(index, DaoKeyWord.And.innername, parsedMethod, tableInfo, sqlTool);
+
         Optional<Annotation> opOrderBy = annotations.stream().filter(annotation -> annotation.annotationType().equals(OrderBy.class)).findFirst();
         if (opOrderBy.isPresent()) {
             OrderBy orderBy = (OrderBy) opOrderBy.get();

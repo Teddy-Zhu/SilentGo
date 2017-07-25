@@ -136,7 +136,7 @@ public class SQLTool {
     }
 
     public String getDeleteSQL() {
-        return "delete from" + tableName + getJoinSQL();
+        return "delete from " + tableName + getJoinSQL();
     }
 
     public String getWhereSQL() {

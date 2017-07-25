@@ -2,7 +2,9 @@ package com.silentgo.utils;
 
 import com.silentgo.utils.reflect.SGClass;
 import com.silentgo.utils.reflect.SGClassParseKit;
+import com.silentgo.utils.reflect.SGField;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,5 +46,20 @@ public class ReflectKit {
         });
 
         return map;
+    }
+
+    public static <O, T> T copyProperties(O origin, T target) {
+        if (origin == null) return target;
+        if (target == null) return null;
+        SGClass sgClass = getSGClass(origin.getClass());
+        SGClass targetClass = getSGClass(target.getClass());
+
+        sgClass.getFieldMap().forEach((s, sgField) -> {
+            SGField sgField1 = targetClass.getFieldMap().get(s);
+            if (sgField.hasGet() && sgField1 != null && sgField1.hasSet()) {
+                sgField1.set(target, sgField.get(origin));
+            }
+        });
+        return target;
     }
 }

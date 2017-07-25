@@ -10,6 +10,7 @@ import com.silentgo.core.route.support.paramresolver.annotation.ParameterResolve
 import com.silentgo.servlet.SilentGoContext;
 import com.silentgo.servlet.http.Request;
 import com.silentgo.servlet.http.Response;
+import com.silentgo.utils.ClassKit;
 
 import java.lang.reflect.Array;
 import java.util.Collection;
@@ -40,7 +41,7 @@ public class RequestBodyParamResolver implements ParameterValueResolver {
                 if (methodParam.getType().isArray()) {
                     ret = me.json().toObject(context.getJsonString(), Array.newInstance(methodParam.getType().getComponentType(), 0).getClass());
                 } else if (Collection.class.isAssignableFrom(methodParam.getType())) {
-                    ret = me.json().toObjectList(context.getJsonString(), methodParam.getType());
+                    ret = me.json().toObjectList(context.getJsonString(), ClassKit.getActualType(methodParam.getSgParameter().getParameter().getParameterizedType()));
                 } else {
                     ret = me.json().toObject(context.getJsonString(), methodParam.getType());
                 }
@@ -48,7 +49,7 @@ public class RequestBodyParamResolver implements ParameterValueResolver {
                 if (methodParam.getType().isArray()) {
                     ret = me.json().toObjectArray(methodParam.getName(), context.getJsonObject(), methodParam.getType().getComponentType());
                 } else if (Collection.class.isAssignableFrom(methodParam.getType())) {
-                    ret = me.json().toObjectList(methodParam.getName(), context.getJsonObject(), methodParam.getType());
+                    ret = me.json().toObjectList(methodParam.getName(), context.getJsonObject(), ClassKit.getActualType(methodParam.getSgParameter().getParameter().getParameterizedType()));
                 } else {
                     ret = me.json().toObject(methodParam.getName(), context.getJsonObject(), methodParam.getType());
                 }

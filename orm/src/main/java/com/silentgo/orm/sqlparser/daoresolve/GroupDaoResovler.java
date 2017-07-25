@@ -25,7 +25,7 @@ import java.util.Optional;
 public class GroupDaoResovler implements DaoResolver {
     @Override
     public boolean handle(String methodName, List<String> parsedMethod, List<Annotation> annotations) {
-        return parsedMethod.contains(DaoKeyWord.Group.innername);
+        return parsedMethod.contains(DaoKeyWord.GroupBy.innername);
     }
 
     @Override
@@ -34,13 +34,12 @@ public class GroupDaoResovler implements DaoResolver {
                                                      BaseTableInfo tableInfo, SQLTool sqlTool,
                                                      List<Annotation> annotations, boolean[] isHandled,
                                                      BaseDaoDialect baseDaoDialect, Map<String, Object> nameObjects, Method method) {
-        int index = parsedMethod.indexOf(DaoKeyWord.Group.innername);
-        String two = DaoResolveKit.getField(parsedMethod, index + 1);
-        if (DaoKeyWord.By.equals(two)) {
-            String field = DaoResolveKit.getField(parsedMethod, index + 2);
-            if (DaoResolveKit.isField(field, tableInfo))
-                setGroup(index + 1, DaoKeyWord.And.innername, parsedMethod, tableInfo, sqlTool);
-        }
+        int index = parsedMethod.indexOf(DaoKeyWord.GroupBy.innername);
+        String nextToken = DaoResolveKit.getField(parsedMethod, index + 1);
+
+        if (DaoResolveKit.isField(nextToken, tableInfo))
+            setGroup(index + 1, DaoKeyWord.And.innername, parsedMethod, tableInfo, sqlTool);
+
         Optional<Annotation> opGroupBy = annotations.stream().filter(annotation -> annotation.annotationType().equals(GroupBy.class)).findFirst();
         if (opGroupBy.isPresent()) {
             GroupBy groupBy = (GroupBy) opGroupBy.get();

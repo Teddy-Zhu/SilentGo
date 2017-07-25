@@ -194,6 +194,6 @@ public class TableMetaGenerate implements TableMetaGenerator {
 
     @Override
     public String getSelectSql(String tableName) {
-        return "select * from " + tableName;
+        return "select * from " + tableName +" limit 0,1";
     }
 }

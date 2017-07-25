@@ -31,6 +31,10 @@ public class MethodParam {
         return sgParameter.getName();
     }
 
+    public SGParameter getSgParameter() {
+        return sgParameter;
+    }
+
     public MethodParam(SGParameter sgParameter) {
         this.sgParameter = sgParameter;
         this.annotations = new ArrayList<>(sgParameter.getAnnotationMap().values());

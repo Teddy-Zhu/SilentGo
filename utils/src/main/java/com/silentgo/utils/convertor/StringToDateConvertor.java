@@ -20,7 +20,6 @@ import java.util.Map;
 public class StringToDateConvertor implements ITypeConvertor<String, Date> {
 
     private static final Map<String, ThreadLocal<SimpleDateFormat>> timeMap = new HashMap<String, ThreadLocal<SimpleDateFormat>>() {{
-        put("default", ThreadLocal.withInitial(() -> new SimpleDateFormat()));
         put("yyyy-MM-dd HH:mm:ss", ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")));
     }};
 
@@ -30,7 +29,7 @@ public class StringToDateConvertor implements ITypeConvertor<String, Date> {
             if (objects.length > 0 && objects[0] instanceof String && timeMap.containsKey(objects[0])) {
                 return timeMap.get(objects[0]).get().parse(source);
             }
-            return timeMap.get("default").get().parse(source);
+            return timeMap.get("yyyy-MM-dd HH:mm:ss").get().parse(source);
         } catch (ParseException e) {
             return null;
         }

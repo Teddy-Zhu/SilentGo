@@ -23,8 +23,8 @@ import java.util.Optional;
  * Package : com.silentgo.orm.sqlparser.daoresolve
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
- *         <p>
- *         Created by teddyzhu on 2016/10/28.
+ * <p>
+ * Created by teddyzhu on 2016/10/28.
  */
 public class WhereDaoResolver implements DaoResolver {
     @Override
@@ -59,15 +59,15 @@ public class WhereDaoResolver implements DaoResolver {
     private void setWhereGroup(WhereJudge whereJudge, Integer[] objectIndex, Object[] objects, Map<String, Object> namedObjects, SQLTool sqlTool) {
         Object object = namedObjects.get(whereJudge.value());
 
-        if (object == null) return;
+        if (object == null) {
+            return;
+        }
         if (object instanceof String) {
             if (StringKit.isNotBlank((String) object)) {
                 sqlTool.where(SQLKit.buildParam(whereJudge.condition(), objectIndex, objects, sqlTool, namedObjects));
             }
-        } else if (object instanceof Boolean) {
-            if ((Boolean) object) {
-                sqlTool.where(SQLKit.buildParam(whereJudge.condition(), objectIndex, objects, sqlTool, namedObjects));
-            }
+        } else {
+            sqlTool.where(SQLKit.buildParam(whereJudge.condition(), objectIndex, objects, sqlTool, namedObjects));
         }
     }
 
