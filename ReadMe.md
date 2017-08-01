@@ -5,6 +5,11 @@ a light web mvc framework.
 [framework Readme](https://github.com/Teddy-Zhu/SilentGo/tree/master/framework/ReadMe.md)  
 [Demo](https://github.com/Teddy-Zhu/lc4e)
 
+
+## TODO LIST
+-[ ] dao支持linq语法糖
+-[ ] framework route部分规整
+
 ### How to Use
 add maven dependency
 ```
