@@ -7,8 +7,8 @@ a light web mvc framework.
 
 
 ## TODO LIST
--[ ] dao支持linq语法糖
--[ ] framework route部分规整
+- [ ] dao支持linq语法糖 
+- [ ] framework route部分规整
 
 ### How to Use
 add maven dependency
