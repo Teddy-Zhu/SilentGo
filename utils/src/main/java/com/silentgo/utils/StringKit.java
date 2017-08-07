@@ -9,8 +9,8 @@ import java.util.Map;
  * com.silentgo.kit
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
- *         <p>
- *         Created by  on 16/7/15.
+ * <p>
+ * Created by  on 16/7/15.
  */
 public class StringKit {
 
@@ -27,8 +27,16 @@ public class StringKit {
         return Character.isLowerCase(first) ? field : (Character.toLowerCase(first) + field.substring(1));
     }
 
+    public static boolean isEmpty(String str) {
+        return str == null || str.length() == 0;
+    }
+
+    public static boolean isNotEmpty(String str) {
+        return !isEmpty(str);
+    }
+
     public static boolean isNotBlank(String str) {
-        return !isNull(str) && str.trim().length() != 0;
+        return !isBlank(str);
     }
 
     public static boolean isBlank(String str) {

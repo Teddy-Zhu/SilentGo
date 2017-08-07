@@ -9,8 +9,8 @@ import java.util.Map;
  * Package : com.silentgo.utils.reflect
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
- *         <p>
- *         Created by teddyzhu on 2017/1/5.
+ * <p>
+ * Created by teddyzhu on 2017/1/5.
  */
 public class SGClass extends AnnotationMap {
 
@@ -67,5 +67,9 @@ public class SGClass extends AnnotationMap {
 
     public SGField getField(String name) {
         return fieldMap.get(name);
+    }
+
+    public SGMethod getMethod(Method name) {
+        return methodMap.get(name);
     }
 }

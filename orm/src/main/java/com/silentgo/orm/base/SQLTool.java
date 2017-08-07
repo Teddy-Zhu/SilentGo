@@ -1,13 +1,15 @@
 package com.silentgo.orm.base;
 
-import com.silentgo.utils.Assert;
+import com.silentgo.orm.sqlparser.daoresolve.parameterresolver.DaoParamResolver;
+import com.silentgo.orm.sqltool.SqlResult;
+import com.silentgo.orm.sqltool.SqlTokenGroup;
+import com.silentgo.orm.sqltool.condition.CommonSqlCondition;
+import com.silentgo.orm.sqltool.condition.ListSqlCondition;
+import com.silentgo.orm.sqltool.condition.SqlCondition;
+import com.silentgo.utils.CollectionKit;
 import com.silentgo.utils.StringKit;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 /**
  * Created by teddy on 2015/9/24.
@@ -17,177 +19,159 @@ public class SQLTool {
     private static String EmptySplit = " ";
     private String tableName;
 
-    private boolean cached = false;
-
-    private String sql = "";
-
     private SQLType type;
 
-    private StringBuilder selectSQL = new StringBuilder();
+    private Map<String, Object> params = new HashMap<>();
+    private Object[] objects;
+    private SqlCondition insertSqlCondition = new ListSqlCondition("insert into " + this.tableName + " ( ", " ) ", " ", " , ");
+    private SqlCondition insertValueSqlCondition = new ListSqlCondition(" values ", " ", " ", " , ");
 
-    private List<String> insertList = new ArrayList<>();
+    private SqlCondition selectSqlCondition = new ListSqlCondition(" select ", "", "", ",");
 
-    private StringBuilder exceptSelectSQL = new StringBuilder();
+    private SqlCondition updateSqlCondition = new ListSqlCondition(" ", " ", " ", ",");
 
-    private List<String> selectList = new ArrayList<>();
+    private SqlCondition joinSqlCondition = new ListSqlCondition(" ", " ", " ", " ");
 
-    private List<String> updateList = new ArrayList<>();
+    private SqlCondition whereSqlCondition = new ListSqlCondition(" where ( ", " ) ", " ", " AND ");
 
-    private List<String> joinList = new ArrayList<>();
+    private SqlCondition orderSqlCondition = new ListSqlCondition(" order by ", "", " ", ",");
 
-    private List<String> whereList = new ArrayList<>();
+    private SqlCondition groupSqlCondition = new ListSqlCondition(" group by ", "", " ", ",");
 
-    private List<String> orderList = new ArrayList<>();
+    private SqlCondition limit = new CommonSqlCondition();
 
-    private List<String> groupList = new ArrayList<>();
+    private SqlCondition cached;
 
-    private List<Object> params = new ArrayList<>();
-
-    private String limit = "";
+    private List<DaoParamResolver> daoParamResolvers = new ArrayList<>();
 
     public SQLTool() {
 
     }
 
-    public SQLTool(String sql, List<Object> paras) {
-        this.cached = true;
-        this.sql = sql;
-        this.params = paras;
+    public SQLTool(SQLType sqlType, String sql) {
+        this.type = sqlType;
+        this.cached = new CommonSqlCondition();
+        this.cached.appendSql(sql);
     }
 
-    public String getSelectSQL() {
-        return " select " + StringKit.join(selectList, ",");
+    public SqlResult getSelectSQL() {
+        return selectSqlCondition.handleCondition(params);
     }
 
-    public String getCountRight() {
-        return " from " + tableName + getJoinSQL() + getWhereSQL() + getLimit();
+    public SqlResult getCountRight() {
+        SqlResult sqlResult = new SqlResult();
+        sqlResult.appendSql(" from ").appendSql(tableName)
+                .append(getJoinSQL())
+                .append(getWhereSQL())
+                .append(getLimit());
+        return sqlResult;
     }
 
-    public String getExceptSQL() {
-
-        return " from " + tableName + getJoinSQL() + getWhereSQL() + getGroupSQL() + getOrderSQL() + getLimit();
+    public SqlResult getExceptSQL() {
+        SqlResult sqlResult = new SqlResult();
+        sqlResult.appendSql(" from ").appendSql(tableName)
+                .append(getJoinSQL())
+                .append(getWhereSQL())
+                .append(getGroupSQL())
+                .append(getOrderSQL())
+                .append(getLimit());
+        return sqlResult;
     }
 
-    public String getSQL(boolean cache) {
-        if (cache) {
-            if (StringKit.isBlank(sql)) {
-                sql = getSql(type);
-            }
-            return sql;
-        } else {
+    public SqlResult getSQL() {
+        if (cached == null)
             return getSql(type);
-        }
+        else return cached.handleCondition(params);
     }
 
-    public String getSQL() {
-        if (cached) {
-            if (StringKit.isBlank(sql)) {
-                sql = getSql(type);
+    private SqlResult getSql(SQLType type) {
+        if (CollectionKit.isNotEmpty(daoParamResolvers)) {
+            for (DaoParamResolver daoParamResolver : daoParamResolvers) {
+                daoParamResolver.handleParam(params, objects);
             }
-            return sql;
-        } else {
-            return getSql(type);
         }
-    }
+        SqlResult sqlResult = new SqlResult();
 
-    private String getSql(SQLType type) {
-        cached = true;
         switch (type) {
             case DELETE: {
-                return getDeleteSQL() + getWhereSQL();
+                sqlResult.append(getDeleteSQL()).append(getWhereSQL());
+                break;
             }
             case UPDATE: {
-                return getUpdateSQL() + getWhereSQL();
+                sqlResult.append(getUpdateSQL()).append(getWhereSQL());
+                break;
             }
             case INSERT: {
-                return getInsertSQL();
+                sqlResult.append(getInsertSQL());
+                break;
             }
             case QUERY: {
-                return getSelectSQL() + getExceptSQL();
+                sqlResult.append(getSelectSQL())
+                        .append(getExceptSQL());
+                break;
             }
             case COUNT: {
-                return "select count(1) " + getCountRight();
+                sqlResult.appendSql("select count(1) ")
+                        .append(getCountRight());
+                break;
             }
 
         }
-        return "";
+        return sqlResult;
     }
 
     public String getCountSQL() {
         return "select count(1) " + getCountRight();
     }
 
-    private String getInsertSQL() {
-        Assert.isNotEmpty(this.insertList, "calc insert sql error");
-        String sql = getListSQL(this.insertList, "insert into " + this.tableName + " ( ", " ) ", " , ", EmptySplit);
-        String value = getListSQL(this.insertList.size(), " ( ", " ) ", ",", "?", EmptySplit);
-        StringBuilder ret = new StringBuilder(sql + " values " + value);
-        for (int i = 1, len = (params.size() / insertList.size()); i < len; i++) {
-            ret.append(",").append(value);
-        }
-        return ret.toString();
+    private SqlResult getInsertSQL() {
+
+        SqlResult sqlResult = insertSqlCondition.handleCondition(params);
+
+        SqlResult sqlResult2 = insertValueSqlCondition.handleCondition(params);
+
+        return sqlResult.append(sqlResult2);
     }
 
-    public String getUpdateSQL() {
-        if (updateList.size() == 0) {
-            return "";
-        }
-        return "update " + tableName + getJoinSQL() + " set " + getListSQL(updateList, " ", " ", ",", " ");
+    public SqlResult getUpdateSQL() {
+        SqlResult sqlResult = new SqlResult();
+        sqlResult.appendSql("update ").appendSql(tableName)
+                .append(getJoinSQL())
+                .appendSql(" set ")
+                .append(updateSqlCondition.handleCondition(params));
+        return sqlResult;
     }
 
-    public String getDeleteSQL() {
-        return "delete from " + tableName + getJoinSQL();
+    public SqlResult getDeleteSQL() {
+        SqlResult sqlResult = new SqlResult();
+        sqlResult.appendSql("delete from ")
+                .appendSql(tableName)
+                .append(getJoinSQL());
+        return sqlResult;
     }
 
-    public String getWhereSQL() {
-        return this.whereList.size() == 0 ? " " : getListSQL(whereList, " where ( ", " ) ", " AND ", EmptySplit);
+    public SqlResult getWhereSQL() {
+        return whereSqlCondition.handleCondition(params);
     }
 
-    public String getJoinSQL() {
-        return getListSQL(joinList, " ", " ", " ", EmptySplit);
+    public SqlResult getJoinSQL() {
+        return joinSqlCondition.handleCondition(params);
     }
 
-    public String getGroupSQL() {
-        return getListSQL(groupList, " group by ", "", ",", EmptySplit);
+    public SqlResult getGroupSQL() {
+        return groupSqlCondition.handleCondition(params);
     }
 
-    public String getOrderSQL() {
-        return getListSQL(orderList, " order by ", "", ",", EmptySplit);
+    public SqlResult getOrderSQL() {
+        return orderSqlCondition.handleCondition(params);
     }
 
-    public String getLimit() {
-        return limit;
+    public SqlResult getLimit() {
+        return limit.handleCondition(params);
     }
 
-    private String getListSQL(List<String> list, String prefix, String suffix, String split, String empty) {
-        return list.size() > 0 ? (prefix + StringKit.join(list, split) + suffix) : empty;
-    }
-
-    private String getListSQL(int len, String prefix, String suffix, String split, String c, String empty) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(prefix);
-        for (int i = 0; i < len - 1; i++) {
-            builder.append(c).append(split);
-        }
-        builder.append(c).append(suffix).append(empty);
-        return builder.toString();
-    }
-
-    public List<Object> getParamList() {
-        return params;
-    }
-
-    public Object[] getParams() {
-        return params.toArray();
-    }
-
-    public void setParams(List<Object> params) {
-        this.params = params;
-    }
-
-
-    public SQLTool appendParam(Object... objects) {
-        Collections.addAll(this.params, objects);
+    public SQLTool appendParam(String name, Object object) {
+        this.params.put(name, object);
         return this;
     }
 
@@ -198,39 +182,17 @@ public class SQLTool {
         return this;
     }
 
-    public SQLTool setPlus(String... columns) {
-        for (String column : columns) {
-            updateList.add(column + " += ?");
-        }
-        return this;
-    }
-
-    public SQLTool setMinus(String... columns) {
-        for (String column : columns) {
-            updateList.add(column + " -= ?");
-        }
-        return this;
-    }
-
-    public SQLTool setEqual(String... columns) {
-        for (String column : columns) {
-            updateList.add(column + " = ?");
-        }
-        return this;
-    }
-
     public SQLTool set(Collection<String> columns) {
-        updateList.addAll(columns);
+        for (String column : columns) {
+            updateSqlCondition.appendSql(column);
+        }
         return this;
     }
 
     public SQLTool set(String... columns) {
-        Collections.addAll(updateList, columns);
-        return this;
-    }
-
-    public SQLTool setEqual(Collection<String> columns) {
-        updateList.addAll(columns.stream().map(column -> column + " = ?").collect(Collectors.toList()));
+        for (String column : columns) {
+            updateSqlCondition.appendSql(column);
+        }
         return this;
     }
 
@@ -241,24 +203,33 @@ public class SQLTool {
     public SQLTool select(String tableName, Collection<String> columns) {
         this.type = SQLType.QUERY;
         this.tableName = tableName;
-        this.selectList.addAll(columns);
+
+        for (String column : columns) {
+            this.selectSqlCondition.appendSql(column);
+        }
         return this;
     }
 
     public SQLTool select(String tableName, String... columns) {
         this.type = SQLType.QUERY;
         this.tableName = tableName;
-        Collections.addAll(this.selectList, columns);
+        for (String column : columns) {
+            this.selectSqlCondition.appendSql(column);
+        }
         return this;
     }
 
     public SQLTool selectCol(String... strings) {
-        Collections.addAll(this.selectList, strings);
+        for (String string : strings) {
+            this.selectSqlCondition.appendSql(string);
+        }
         return this;
     }
 
     public SQLTool selectCol(Collection<String> collections) {
-        this.selectList.addAll(collections);
+        for (String collection : collections) {
+            this.selectSqlCondition.appendSql(collection);
+        }
         return this;
     }
     //endregion select
@@ -272,6 +243,16 @@ public class SQLTool {
 
     //endregion
     //region start
+    public SQLTool insertValue(SqlTokenGroup sqlTokenGroup) {
+        this.insertValueSqlCondition.appendCondtion(sqlTokenGroup);
+        return this;
+    }
+
+    public SQLTool insertValue(String sql) {
+        this.insertValueSqlCondition.appendSql(sql);
+        return this;
+    }
+
     public SQLTool insert(String tableName) {
         this.type = SQLType.INSERT;
         this.tableName = tableName;
@@ -281,19 +262,26 @@ public class SQLTool {
     public SQLTool insert(String tableName, String... columns) {
         this.type = SQLType.INSERT;
         this.tableName = tableName;
-        Collections.addAll(this.insertList, columns);
+
+        for (String column : columns) {
+            this.insertSqlCondition.appendSql(column);
+        }
         return this;
     }
 
     public SQLTool insert(String tableName, Collection<String> columns) {
         this.type = SQLType.INSERT;
         this.tableName = tableName;
-        this.insertList.addAll(columns);
+        for (String column : columns) {
+            this.insertSqlCondition.appendSql(column);
+        }
         return this;
     }
 
     public SQLTool insertCol(String... columns) {
-        Collections.addAll(this.insertList, columns);
+        for (String column : columns) {
+            this.insertSqlCondition.appendSql(column);
+        }
         return this;
     }
     //endregion
@@ -309,50 +297,20 @@ public class SQLTool {
         return this;
     }
 
-    public SQLTool whereEquals(String condition) {
-        this.whereList.add(condition + " = ?");
+    public SQLTool set(SqlTokenGroup sqlTokenGroup) {
+        this.updateSqlCondition.appendCondtion(sqlTokenGroup);
         return this;
     }
 
-    public SQLTool whereGreater(String condition) {
-        this.whereList.add(condition + " > ?");
+    public SQLTool where(SqlTokenGroup sqlTokenGroup) {
+        this.whereSqlCondition.appendCondtion(sqlTokenGroup);
         return this;
     }
-
-    public SQLTool whereLess(String condition) {
-        this.whereList.add(condition + " < ?");
-        return this;
-    }
-
-    public SQLTool whereGreaterEq(String condition) {
-        this.whereList.add(condition + " >= ?");
-        return this;
-    }
-
-    public SQLTool whereLessEq(String condition) {
-        this.whereList.add(condition + " <= ?");
-        return this;
-    }
-
-
-    public SQLTool whereIn(String condition) {
-        return whereIn(condition, 1);
-    }
-
-    public SQLTool whereIn(String condition, int len) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(condition).append(" in (");
-        for (int i = 0; i < len - 1; i++) {
-            builder.append("?,");
-        }
-        builder.append("? )");
-        this.whereList.add(builder.toString());
-        return this;
-    }
-
 
     public SQLTool where(String... conditions) {
-        Collections.addAll(this.whereList, conditions);
+        for (String condition : conditions) {
+            this.whereSqlCondition.appendSql(condition);
+        }
         return this;
     }
 
@@ -361,75 +319,70 @@ public class SQLTool {
     }
 
     public SQLTool leftJoin(String tableName, String condition) {
-        this.joinList.add(join("left", tableName) + " on " + condition);
+        this.joinSqlCondition.appendSql(join("left", tableName) + " on " + condition);
         return this;
     }
 
     public SQLTool rightJoin(String tableName, String condition) {
-        this.joinList.add(join("right", tableName) + " on " + condition);
+        this.joinSqlCondition.appendSql(join("right", tableName) + " on " + condition);
         return this;
     }
 
     public SQLTool join(String direct, String tableName, String condition) {
-        this.joinList.add(join(direct, tableName) + " on " + condition);
+        this.joinSqlCondition.appendSql(join(direct, tableName) + " on " + condition);
         return this;
     }
 
     public SQLTool groupBy(String... columns) {
-        Collections.addAll(this.groupList, columns);
+        for (String column : columns) {
+            this.groupSqlCondition.appendSql(column);
+        }
         return this;
     }
 
     public SQLTool orderByDesc(String... columns) {
-        Collections.addAll(this.orderList, orderBy(" DESC ", columns));
+        for (String column : columns) {
+            this.orderSqlCondition.appendSql(orderBy(" DESC ", column));
+        }
         return this;
     }
 
     public SQLTool orderByAsc(String... columns) {
-        Collections.addAll(this.orderList, orderBy(" ASC ", columns));
+        for (String column : columns) {
+            this.orderSqlCondition.appendSql(orderBy(" ASC ", column));
+        }
         return this;
     }
 
     public SQLTool orderBy(String... columns) {
-        Collections.addAll(this.orderList, columns);
-        return this;
-    }
-
-    private String[] orderBy(String order, String... columns) {
-        for (int i = 0; i < columns.length; i++) {
-            columns[i] = EmptySplit + columns[i] + EmptySplit + order;
+        for (String column : columns) {
+            this.orderSqlCondition.appendSql(column);
         }
-        return columns;
-    }
-
-    public SQLTool findFirst() {
-        this.limit = " limit 0,1 ";
         return this;
     }
 
-    public SQLTool limit(String limit) {
-        this.limit = " " + limit;
-        return this;
+    private String orderBy(String order, String column) {
+        return EmptySplit + column + EmptySplit + order;
     }
 
-    public SQLTool limit() {
-        this.limit = " limit ?,? ";
+    public SQLTool limit(String sql) {
+        this.limit.appendSql(" limit " + sql);
         return this;
     }
 
     public SQLTool limitClear() {
-        this.limit = "";
+        this.limit.clearSql();
         return this;
     }
 
     public SQLTool limit(int size, int page) {
-        this.limit = " limit " + (page - 1) * size + "," + size;
+        this.limit.appendSql(" limit " + (page - 1) * size + "," + size);
         return this;
     }
 
     @Override
     public String toString() {
-        return getSQL(false);
+        return "";
     }
 
     public static String NOTIN(String column, String condition) {
@@ -477,12 +430,35 @@ public class SQLTool {
         return type;
     }
 
-    public void setSql(String sql) {
-        this.cached = true;
-        this.sql = sql;
-    }
-
     public void setType(SQLType type) {
         this.type = type;
+    }
+
+    public Map<String, Object> getParams() {
+        return params;
+    }
+
+    public void setParams(Map<String, Object> params) {
+        this.params = params;
+    }
+
+    public boolean addParamResolver(DaoParamResolver resolver) {
+        return daoParamResolvers.add(resolver);
+    }
+
+    public Object[] getObjects() {
+        return objects;
+    }
+
+    public void setObjects(Object[] objects) {
+        this.objects = objects;
+    }
+
+    public String getTableName() {
+        return tableName;
+    }
+
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
     }
 }

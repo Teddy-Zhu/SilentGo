@@ -1,15 +1,9 @@
 package com.silentgo.orm.sqlparser.daoresolve;
 
-import com.silentgo.orm.base.BaseDaoDialect;
-import com.silentgo.orm.base.BaseTableInfo;
-import com.silentgo.orm.base.SQLTool;
-import com.silentgo.orm.base.TableModel;
+import com.silentgo.orm.base.*;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,8 +11,8 @@ import java.util.Map;
  * Package : com.silentgo.orm.sqlparser.daoresolve
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
- *         <p>
- *         Created by teddyzhu on 16/9/28.
+ * <p>
+ * Created by teddyzhu on 16/9/28.
  */
 public class CommonDaoResolver implements DaoResolver {
     private static final ArrayList<String> methodNames = new ArrayList() {{
@@ -41,66 +35,91 @@ public class CommonDaoResolver implements DaoResolver {
     }};
 
     @Override
-    public boolean handle(String methodName, List<String> parsedMethod, List<Annotation> annotations) {
-        return methodNames.contains(methodName);
+    public boolean handle(DaoResolveEntity daoResolveEntity) {
+        return methodNames.contains(daoResolveEntity.getMethodName());
     }
 
     @Override
-    public <T extends TableModel> SQLTool processSQL(String methodName, Class<?> returnType, Object[] objects, Integer[] objectIndex, List<String> parsedMethod, BaseTableInfo tableInfo, SQLTool sqlTool, List<Annotation> annotations, boolean[] isHandled, BaseDaoDialect daoDialect, Map<String, Object> nameObjects, Method method) {
-        isHandled[0] = true;
-        switch (methodName) {
+    public <T extends TableModel> void processSQL(DaoResolveEntity daoResolveEntity) {
+        daoResolveEntity.resolved();
+        BaseDaoDialect daoDialect = daoResolveEntity.getDaoDialect();
+        BaseTableInfo tableInfo = daoResolveEntity.getTableInfo();
+        Object[] objects = daoResolveEntity.getObjects();
+        SQLTool sqlTool = null;
+        switch (daoResolveEntity.getMethodName()) {
             case "queryByPrimaryKey": {
-                return daoDialect.queryByPrimaryKey(tableInfo, objects[0]);
+                sqlTool = daoDialect.queryByPrimaryKey(tableInfo, objects[0]);
+                break;
             }
             case "queryByPrimaryKeys": {
-                return daoDialect.queryByPrimaryKeys(tableInfo, (Collection<Object>) objects[0]);
+                sqlTool = daoDialect.queryByPrimaryKeys(tableInfo, (Collection<Object>) objects[0]);
+                break;
             }
             case "queryByModelSelective": {
-                return daoDialect.queryByModelSelective(tableInfo, (T) objects[0]);
+                sqlTool = daoDialect.queryByModelSelective(tableInfo, (T) objects[0]);
+                break;
             }
             case "queryByModelMap": {
-                return daoDialect.queryByModelMap(tableInfo, (Map<String, Object>) objects[0]);
+                sqlTool = daoDialect.queryByModelMap(tableInfo, (Map<String, Object>) objects[0]);
+                break;
             }
             case "insertByRow": {
-                return daoDialect.insertByRow(tableInfo, (T) objects[0]);
+                sqlTool = daoDialect.insertByRow(tableInfo, (T) objects[0]);
+                break;
             }
             case "insertByRows": {
-                return daoDialect.insertByRows(tableInfo, (Collection<T>) objects[0]);
+                sqlTool = daoDialect.insertByRows(tableInfo, (Collection<T>) objects[0]);
+                break;
             }
             case "updateByPrimaryKey": {
 
-                return daoDialect.updateByPrimaryKey(tableInfo, (T) objects[0]);
+                sqlTool = daoDialect.updateByPrimaryKey(tableInfo, (T) objects[0]);
+                break;
             }
             case "updateByPrimaryKeyOptional": {
-                return daoDialect.updateByPrimaryKeyOptional(tableInfo, (T) objects[0], (Collection<String>) objects[1]);
+                sqlTool = daoDialect.updateByPrimaryKeyOptional(tableInfo, (T) objects[0], (Collection<String>) objects[1]);
+                break;
             }
             case "updateByPrimaryKeySelective": {
-                return daoDialect.updateByPrimaryKeySelective(tableInfo, (T) objects[0]);
+                sqlTool = daoDialect.updateByPrimaryKeySelective(tableInfo, (T) objects[0]);
+                break;
             }
             case "deleteByPrimaryKey": {
-                return daoDialect.deleteByPrimaryKey(tableInfo, objects[0]);
+                sqlTool = daoDialect.deleteByPrimaryKey(tableInfo, objects[0]);
+                break;
             }
             case "deleteByPrimaryKeys": {
-                return daoDialect.deleteByPrimaryKeys(tableInfo, (Collection<Object>) objects[0]);
+                sqlTool = daoDialect.deleteByPrimaryKeys(tableInfo, (Collection<Object>) objects[0]);
+                break;
             }
             case "queryAll": {
-                return daoDialect.queryAll(tableInfo);
+                sqlTool = daoDialect.queryAll(tableInfo);
+                break;
             }
             case "deleteAll": {
-                return daoDialect.deleteAll(tableInfo);
+                sqlTool = daoDialect.deleteAll(tableInfo);
+                break;
             }
             case "queryCustom": {
-                return (SQLTool) objects[0];
+                sqlTool = (SQLTool) objects[0];
+                break;
             }
             case "countCustom": {
-                return (SQLTool) objects[0];
+                sqlTool = (SQLTool) objects[0];
+                break;
             }
             case "countByModelMap": {
-                return daoDialect.countByModelMap(tableInfo, (Map<String, Object>) objects[0]);
+                sqlTool = daoDialect.countByModelMap(tableInfo, (Map<String, Object>) objects[0]);
+                break;
             }
         }
-        isHandled[0] = false;
-        return sqlTool;
+        if (sqlTool == null)
+            daoResolveEntity.setHandled(false);
+        else {
+            sqlTool.setParams(daoResolveEntity.getNameObjects());
+            sqlTool.setObjects(daoResolveEntity.getObjects());
+            daoResolveEntity.setSqlTool(sqlTool);
+        }
     }
 
 }

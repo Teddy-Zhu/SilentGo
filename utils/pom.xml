@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
-    <version>0.1.14</version>
+    <version>0.1.15</version>
     <artifactId>utils</artifactId>
 
     <properties>
@@ -27,7 +27,7 @@
         <dependency>
             <groupId>com.silentgo</groupId>
             <artifactId>json</artifactId>
-            <version>0.0.3</version>
+            <version>0.0.9</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

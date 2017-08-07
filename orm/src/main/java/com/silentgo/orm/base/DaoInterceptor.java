@@ -9,10 +9,14 @@ import com.silentgo.orm.sqlparser.SQLKit;
 import com.silentgo.orm.sqlparser.daoresolve.DaoResolver;
 import com.silentgo.orm.sqlparser.daoresolve.DefaultDaoResolver;
 import com.silentgo.orm.sqlparser.methodnameparser.MethodParserKit;
+import com.silentgo.orm.sqltool.SqlResult;
 import com.silentgo.utils.ClassKit;
 import com.silentgo.utils.ConvertKit;
+import com.silentgo.utils.ReflectKit;
 import com.silentgo.utils.log.Log;
 import com.silentgo.utils.log.LogFactory;
+import com.silentgo.utils.reflect.SGClass;
+import com.silentgo.utils.reflect.SGMethod;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
@@ -23,6 +27,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Project : silentgo
@@ -50,67 +55,62 @@ public class DaoInterceptor implements MethodInterceptor {
 
     private static final DefaultDaoResolver daoResolveFactory = new DefaultDaoResolver();
 
+    private static final Map<Method, SQLTool> sqlToolCache = new ConcurrentHashMap<>();
+
     @Override
     public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
 
         Long start = System.currentTimeMillis();
         DBConnect connect = null;
 
-        BaseTableBuilder baseTableBuilder = BaseTableBuilder.me();
-        SQLTool sqlTool = new SQLTool();
-        String methodName = method.getName();
-        List<String> parsedString;
-        List<Annotation> annotations = baseTableBuilder.getMethodListMap().getOrDefault(method, EmptyList);
-        Class<? extends BaseDao> daoClass = (Class<? extends BaseDao>) method.getDeclaringClass();
-        if (BaseDao.class.equals(daoClass)) {
-            daoClass = getClz(o.getClass().getName());
-        }
-        BaseTableInfo tableInfo = baseTableBuilder.getClassTableInfoMap().get(daoClass);
-        BaseDaoDialect daoDialect = baseTableBuilder.getDialect(tableInfo.getType());
-        boolean cached = cacheNamePaser.containsKey(method);
-        if (cached) {
-            parsedString = cacheNamePaser.get(method);
-        } else {
-            parsedString = new ArrayList<>();
-            MethodParserKit.parse(methodName, annotations, parsedString, tableInfo);
-            cacheNamePaser.put(method, parsedString);
-        }
-        LOGGER.debug("dao prepare for parse object , end in {} ms", System.currentTimeMillis() - start);
+        DaoResolveEntity daoResolveEntity = buildDaoResolveEntity(o, method, objects);
 
-        Map<String, Object> namdObjects = new HashMap<>();
-        Object[] newObjects = SQLKit.getNamedObject(method, objects, namdObjects);
-
-        LOGGER.debug("dao parse object end in {} ms", System.currentTimeMillis() - start);
-        Class<?> methodRetType = method.getReturnType();
-        boolean[] isHandled = new boolean[]{false};
-        Integer[] commonIndex = new Integer[]{0};
-        for (DaoResolver daoResolver : daoResolveFactory.getResolverList()) {
-            if (daoResolver.handle(methodName, parsedString, annotations)) {
-                sqlTool = daoResolver.processSQL(methodName, methodRetType, newObjects, commonIndex,
-                        parsedString, tableInfo, sqlTool, annotations, isHandled, daoDialect, namdObjects, method);
+        SQLTool cachedSqlTool = sqlToolCache.get(method);
+        if (cachedSqlTool == null) {
+            for (DaoResolver daoResolver : daoResolveFactory.getResolverList()) {
+                if (daoResolver.handle(daoResolveEntity)) {
+                    daoResolver.processSQL(daoResolveEntity);
+                }
             }
+
+            sqlToolCache.put(method,daoResolveEntity.getSqlTool());
+        } else {
+            cachedSqlTool.setObjects(daoResolveEntity.getObjects());
+            cachedSqlTool.setParams(daoResolveEntity.getNameObjects());
+
+            if (daoResolveEntity.isBaseDao()) {
+                cachedSqlTool.setTableName(daoResolveEntity.getTableInfo().getTableName());
+            }
+            daoResolveEntity.setSqlTool(cachedSqlTool);
         }
 
         LOGGER.debug("dao parse sql end in {} ms", System.currentTimeMillis() - start);
 
         Object ret = null;
+        BaseTableBuilder baseTableBuilder = BaseTableBuilder.me();
+
+        BaseTableInfo tableInfo = daoResolveEntity.getTableInfo();
+
+        Class<?> daoClass = daoResolveEntity.getDaoClass();
 
         try {
+            SqlResult sqlResult = daoResolveEntity.getSqlTool().getSQL();
 
-            SQLType type = sqlTool.getType();
-            Object[] args = sqlTool.getParams();
+            SQLType type = daoResolveEntity.getSqlTool().getType();
+            Object[] args = sqlResult.getDy().toArray();
+            String sql = sqlResult.getSql().toString();
             switch (type) {
                 case QUERY:
                 case COUNT: {
                     DaoMethod daoMethod = getDaoMethod(method, daoClass, baseTableBuilder.getReflectMap().get(daoClass));
                     connect = ConnectManager.me().getConnect(tableInfo.getType(), tableInfo.getPoolName());
-                    ret = excuteQuery(sqlTool, args, connect, daoMethod);
+                    ret = excuteQuery(sql, args, connect, daoMethod);
                     break;
                 }
                 case DELETE:
                 case UPDATE: {
                     connect = ConnectManager.me().getConnect(tableInfo.getType(), tableInfo.getPoolName());
-                    ret = SilentGoOrm.updateOrDelete(connect, sqlTool.getSQL(), type.name(), int.class, args);
+                    ret = SilentGoOrm.updateOrDelete(connect, sql, type.name(), int.class, args);
                     break;
                 }
                 case INSERT: {
@@ -124,7 +124,7 @@ public class DaoInterceptor implements MethodInterceptor {
                     } else {
                         generateKeys = new Object[0];
                     }
-                    ret = SilentGoOrm.insert(connect, sqlTool.getSQL(), int.class, generateKeys, args);
+                    ret = SilentGoOrm.insert(connect, sql, int.class, generateKeys, args);
                     resolveInsertResult(tableInfo, generateKeys, objects);
                     break;
                 }
@@ -138,10 +138,67 @@ public class DaoInterceptor implements MethodInterceptor {
             if (connect != null && connect.getConnect().getAutoCommit()) {
                 ConnectManager.me().releaseConnect(tableInfo.getType(), tableInfo.getPoolName(), connect);
             }
+            daoResolveEntity.clearSqlTool();
         }
 
         LOGGER.debug("end orm method : {}", System.currentTimeMillis() - start);
         return ret;
+    }
+
+
+    private DaoResolveEntity buildDaoResolveEntity(Object o, Method method, Object[] objects) {
+        Long start = System.currentTimeMillis();
+
+        DaoResolveEntity daoResolveEntity = new DaoResolveEntity();
+
+        BaseTableBuilder baseTableBuilder = BaseTableBuilder.me();
+
+        SGClass sgClass = ReflectKit.getSGClass(method.getDeclaringClass());
+
+        SGMethod sgMethod = sgClass.getMethod(method);
+
+        List<String> parsedString;
+        List<Annotation> annotations = baseTableBuilder.getMethodListMap().getOrDefault(method, EmptyList);
+        Class<? extends BaseDao> daoClass = (Class<? extends BaseDao>) method.getDeclaringClass();
+        if (BaseDao.class.equals(daoClass)) {
+            daoResolveEntity.setBaseDao(true);
+            daoClass = getClz(o.getClass().getName());
+        } else {
+            daoResolveEntity.setBaseDao(false);
+        }
+        BaseTableInfo tableInfo = baseTableBuilder.getClassTableInfoMap().get(daoClass);
+        BaseDaoDialect daoDialect = baseTableBuilder.getDialect(tableInfo.getType());
+        boolean cached = cacheNamePaser.containsKey(method);
+        if (cached) {
+            parsedString = cacheNamePaser.get(method);
+        } else {
+            parsedString = new ArrayList<>();
+            MethodParserKit.parse(sgMethod.getName(), annotations, parsedString, tableInfo);
+            cacheNamePaser.put(method, parsedString);
+        }
+        LOGGER.debug("dao prepare for parse object , end in {} ms", System.currentTimeMillis() - start);
+
+        Map<String, Object> namdObjects = new HashMap<>();
+        Object[] sequentialObject = SQLKit.parseNamedObject(sgMethod, objects, namdObjects);
+
+        LOGGER.debug("dao parse object end in {} ms", System.currentTimeMillis() - start);
+
+        daoResolveEntity.setHandled(false);
+        daoResolveEntity.setSqlTool(new SQLTool());
+        daoResolveEntity.setDaoDialect(daoDialect);
+        daoResolveEntity.setNameObjects(namdObjects);
+        daoResolveEntity.setSgMethod(sgMethod);
+        daoResolveEntity.setParsedMethod(parsedString);
+        daoResolveEntity.setTableInfo(tableInfo);
+        daoResolveEntity.setDaoClass(daoClass);
+        daoResolveEntity.setObjects(sequentialObject);
+        daoResolveEntity.setObjectIndex(0);
+        daoResolveEntity.setObjectParsedIndex(0);
+
+
+        daoResolveEntity.getSqlTool().setObjects(sequentialObject);
+        daoResolveEntity.getSqlTool().setParams(namdObjects);
+        return daoResolveEntity;
     }
 
     private Class<? extends BaseDao> getClz(String clzString) {
@@ -178,17 +235,17 @@ public class DaoInterceptor implements MethodInterceptor {
         }
     }
 
-    private Object excuteQuery(SQLTool sqlTool, Object[] objects, DBConnect connect, DaoMethod daoMethod) throws SQLException {
+    private Object excuteQuery(String sql, Object[] objects, DBConnect connect, DaoMethod daoMethod) throws SQLException {
         if (daoMethod.isList()) {
             if (daoMethod.isArray()) {
-                return SilentGoOrm.queryArrayList(connect, sqlTool.getSQL(), daoMethod.getType(), objects);
+                return SilentGoOrm.queryArrayList(connect, sql, daoMethod.getType(), objects);
             } else {
-                return SilentGoOrm.queryList(connect, sqlTool.getSQL(), daoMethod.getType(), objects);
+                return SilentGoOrm.queryList(connect, sql, daoMethod.getType(), objects);
             }
         } else if (daoMethod.isArray()) {
-            return SilentGoOrm.queryArray(connect, sqlTool.getSQL(), daoMethod.getType(), objects);
+            return SilentGoOrm.queryArray(connect, sql, daoMethod.getType(), objects);
         } else {
-            return SilentGoOrm.query(connect, sqlTool.getSQL(), daoMethod.getType(), objects);
+            return SilentGoOrm.query(connect, sql, daoMethod.getType(), objects);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.silentgo.utils.reflect;
 
+import com.silentgo.utils.CollectionKit;
 import com.silentgo.utils.StringKit;
 import com.silentgo.utils.asm.ParameterNameUtils;
 import com.silentgo.utils.log.Log;
@@ -14,8 +15,8 @@ import java.util.*;
  * Package : com.silentgo.utils.reflect
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
- *         <p>
- *         Created by teddyzhu on 2017/1/5.
+ * <p>
+ * Created by teddyzhu on 2017/1/5.
  */
 public class SGClassParseKit {
     private static final Log LOGGER = LogFactory.get();
@@ -38,8 +39,10 @@ public class SGClassParseKit {
 
         sgClass.setMethodMap(new HashMap<>());
 
+
         Method[] methods = clz.getMethods();
-        boolean needNamed = false;
+
+        List<Method> needNameMethods = new ArrayList<>();
         for (Method method : methods) {
             int modifier = method.getModifiers();
 
@@ -52,13 +55,13 @@ public class SGClassParseKit {
                 continue;
             }
             if (method.getParameters().length > 0 && !method.getParameters()[0].isNamePresent()) {
-                needNamed = true;
+                needNameMethods.add(method);
             }
             sgClass.getMethodMap().put(method, parseMethod(method));
         }
 
-        if (needNamed) {
-            findMethodParameterName(sgClass.getMethodMap());
+        if (CollectionKit.isNotEmpty(needNameMethods)) {
+            findMethodParameterName(needNameMethods, sgClass.getMethodMap());
         }
 
         sgClass.setFieldMap(new HashMap<>());
@@ -141,9 +144,15 @@ public class SGClassParseKit {
         return methodName.substring(index);
     }
 
-    private static void findMethodParameterName(Map<Method, SGMethod> methodMap) {
-        methodMap.forEach((s, sgMethod) -> {
-            String[] parameterNames = ParameterNameUtils.getMethodParameterNames(sgMethod.getMethod());
+    private static void findMethodParameterName(List<Method> methods, Map<Method, SGMethod> methodMap) {
+
+        for (Method method : methods) {
+            String[] parameterNames = ParameterNameUtils.getMethodParameterNames(method);
+
+            if (parameterNames == null || parameterNames.length == 0) continue;
+
+            SGMethod sgMethod = methodMap.get(method);
+
             String[] preParameterNames = sgMethod.getParameterNames();
             if (parameterNames != null && parameterNames.length == preParameterNames.length) {
                 for (int i = 0; i < preParameterNames.length; i++) {
@@ -154,7 +163,7 @@ public class SGClassParseKit {
                 }
                 sgMethod.setParameterNames(parameterNames);
             }
-        });
+        }
     }
 
     private static void findGetSetMethod(Map<Method, SGMethod> methodMap, SGField field) {

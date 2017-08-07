@@ -4,8 +4,9 @@ import com.silentgo.utils.reflect.SGClass;
 import com.silentgo.utils.reflect.SGClassParseKit;
 import com.silentgo.utils.reflect.SGField;
 
-import java.util.Collection;
+import java.lang.annotation.Annotation;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -13,8 +14,8 @@ import java.util.Map;
  * Package : com.silentgo.utils
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
- *         <p>
- *         Created by teddyzhu on 2017/1/5.
+ * <p>
+ * Created by teddyzhu on 2017/1/5.
  */
 public class ReflectKit {
 
@@ -61,5 +62,9 @@ public class ReflectKit {
             }
         });
         return target;
+    }
+
+    public static boolean contain(List<Annotation> annotations, Class<? extends Annotation> clz) {
+        return annotations.stream().anyMatch(annotation -> annotation.annotationType().equals(clz));
     }
 }

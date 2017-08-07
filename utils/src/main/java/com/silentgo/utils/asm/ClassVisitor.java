@@ -1,5 +1,3 @@
-package com.silentgo.utils.asm;
-
 /***
  * ASM: a very small and fast Java bytecode manipulation framework
  * Copyright (c) 2000-2011 INRIA, France Telecom
@@ -29,21 +27,23 @@ package com.silentgo.utils.asm;
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.silentgo.utils.asm;
 
 /**
  * A visitor to visit a Java class. The methods of this class must be called in
  * the following order: <tt>visit</tt> [ <tt>visitSource</tt> ] [
  * <tt>visitOuterClass</tt> ] ( <tt>visitAnnotation</tt> |
- * <tt>visitAttribute</tt> )* ( <tt>visitInnerClass</tt> | <tt>visitField</tt> |
- * <tt>visitMethod</tt> )* <tt>visitEnd</tt>.
- *
+ * <tt>visitTypeAnnotation</tt> | <tt>visitAttribute</tt> )* (
+ * <tt>visitInnerClass</tt> | <tt>visitField</tt> | <tt>visitMethod</tt> )*
+ * <tt>visitEnd</tt>.
+ * 
  * @author Eric Bruneton
  */
 public abstract class ClassVisitor {
 
     /**
      * The ASM API version implemented by this visitor. The value of this field
-     * must be one of {@link Opcodes#ASM4}.
+     * must be one of {@link Opcodes#ASM4} or {@link Opcodes#ASM5}.
      */
     protected final int api;
 
@@ -55,10 +55,10 @@ public abstract class ClassVisitor {
 
     /**
      * Constructs a new {@link ClassVisitor}.
-     *
+     * 
      * @param api
      *            the ASM API version implemented by this visitor. Must be one
-     *            of {@link Opcodes#ASM4}.
+     *            of {@link Opcodes#ASM4} or {@link Opcodes#ASM5}.
      */
     public ClassVisitor(final int api) {
         this(api, null);
@@ -66,27 +66,25 @@ public abstract class ClassVisitor {
 
     /**
      * Constructs a new {@link ClassVisitor}.
-     *
+     * 
      * @param api
      *            the ASM API version implemented by this visitor. Must be one
-     *            of {@link Opcodes#ASM4}.
+     *            of {@link Opcodes#ASM4} or {@link Opcodes#ASM5}.
      * @param cv
      *            the class visitor to which this visitor must delegate method
      *            calls. May be null.
      */
     public ClassVisitor(final int api, final ClassVisitor cv) {
-		/* SPRING PATCH: REMOVED FOR CGLIB 3.0 COMPATIBILITY
-        if (api != Opcodes.ASM4) {
+        if (api != Opcodes.ASM4 && api != Opcodes.ASM5) {
             throw new IllegalArgumentException();
         }
-        */
         this.api = api;
         this.cv = cv;
     }
 
     /**
      * Visits the header of the class.
-     *
+     * 
      * @param version
      *            the class version.
      * @param access
@@ -110,7 +108,7 @@ public abstract class ClassVisitor {
      *            <tt>null</tt>.
      */
     public void visit(int version, int access, String name, String signature,
-                      String superName, String[] interfaces) {
+            String superName, String[] interfaces) {
         if (cv != null) {
             cv.visit(version, access, name, signature, superName, interfaces);
         }
@@ -118,7 +116,7 @@ public abstract class ClassVisitor {
 
     /**
      * Visits the source of the class.
-     *
+     * 
      * @param source
      *            the name of the source file from which the class was compiled.
      *            May be <tt>null</tt>.
@@ -136,7 +134,7 @@ public abstract class ClassVisitor {
     /**
      * Visits the enclosing class of the class. This method must be called only
      * if the class has an enclosing class.
-     *
+     * 
      * @param owner
      *            internal name of the enclosing class of the class.
      * @param name
@@ -156,7 +154,7 @@ public abstract class ClassVisitor {
 
     /**
      * Visits an annotation of the class.
-     *
+     * 
      * @param desc
      *            the class descriptor of the annotation class.
      * @param visible
@@ -172,8 +170,43 @@ public abstract class ClassVisitor {
     }
 
     /**
+     * Visits an annotation on a type in the class signature.
+     * 
+     * @param typeRef
+     *            a reference to the annotated type. The sort of this type
+     *            reference must be {@link TypeReference#CLASS_TYPE_PARAMETER
+     *            CLASS_TYPE_PARAMETER},
+     *            {@link TypeReference#CLASS_TYPE_PARAMETER_BOUND
+     *            CLASS_TYPE_PARAMETER_BOUND} or
+     *            {@link TypeReference#CLASS_EXTENDS CLASS_EXTENDS}. See
+     *            {@link TypeReference}.
+     * @param typePath
+     *            the path to the annotated type argument, wildcard bound, array
+     *            element type, or static inner type within 'typeRef'. May be
+     *            <tt>null</tt> if the annotation targets 'typeRef' as a whole.
+     * @param desc
+     *            the class descriptor of the annotation class.
+     * @param visible
+     *            <tt>true</tt> if the annotation is visible at runtime.
+     * @return a visitor to visit the annotation values, or <tt>null</tt> if
+     *         this visitor is not interested in visiting this annotation.
+     */
+    public AnnotationVisitor visitTypeAnnotation(int typeRef,
+            TypePath typePath, String desc, boolean visible) {
+		/* SPRING PATCH: REMOVED FOR COMPATIBILITY WITH CGLIB 3.1
+        if (api < Opcodes.ASM5) {
+            throw new RuntimeException();
+        }
+        */
+        if (cv != null) {
+            return cv.visitTypeAnnotation(typeRef, typePath, desc, visible);
+        }
+        return null;
+    }
+
+    /**
      * Visits a non standard attribute of the class.
-     *
+     * 
      * @param attr
      *            an attribute.
      */
@@ -186,7 +219,7 @@ public abstract class ClassVisitor {
     /**
      * Visits information about an inner class. This inner class is not
      * necessarily a member of the class being visited.
-     *
+     * 
      * @param name
      *            the internal name of an inner class (see
      *            {@link Type#getInternalName() getInternalName}).
@@ -202,7 +235,7 @@ public abstract class ClassVisitor {
      *            the enclosing class.
      */
     public void visitInnerClass(String name, String outerName,
-                                String innerName, int access) {
+            String innerName, int access) {
         if (cv != null) {
             cv.visitInnerClass(name, outerName, innerName, access);
         }
@@ -210,7 +243,7 @@ public abstract class ClassVisitor {
 
     /**
      * Visits a field of the class.
-     *
+     * 
      * @param access
      *            the field's access flags (see {@link Opcodes}). This parameter
      *            also indicates if the field is synthetic and/or deprecated.
@@ -236,7 +269,7 @@ public abstract class ClassVisitor {
      *         these annotations and attributes.
      */
     public FieldVisitor visitField(int access, String name, String desc,
-                                   String signature, Object value) {
+            String signature, Object value) {
         if (cv != null) {
             return cv.visitField(access, name, desc, signature, value);
         }
@@ -247,7 +280,7 @@ public abstract class ClassVisitor {
      * Visits a method of the class. This method <i>must</i> return a new
      * {@link MethodVisitor} instance (or <tt>null</tt>) each time it is called,
      * i.e., it should not return a previously returned visitor.
-     *
+     * 
      * @param access
      *            the method's access flags (see {@link Opcodes}). This
      *            parameter also indicates if the method is synthetic and/or
@@ -269,7 +302,7 @@ public abstract class ClassVisitor {
      *         this method.
      */
     public MethodVisitor visitMethod(int access, String name, String desc,
-                                     String signature, String[] exceptions) {
+            String signature, String[] exceptions) {
         if (cv != null) {
             return cv.visitMethod(access, name, desc, signature, exceptions);
         }

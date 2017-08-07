@@ -1,4 +1,3 @@
-package com.silentgo.utils.asm;
 /***
  * ASM: a very small and fast Java bytecode manipulation framework
  * Copyright (c) 2000-2011 INRIA, France Telecom
@@ -28,11 +27,13 @@ package com.silentgo.utils.asm;
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.silentgo.utils.asm;
+
 /**
  * A visitor to visit a Java annotation. The methods of this class must be
  * called in the following order: ( <tt>visit</tt> | <tt>visitEnum</tt> |
  * <tt>visitAnnotation</tt> | <tt>visitArray</tt> )* <tt>visitEnd</tt>.
- *
+ * 
  * @author Eric Bruneton
  * @author Eugene Kuleshov
  */
@@ -40,7 +41,7 @@ public abstract class AnnotationVisitor {
 
     /**
      * The ASM API version implemented by this visitor. The value of this field
-     * must be one of {@link Opcodes#ASM4}.
+     * must be one of {@link Opcodes#ASM4} or {@link Opcodes#ASM5}.
      */
     protected final int api;
 
@@ -52,10 +53,10 @@ public abstract class AnnotationVisitor {
 
     /**
      * Constructs a new {@link AnnotationVisitor}.
-     *
+     * 
      * @param api
      *            the ASM API version implemented by this visitor. Must be one
-     *            of {@link Opcodes#ASM4}.
+     *            of {@link Opcodes#ASM4} or {@link Opcodes#ASM5}.
      */
     public AnnotationVisitor(final int api) {
         this(api, null);
@@ -63,16 +64,16 @@ public abstract class AnnotationVisitor {
 
     /**
      * Constructs a new {@link AnnotationVisitor}.
-     *
+     * 
      * @param api
      *            the ASM API version implemented by this visitor. Must be one
-     *            of {@link Opcodes#ASM4}.
+     *            of {@link Opcodes#ASM4} or {@link Opcodes#ASM5}.
      * @param av
      *            the annotation visitor to which this visitor must delegate
      *            method calls. May be null.
      */
     public AnnotationVisitor(final int api, final AnnotationVisitor av) {
-        if (api != Opcodes.ASM4) {
+        if (api != Opcodes.ASM4 && api != Opcodes.ASM5) {
             throw new IllegalArgumentException();
         }
         this.api = api;
@@ -81,14 +82,14 @@ public abstract class AnnotationVisitor {
 
     /**
      * Visits a primitive value of the annotation.
-     *
+     * 
      * @param name
      *            the value name.
      * @param value
      *            the actual value, whose type must be {@link Byte},
      *            {@link Boolean}, {@link Character}, {@link Short},
      *            {@link Integer} , {@link Long}, {@link Float}, {@link Double},
-     *            {@link String} or {@link Type} or OBJECT or ARRAY sort. This
+     *            {@link String} or {@link Type} of OBJECT or ARRAY sort. This
      *            value can also be an array of byte, boolean, short, char, int,
      *            long, float or double values (this is equivalent to using
      *            {@link #visitArray visitArray} and visiting each array element
@@ -102,7 +103,7 @@ public abstract class AnnotationVisitor {
 
     /**
      * Visits an enumeration value of the annotation.
-     *
+     * 
      * @param name
      *            the value name.
      * @param desc
@@ -118,7 +119,7 @@ public abstract class AnnotationVisitor {
 
     /**
      * Visits a nested annotation value of the annotation.
-     *
+     * 
      * @param name
      *            the value name.
      * @param desc
@@ -141,7 +142,7 @@ public abstract class AnnotationVisitor {
      * types (such as byte, boolean, short, char, int, long, float or double)
      * can be passed as value to {@link #visit visit}. This is what
      * {@link ClassReader} does.
-     *
+     * 
      * @param name
      *            the value name.
      * @return a visitor to visit the actual array value elements, or
