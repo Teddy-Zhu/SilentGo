@@ -1,8 +1,7 @@
 package com.silentgo.core.config;
 
-import com.silentgo.core.action.ActionChain;
 import com.silentgo.core.cache.CacheManager;
-import com.silentgo.core.ioc.bean.BeanWrapper;
+import com.silentgo.core.ioc.bean.Bean;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.orm.base.DBConfig;
 import com.silentgo.servlet.SilentGoContext;
@@ -27,7 +26,7 @@ public class InterConfig {
 
     private final ThreadLocal<SilentGoContext> ctx = new InheritableThreadLocal<>();
 
-    private BeanWrapper actionChain;
+    private Bean actionChain;
 
     private PropKit propKit;
 
@@ -49,11 +48,11 @@ public class InterConfig {
         return ctx;
     }
 
-    public BeanWrapper getActionChain() {
+    public Bean getActionChain() {
         return actionChain;
     }
 
-    public void setActionChain(BeanWrapper actionChain) {
+    public void setActionChain(Bean actionChain) {
         this.actionChain = actionChain;
     }
 

@@ -1,5 +1,6 @@
 package com.silentgo.orm.base;
 
+import com.google.common.collect.Maps;
 import com.silentgo.orm.SilentGoOrm;
 import com.silentgo.orm.connect.ConnectManager;
 import com.silentgo.orm.infobuilder.BaseTableBuilder;
@@ -57,6 +58,8 @@ public class DaoInterceptor implements MethodInterceptor {
 
     private static final Map<Method, SQLTool> sqlToolCache = new ConcurrentHashMap<>();
 
+    private static final Map<Class<?>, Map<Method, SQLTool>> baseDaoCacheSqlTool = new ConcurrentHashMap<>();
+
     @Override
     public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
 
@@ -65,22 +68,31 @@ public class DaoInterceptor implements MethodInterceptor {
 
         DaoResolveEntity daoResolveEntity = buildDaoResolveEntity(o, method, objects);
 
-        SQLTool cachedSqlTool = sqlToolCache.get(method);
+        SQLTool cachedSqlTool = null;
+        if (daoResolveEntity.isBaseDao()) {
+            Map<Method, SQLTool> sqlToolMapCache = baseDaoCacheSqlTool.get(daoResolveEntity.getDaoClass());
+            if (sqlToolMapCache == null) {
+                sqlToolMapCache = Maps.newConcurrentMap();
+                baseDaoCacheSqlTool.put(daoResolveEntity.getDaoClass(), sqlToolMapCache);
+            }
+            cachedSqlTool = sqlToolMapCache.get(method);
+        } else {
+            cachedSqlTool = sqlToolCache.get(method);
+        }
         if (cachedSqlTool == null) {
             for (DaoResolver daoResolver : daoResolveFactory.getResolverList()) {
                 if (daoResolver.handle(daoResolveEntity)) {
                     daoResolver.processSQL(daoResolveEntity);
                 }
             }
-
-            sqlToolCache.put(method,daoResolveEntity.getSqlTool());
+            if (daoResolveEntity.isBaseDao()) {
+                baseDaoCacheSqlTool.get(daoResolveEntity.getDaoClass()).put(method, daoResolveEntity.getSqlTool());
+            } else {
+                sqlToolCache.put(method, daoResolveEntity.getSqlTool());
+            }
         } else {
             cachedSqlTool.setObjects(daoResolveEntity.getObjects());
             cachedSqlTool.setParams(daoResolveEntity.getNameObjects());
-
-            if (daoResolveEntity.isBaseDao()) {
-                cachedSqlTool.setTableName(daoResolveEntity.getTableInfo().getTableName());
-            }
             daoResolveEntity.setSqlTool(cachedSqlTool);
         }
 

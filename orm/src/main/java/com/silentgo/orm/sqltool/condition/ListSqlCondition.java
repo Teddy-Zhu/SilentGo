@@ -77,4 +77,36 @@ public class ListSqlCondition implements SqlCondition {
     public boolean appendCondtion(SqlTokenGroup sqlTokenGroup) {
         return this.sqlTokens.add(sqlTokenGroup);
     }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
+    }
+
+    public String getEmpty() {
+        return empty;
+    }
+
+    public void setEmpty(String empty) {
+        this.empty = empty;
+    }
+
+    public String getSplit() {
+        return split;
+    }
+
+    public void setSplit(String split) {
+        this.split = split;
+    }
 }

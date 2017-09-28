@@ -8,7 +8,7 @@ package com.silentgo.core.ioc.bean;
  *         <p>
  *         Created by teddyzhu on 16/7/20.
  */
-public abstract class BeanWrapper {
+public abstract class Bean {
 
     public abstract Object getObject();
 

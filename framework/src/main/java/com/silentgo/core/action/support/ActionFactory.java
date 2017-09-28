@@ -8,12 +8,11 @@ import com.silentgo.core.build.Factory;
 import com.silentgo.core.exception.AppBuildException;
 import com.silentgo.core.exception.AppReleaseException;
 import com.silentgo.core.ioc.bean.BeanFactory;
-import com.silentgo.core.ioc.bean.BeanWrapper;
+import com.silentgo.core.ioc.bean.Bean;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.utils.CollectionKit;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -49,7 +48,7 @@ public class ActionFactory extends BaseFactory {
         ActionChain result = actionChains.get(actionChains.size() - 1);
 
         BeanFactory beanFactory = me.getFactory(me.getConfig().getBeanClass());
-        BeanWrapper beanWrapper = beanFactory.addBean(result, true, false, false);
+        Bean beanWrapper = beanFactory.addBean(result, true, false, false);
         if (result instanceof RouteAction) {
             for (int i = actionChains.size() - 1; i >= 0; i--) {
                 ActionChain temp = actionChains.get(i);

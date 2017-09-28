@@ -7,7 +7,7 @@ import com.silentgo.core.aop.annotationintercept.annotation.CustomInterceptor;
 import com.silentgo.core.build.Factory;
 import com.silentgo.core.exception.AppReleaseException;
 import com.silentgo.core.ioc.bean.BeanFactory;
-import com.silentgo.core.ioc.bean.BeanWrapper;
+import com.silentgo.core.ioc.bean.Bean;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.utils.ClassKit;
 import com.silentgo.utils.CollectionKit;
@@ -33,35 +33,35 @@ public class AnnotationInceptFactory extends BaseFactory {
     /**
      * Key : Method Name  Value : Sorted AnnotationInterceptor
      */
-    private Map<Class<? extends Annotation>, BeanWrapper> annotationInterceptorMap = new HashMap<>();
+    private Map<Class<? extends Annotation>, Bean> annotationInterceptorMap = new HashMap<>();
 
-    private Map<Method, Map<Annotation, BeanWrapper>> iAnnotationMap = new HashMap<>();
+    private Map<Method, Map<Annotation, Bean>> iAnnotationMap = new HashMap<>();
 
-    private Map<Method, List<Map.Entry<Annotation, BeanWrapper>>> sortedIAnnotationMap = new HashMap<>();
+    private Map<Method, List<Map.Entry<Annotation, Bean>>> sortedIAnnotationMap = new HashMap<>();
 
 
-    public boolean addAnnotationInterceptor(Class<? extends Annotation> clz, BeanWrapper interceptor) {
+    public boolean addAnnotationInterceptor(Class<? extends Annotation> clz, Bean interceptor) {
         return CollectionKit.MapAdd(annotationInterceptorMap, clz, interceptor);
     }
 
-    public BeanWrapper getAnnotationInterceptor(Class<? extends Annotation> clz) {
+    public Bean getAnnotationInterceptor(Class<? extends Annotation> clz) {
         return annotationInterceptorMap.get(clz);
     }
 
-    private boolean addIAnnotation(Method name, Map<Annotation, BeanWrapper> anMap) {
+    private boolean addIAnnotation(Method name, Map<Annotation, Bean> anMap) {
         CollectionKit.MapAdd(iAnnotationMap, name, anMap);
         return true;
     }
 
-    public List<Map.Entry<Annotation, BeanWrapper>> getSortedAnnotationMap(Method name) {
+    public List<Map.Entry<Annotation, Bean>> getSortedAnnotationMap(Method name) {
         return sortedIAnnotationMap.getOrDefault(name, new ArrayList<>());
     }
 
-    public Map<Annotation, BeanWrapper> getAnnotationMap(Method name) {
+    public Map<Annotation, Bean> getAnnotationMap(Method name) {
         return iAnnotationMap.get(name);
     }
 
-    private boolean addSortedIAnnotation(Method name, List<Map.Entry<Annotation, BeanWrapper>> iAnnotationMap) {
+    private boolean addSortedIAnnotation(Method name, List<Map.Entry<Annotation, Bean>> iAnnotationMap) {
         return CollectionKit.MapAdd(sortedIAnnotationMap, name, iAnnotationMap);
     }
 
@@ -91,7 +91,7 @@ public class AnnotationInceptFactory extends BaseFactory {
         if (IAnnotation.class.isAssignableFrom(aClass)) {
             Class<? extends Annotation> an = (Class<? extends Annotation>) ClassKit.getGenericClass(aClass, 0);
             try {
-                BeanWrapper bean = beanFactory.addBean(aClass.newInstance(), true, false, false);
+                Bean bean = beanFactory.addBean(aClass.newInstance(), true, false, false);
                 if (addAnnotationInterceptor(an, bean)) {
                     if (me.getConfig().isDevMode()) {
                         LOGGER.debug("Register Custom Interceptor [{}] successfully", aClass.getName());
@@ -108,7 +108,7 @@ public class AnnotationInceptFactory extends BaseFactory {
 
     public void buildIAnnotation(MethodAdviser adviser) {
 
-        Map<Annotation, BeanWrapper> annotationIAnnotationMap = new HashMap<>();
+        Map<Annotation, Bean> annotationIAnnotationMap = new HashMap<>();
         //build IAnnotation
         adviser.getAnnotations().forEach(annotation -> CollectionKit.MapAdd(annotationIAnnotationMap, annotation, getAnnotationInterceptor(annotation.annotationType())));
 
@@ -117,8 +117,8 @@ public class AnnotationInceptFactory extends BaseFactory {
 
     }
 
-    private List<Map.Entry<Annotation, BeanWrapper>> sortAnnotationMap(Map<Annotation, BeanWrapper> annotationMap) {
-        List<Map.Entry<Annotation, BeanWrapper>> list = new ArrayList<>(annotationMap.entrySet());
+    private List<Map.Entry<Annotation, Bean>> sortAnnotationMap(Map<Annotation, Bean> annotationMap) {
+        List<Map.Entry<Annotation, Bean>> list = new ArrayList<>(annotationMap.entrySet());
         Collections.sort(list, (o1, o2) -> {
             int x = ((IAnnotation) o1.getValue().getOriginObject()).priority();
             int y = ((IAnnotation) o2.getValue().getOriginObject()).priority();

@@ -13,6 +13,10 @@ public class CommonSqlCondition implements SqlCondition {
         this.sqlTokenGroup = new SqlTokenGroup(sql);
     }
 
+    public CommonSqlCondition(SqlTokenGroup sqlTokenGroup) {
+        this.sqlTokenGroup = sqlTokenGroup;
+    }
+
     @Override
     public boolean clearSql() {
         this.sqlTokenGroup = null;

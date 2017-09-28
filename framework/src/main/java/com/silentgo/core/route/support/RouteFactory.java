@@ -8,7 +8,7 @@ import com.silentgo.core.config.Const;
 import com.silentgo.core.config.Regex;
 import com.silentgo.core.exception.AppReleaseException;
 import com.silentgo.core.ioc.bean.BeanFactory;
-import com.silentgo.core.ioc.bean.BeanWrapper;
+import com.silentgo.core.ioc.bean.Bean;
 import com.silentgo.core.route.BasicRoute;
 import com.silentgo.core.route.RegexRoute;
 import com.silentgo.core.route.Route;
@@ -116,7 +116,7 @@ public class RouteFactory extends BaseFactory {
         com.silentgo.core.route.annotation.Route route = aClass.getAnnotation(com.silentgo.core.route.annotation.Route.class);
         BeanFactory beanFactory = me.getFactory(me.getConfig().getBeanClass());
         MethodAOPFactory methodAOPFactory = me.getFactory(MethodAOPFactory.class);
-        BeanWrapper bean = beanFactory.getBean(aClass.getName());
+        Bean bean = beanFactory.getBean(aClass.getName());
         boolean parentRegex = route != null && route.regex();
         Pattern routePattern = Pattern.compile(Regex.RoutePath);
 
@@ -132,7 +132,7 @@ public class RouteFactory extends BaseFactory {
         }
     }
 
-    private void buildControllerRoute(String path, BeanWrapper bean, MethodAOPFactory methodAOPFactory, boolean parentRegex, Pattern routePattern) {
+    private void buildControllerRoute(String path, Bean bean, MethodAOPFactory methodAOPFactory, boolean parentRegex, Pattern routePattern) {
 
         //LOGGER.info("build route class:{}", aClass.getName());
         for (Method method : bean.getBeanClass().getDeclaredMethods()) {

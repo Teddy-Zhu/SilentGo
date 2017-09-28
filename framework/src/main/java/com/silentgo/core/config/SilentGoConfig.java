@@ -5,7 +5,7 @@ import com.silentgo.core.action.ActionChain;
 import com.silentgo.core.aop.annotationintercept.IAnnotation;
 import com.silentgo.core.cache.CacheManager;
 import com.silentgo.core.exception.AppBuildException;
-import com.silentgo.core.ioc.bean.BeanWrapper;
+import com.silentgo.core.ioc.bean.Bean;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.orm.base.DBConnect;
 import com.silentgo.orm.base.DBType;
@@ -111,11 +111,11 @@ public class SilentGoConfig extends BaseConfig {
         return CollectionKit.ListAdd(getFactories(), clz);
     }
 
-    public BeanWrapper getBean(Class<?> name) {
+    public Bean getBean(Class<?> name) {
         return getBean(name.getName());
     }
 
-    public BeanWrapper getBean(String name) {
+    public Bean getBean(String name) {
         return getFactory(getBeanClass(), SilentGo.me()).getBean(name);
     }
 

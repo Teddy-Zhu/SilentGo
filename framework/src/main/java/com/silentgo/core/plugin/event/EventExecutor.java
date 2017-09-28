@@ -1,11 +1,9 @@
 package com.silentgo.core.plugin.event;
 
-import com.silentgo.core.ioc.bean.BeanWrapper;
+import com.silentgo.core.ioc.bean.Bean;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.FutureTask;
 
 /**
  * Project : SilentGo
@@ -17,15 +15,15 @@ import java.util.concurrent.FutureTask;
  */
 public class EventExecutor {
 
-    private BeanWrapper eventListener;
+    private Bean eventListener;
     private int delay = 0;
     private boolean async = false;
 
-    public EventExecutor(BeanWrapper eventListener) {
+    public EventExecutor(Bean eventListener) {
         this.eventListener = eventListener;
     }
 
-    public EventExecutor(BeanWrapper eventListener, int delay, boolean async) {
+    public EventExecutor(Bean eventListener, int delay, boolean async) {
         this.eventListener = eventListener;
         this.delay = delay;
         this.async = async;

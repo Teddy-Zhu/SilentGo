@@ -27,6 +27,10 @@ public class IfSqlToken implements SqlToken {
         }
         if (object == null) {
             return new SqlTokenResult("");
+        } else if (object instanceof String) {
+            if (StringKit.isBlank((String) object)) {
+                return new SqlTokenResult("");
+            }
         } else if (object instanceof Boolean || object.getClass().equals(boolean.class)) {
             if (!(boolean) object) {
                 return new SqlTokenResult("");

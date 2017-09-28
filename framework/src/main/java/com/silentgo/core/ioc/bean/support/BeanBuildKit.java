@@ -1,8 +1,9 @@
 package com.silentgo.core.ioc.bean.support;
 
-import com.silentgo.orm.base.DaoInterceptor;
 import com.silentgo.core.ioc.annotation.Lazy;
-import com.silentgo.core.ioc.bean.BeanDefinition;
+import com.silentgo.core.ioc.rbean.BeanInitModel;
+import com.silentgo.core.ioc.rbean.BeanModel;
+import com.silentgo.orm.base.DaoInterceptor;
 import com.silentgo.utils.CollectionKit;
 import com.silentgo.utils.log.Log;
 import com.silentgo.utils.log.LogFactory;
@@ -18,8 +19,8 @@ import java.util.List;
  * Package : com.silentgo.core.ioc.bean.support
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
- *         <p>
- *         Created by teddyzhu on 16/9/29.
+ * <p>
+ * Created by teddyzhu on 16/9/29.
  */
 public class BeanBuildKit {
 
@@ -34,29 +35,51 @@ public class BeanBuildKit {
         return CollectionKit.ListAdd(beanHandlers, beanHandler);
     }
 
-    public static void commonBuildNoValue(List<BeanDefinition> beanDefinitions, Class<?> aClass, boolean inject) {
-        Lazy lazy = aClass.getAnnotation(Lazy.class);
-        boolean islazy = lazy != null;
-        beanDefinitions.add(new BeanDefinition(aClass, inject, islazy));
+    public static void commonBuildNoValue(List<BeanModel> beanDefinitions, Class<?> aClass, boolean inject) {
+
+        BeanInitModel beanInitModel = new BeanInitModel();
+        beanInitModel.setBeanClass(aClass);
+        beanInitModel.setCreateImmediately(true);
+        beanInitModel.setNeedInject(inject);
+        beanInitModel.setSingle(true);
+
+        beanDefinitions.add(new BeanModel(beanInitModel));
     }
 
-    public static <T extends Annotation> void commonBuild(List<BeanDefinition> beanDefinitions, T annotation, Class<?> aClass, boolean inject) {
-        Lazy lazy = aClass.getAnnotation(Lazy.class);
-        boolean islazy = lazy != null;
+    public static <T extends Annotation> void commonBuild(List<BeanModel> beanDefinitions, T annotation, Class<?> aClass, boolean inject) {
+
+        BeanInitModel beanInitModel = null;
         try {
+
+            beanInitModel = new BeanInitModel();
+            beanInitModel.setBeanClass(aClass);
+            beanInitModel.setCreateImmediately(aClass.getAnnotation(Lazy.class) == null);
+            beanInitModel.setNeedInject(inject);
+            beanInitModel.setSingle(true);
+
+
             Method method = aClass.getDeclaredMethod("value");
-            beanDefinitions.add(new BeanDefinition(method.invoke(annotation).toString(), aClass, inject, islazy));
+            beanInitModel.setBeanName(method.invoke(annotation).toString());
+
+            beanDefinitions.add(new BeanModel(beanInitModel));
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             LOGGER.debug("no value , ignored");
         }
         LOGGER.debug("reg class : {}", aClass);
-        beanDefinitions.add(new BeanDefinition(aClass, inject, islazy));
+        beanInitModel.setBeanName(null);
+        beanDefinitions.add(new BeanModel(beanInitModel));
     }
 
 
-    public static void buildBaseDaoInterface(List<BeanDefinition> beanDefinitions, Object target, Class<?> clz) {
-        Lazy lazy = clz.getAnnotation(Lazy.class);
-        boolean islazy = lazy != null;
-        beanDefinitions.add(new BeanDefinition(clz, DaoInterceptor.proxy(clz), false, true, islazy));
+    public static void buildBaseDaoInterface(List<BeanModel> beanDefinitions, Object target, Class<?> clz) {
+
+        BeanInitModel beanInitModel = new BeanInitModel();
+        beanInitModel.setBeanClass(clz);
+        beanInitModel.setCreateImmediately(clz.getAnnotation(Lazy.class) == null);
+        beanInitModel.setNeedInject(false);
+        beanInitModel.setSingle(true);
+        beanInitModel.setOriginObject(DaoInterceptor.proxy(clz));
+
+        beanDefinitions.add(new BeanModel(beanInitModel));
     }
 }

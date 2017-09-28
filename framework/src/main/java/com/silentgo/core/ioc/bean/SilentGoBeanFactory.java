@@ -1,5 +1,7 @@
 package com.silentgo.core.ioc.bean;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.silentgo.core.SilentGo;
 import com.silentgo.core.aop.annotation.Aspect;
 import com.silentgo.core.aop.annotationintercept.annotation.CustomInterceptor;
@@ -13,6 +15,9 @@ import com.silentgo.core.ioc.annotation.Lazy;
 import com.silentgo.core.ioc.annotation.Service;
 import com.silentgo.core.ioc.bean.support.BeanBuildKit;
 import com.silentgo.core.ioc.bean.support.BeanHandleFactory;
+import com.silentgo.core.ioc.rbean.BeanFiledModel;
+import com.silentgo.core.ioc.rbean.BeanInitModel;
+import com.silentgo.core.ioc.rbean.BeanModel;
 import com.silentgo.core.route.annotation.Controller;
 import com.silentgo.utils.CollectionKit;
 import com.silentgo.utils.log.Log;
@@ -27,22 +32,22 @@ import java.util.*;
  * com.silentgo.core.ioc.bean
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
- *         <p>
- *         Created by teddyzhu on 16/7/22.
+ * <p>
+ * Created by teddyzhu on 16/7/22.
  */
 @Factory
-public class SilentGoBeanFactory extends BeanFactory<BeanDefinition> {
+public class SilentGoBeanFactory extends BeanFactory<BeanModel> {
 
     private static final Log LOGGER = LogFactory.get();
 
-    private Map<String, BeanDefinition> beansMap = new HashMap<>();
+    private Map<String, BeanModel> beansMap = new HashMap<>();
 
     public SilentGoBeanFactory() {
 
     }
 
     @Override
-    public void build(List<BeanDefinition> beans, SilentGoConfig config) {
+    public void build(List<BeanModel> beans, SilentGoConfig config) {
         beans.forEach(beanDefinition -> {
             if (!CollectionKit.MapAdd(beansMap, beanDefinition.getBeanName(), beanDefinition) && config.isDevMode()) {
                 LOGGER.debug("Bean [{}] has been registered.", beanDefinition.getBeanName());
@@ -56,38 +61,51 @@ public class SilentGoBeanFactory extends BeanFactory<BeanDefinition> {
     }
 
     @SuppressWarnings("unchecked")
-    public BeanDefinition getBean(String name) {
+    public BeanModel getBean(String name) {
         return beansMap.getOrDefault(name, null);
     }
 
     @Override
-    public BeanDefinition addBean(Class<?> beanDefinitionClass) {
-        Lazy lazy = beanDefinitionClass.getAnnotation(Lazy.class);
-        boolean islazy = lazy != null;
-        BeanDefinition beanDefinition = new BeanDefinition(beanDefinitionClass, islazy);
+    public BeanModel addBean(Class<?> beanDefinitionClass) {
+        BeanInitModel beanInitModel = new BeanInitModel();
+        beanInitModel.setBeanClass(beanDefinitionClass);
+        beanInitModel.setCreateImmediately(beanDefinitionClass.getAnnotation(Lazy.class) == null);
+        BeanModel beanDefinition = new BeanModel(beanInitModel);
         beansMap.put(beanDefinition.getBeanName(), beanDefinition);
         depend(beanDefinition);
         return beanDefinition;
     }
 
     @Override
-    public BeanDefinition addBean(BeanDefinition beanDefinition) {
+    public BeanModel addBean(BeanModel beanDefinition) {
         beansMap.put(beanDefinition.getBeanName(), beanDefinition);
         depend(beanDefinition);
         return beanDefinition;
     }
 
     @Override
-    public BeanDefinition addBean(Class<?> target, boolean isSingle, boolean needInject, boolean isLazy) {
-        BeanDefinition beanDefinition = new BeanDefinition(target, false, true);
-        beansMap.put(target.getName(), beanDefinition);
+    public BeanModel addBean(Class<?> target, boolean isSingle, boolean needInject, boolean isLazy) {
+        BeanInitModel beanInitModel = new BeanInitModel();
+        beanInitModel.setBeanClass(target);
+        beanInitModel.setNeedInject(needInject);
+        beanInitModel.setSingle(isSingle);
+        beanInitModel.setCreateImmediately(!isLazy);
+
+        BeanModel beanDefinition = new BeanModel(beanInitModel);
+        beansMap.put(beanDefinition.getBeanName(), beanDefinition);
         depend(beanDefinition);
         return beanDefinition;
     }
 
     @Override
-    public BeanDefinition addBean(Object target, boolean isSingle, boolean needInject, boolean isLazy) {
-        BeanDefinition beanDefinition = new BeanDefinition(target.getClass(), target, needInject, isSingle, isLazy);
+    public BeanModel addBean(Object target, boolean isSingle, boolean needInject, boolean isLazy) {
+        BeanInitModel beanInitModel = new BeanInitModel();
+        beanInitModel.setOriginObject(target);
+        beanInitModel.setNeedInject(needInject);
+        beanInitModel.setSingle(isSingle);
+        beanInitModel.setCreateImmediately(!isLazy);
+
+        BeanModel beanDefinition = new BeanModel(beanInitModel);
         beansMap.put(beanDefinition.getBeanName(), beanDefinition);
         depend(beanDefinition);
         return beanDefinition;
@@ -104,65 +122,73 @@ public class SilentGoBeanFactory extends BeanFactory<BeanDefinition> {
         return true;
     }
 
-    public void depend(BeanDefinition beanDefinition) {
-        if (beanDefinition.isInjectComplete() || beanDefinition.isLazy()) return;
-        Set<Map.Entry<String, FieldBean>> set = beanDefinition.getFieldBeans().entrySet();
+    public void depend(BeanModel beanDefinition) {
 
-        for (Map.Entry<String, FieldBean> entity : set) {
-            String k = entity.getKey();
-            FieldBean v = entity.getValue();
-            Field field = v.getField();
-            Class<?> type = field.getType();
-            BeanDefinition bean;
-            if (type.isInterface() && k.equals(type.getName())) {
-                try {
-                    bean = beansMap.entrySet().stream().filter(keyset -> keyset.getValue().getInterfaceClass().getName().equals(k))
-                            .findFirst().get().getValue();
-                } catch (NoSuchElementException ex) {
-                    LOGGER.error(ex, "Can not find [{}] find implemented class bean", k);
-                    return;
+        if (beanDefinition != null && beanDefinition.getFields() != null) {
+            for (BeanFiledModel beanFiledModel : beanDefinition.getFields()) {
+                String k = beanFiledModel.getBeanName();
+
+                Field field = beanFiledModel.getField().getField();
+                Class<?> type = field.getType();
+                BeanModel bean;
+                if (type.isInterface() && k.equals(type.getName())) {
+                    try {
+                        bean = beansMap.entrySet().stream().filter(keyset -> keyset.getValue().getInterfaceClass().getName().equals(k))
+                                .findFirst().get().getValue();
+                    } catch (NoSuchElementException ex) {
+                        LOGGER.info("Can not find [{}] find implemented class bean", k);
+                        return;
+                    }
+
+                } else {
+                    bean = beansMap.get(k);
                 }
 
-            } else {
-                bean = beansMap.get(k);
-            }
-            Lazy lazy = field.getAnnotation(Lazy.class);
-            if (bean == null) {
-                if (lazy == null)
-                    bean = addBean(type);
-                else
-                    bean = addBean(type, true, false, true);
-            }
-            v.setBeanName(bean.getBeanName());
-        }
+                Lazy lazy = field.getAnnotation(Lazy.class);
+                if (bean == null) {
+                    if (lazy == null)
+                        bean = addBean(type);
+                    else
+                        bean = addBean(type, true, false, true);
+                }
+                beanFiledModel.setBeanName(bean.getBeanName());
 
-        beanDefinition.setInjectComplete(true);
+            }
+        }
     }
 
-    private static ArrayList<Class<? extends Annotation>> anList = new ArrayList() {{
-        add(Service.class);
-        add(Component.class);
-        add(Controller.class);
-        add(Aspect.class);
-        add(ExceptionHandler.class);
-        add(CustomInterceptor.class);
-        add(Validator.class);
-    }};
+    static ImmutableList<Class<? extends Annotation>> annatationList = ImmutableList.of(
+            Service.class,
+            Component.class,
+            Controller.class,
+            Aspect.class,
+            ExceptionHandler.class,
+            CustomInterceptor.class,
+            Validator.class);
+
+    static List<Class<? extends Annotation>> anList = Lists.newArrayList(Service.class,
+            Component.class,
+            Controller.class,
+            Aspect.class,
+            ExceptionHandler.class,
+            CustomInterceptor.class,
+            Validator.class);
 
     @Override
     public boolean initialize(SilentGo me) {
-        List<BeanDefinition> beanDefinitions = new ArrayList<>();
+        List<BeanModel> beanDefinitions = new ArrayList<>();
 
         me.getFactory(BeanHandleFactory.class);
 
-        anList.forEach(an ->
-                me.getAnnotationManager().getClasses(an).
-                        forEach(aClass -> BeanBuildKit.getBeanHandlers().forEach(beanHandler -> {
-                            Annotation annotation = aClass.getAnnotation(an);
-                            if (beanHandler.hasHandle(annotation, aClass)) {
-                                beanHandler.handle(annotation, aClass, beanDefinitions);
-                            }
-                        })));
+        for (Class<? extends Annotation> an : annatationList) {
+            me.getAnnotationManager().getClasses(an).
+                    forEach(aClass -> BeanBuildKit.getBeanHandlers().forEach(beanHandler -> {
+                        Annotation annotation = aClass.getAnnotation(an);
+                        if (beanHandler.preHandle(annotation, aClass)) {
+                            beanHandler.handle(annotation, aClass, beanDefinitions);
+                        }
+                    }));
+        }
 
         build(beanDefinitions, me.getConfig());
 

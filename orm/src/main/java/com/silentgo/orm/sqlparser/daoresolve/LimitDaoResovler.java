@@ -5,6 +5,11 @@ import com.silentgo.orm.base.Pager;
 import com.silentgo.orm.base.TableModel;
 import com.silentgo.orm.sqlparser.SQLKit;
 import com.silentgo.orm.sqlparser.funcanalyse.DaoKeyWord;
+import com.silentgo.orm.sqltool.SqlTokenGroup;
+import com.silentgo.orm.sqltool.condition.CommonSqlCondition;
+import com.silentgo.orm.sqltool.condition.SqlCondition;
+import com.silentgo.orm.sqltool.sqltoken.ParamSqlToken;
+import com.silentgo.orm.sqltool.sqltoken.StringSqlToken;
 
 /**
  * Project : parent
@@ -26,6 +31,12 @@ public class LimitDaoResovler implements DaoResolver {
         Pager pager = (Pager) daoResolveEntity.getNameObjects().get(SQLKit.PagerName);
 
         if (pager == null) throw new IllegalArgumentException("limit need pager parameter");
-        daoResolveEntity.getSqlTool().limit(pager.getStart() + "," + pager.getPageSize());
+        SqlTokenGroup sqlTokenGroup = new SqlTokenGroup();
+        SqlCondition sqlCondition = new CommonSqlCondition(sqlTokenGroup);
+        sqlTokenGroup.appendToken(new StringSqlToken("limit "));
+        sqlTokenGroup.appendToken(new ParamSqlToken(SQLKit.PagerName + ".start"));
+        sqlTokenGroup.appendToken(new StringSqlToken(","));
+        sqlTokenGroup.appendToken(new ParamSqlToken(SQLKit.PagerName + ".pageSize"));
+        daoResolveEntity.getSqlTool().limit(sqlCondition);
     }
 }

@@ -7,8 +7,8 @@ import java.util.Collection;
  * com.silentgo.utils
  *
  * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
- *         <p>
- *         Created by teddyzhu on 16/9/13.
+ * <p>
+ * Created by teddyzhu on 16/9/13.
  */
 public class Assert {
 
@@ -56,13 +56,25 @@ public class Assert {
 
     public static void isNull(Object object, String message) {
         if (object != null) {
-            throw new RuntimeException(message);
+            throw new NullPointerException(message);
+        }
+    }
+
+    public static void isNull(Object object) {
+        if (object != null) {
+            throw new NullPointerException();
+        }
+    }
+
+    public static void isNotNull(Object object) {
+        if (object == null) {
+            throw new NullPointerException();
         }
     }
 
     public static void isNotNull(Object object, String message) {
         if (object == null) {
-            throw new RuntimeException(message);
+            throw new NullPointerException(message);
         }
     }
 

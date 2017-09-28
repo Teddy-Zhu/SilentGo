@@ -34,7 +34,7 @@ public class SqlTokenResult {
         this.objects.addAll(sqlResult.getDy());
     }
 
-    public void appendSql(String sql){
+    public void appendSql(String sql) {
         this.sql.append(sql);
     }
 
@@ -48,6 +48,10 @@ public class SqlTokenResult {
 
     public List<Object> getObjects() {
         return objects;
+    }
+
+    public void appendObject(Object obj) {
+        this.objects.add(obj);
     }
 
     public void setObjects(List<Object> objects) {

@@ -23,6 +23,7 @@ public class SQLTool {
 
     private Map<String, Object> params = new HashMap<>();
     private Object[] objects;
+
     private SqlCondition insertSqlCondition = new ListSqlCondition("insert into " + this.tableName + " ( ", " ) ", " ", " , ");
     private SqlCondition insertValueSqlCondition = new ListSqlCondition(" values ", " ", " ", " , ");
 
@@ -175,10 +176,18 @@ public class SQLTool {
         return this;
     }
 
+    public SQLTool updateTableName(String tableName) {
+        this.tableName = tableName;
+        if (this.insertSqlCondition instanceof ListSqlCondition) {
+            ((ListSqlCondition) this.insertSqlCondition).setPrefix("insert into " + tableName + " ( ");
+        }
+        return this;
+    }
+
     //region update
     public SQLTool update(String tableName) {
         this.type = SQLType.UPDATE;
-        this.tableName = tableName;
+        updateTableName(tableName);
         return this;
     }
 
@@ -202,7 +211,7 @@ public class SQLTool {
 
     public SQLTool select(String tableName, Collection<String> columns) {
         this.type = SQLType.QUERY;
-        this.tableName = tableName;
+        updateTableName(tableName);
 
         for (String column : columns) {
             this.selectSqlCondition.appendSql(column);
@@ -212,7 +221,8 @@ public class SQLTool {
 
     public SQLTool select(String tableName, String... columns) {
         this.type = SQLType.QUERY;
-        this.tableName = tableName;
+        updateTableName(tableName);
+
         for (String column : columns) {
             this.selectSqlCondition.appendSql(column);
         }
@@ -237,7 +247,8 @@ public class SQLTool {
     //region delete
     public SQLTool delete(String tableName) {
         this.type = SQLType.DELETE;
-        this.tableName = tableName;
+        updateTableName(tableName);
+
         return this;
     }
 
@@ -255,13 +266,15 @@ public class SQLTool {
 
     public SQLTool insert(String tableName) {
         this.type = SQLType.INSERT;
-        this.tableName = tableName;
+        updateTableName(tableName);
+
         return this;
     }
 
     public SQLTool insert(String tableName, String... columns) {
         this.type = SQLType.INSERT;
-        this.tableName = tableName;
+        updateTableName(tableName);
+
 
         for (String column : columns) {
             this.insertSqlCondition.appendSql(column);
@@ -271,7 +284,8 @@ public class SQLTool {
 
     public SQLTool insert(String tableName, Collection<String> columns) {
         this.type = SQLType.INSERT;
-        this.tableName = tableName;
+        updateTableName(tableName);
+
         for (String column : columns) {
             this.insertSqlCondition.appendSql(column);
         }
@@ -288,12 +302,14 @@ public class SQLTool {
 
     public SQLTool count(String tableName) {
         this.type = SQLType.COUNT;
-        this.tableName = tableName;
+        updateTableName(tableName);
+
         return this;
     }
 
     public SQLTool from(String tableName) {
-        this.tableName = tableName;
+        updateTableName(tableName);
+
         return this;
     }
 
@@ -363,6 +379,16 @@ public class SQLTool {
 
     private String orderBy(String order, String column) {
         return EmptySplit + column + EmptySplit + order;
+    }
+
+    public SQLTool orderBy(SqlTokenGroup sqlTokenGroup) {
+        this.orderSqlCondition.appendCondtion(sqlTokenGroup);
+        return this;
+    }
+
+    public SQLTool limit(SqlCondition sqlCondition) {
+        this.limit = sqlCondition;
+        return this;
     }
 
     public SQLTool limit(String sql) {
@@ -459,6 +485,10 @@ public class SQLTool {
     }
 
     public void setTableName(String tableName) {
-        this.tableName = tableName;
+        updateTableName(tableName);
+    }
+
+    public SqlCondition getInsertValueSqlCondition() {
+        return insertValueSqlCondition;
     }
 }

@@ -1,29 +1,22 @@
-package com.silentgo.core.ioc.bean;
+package com.silentgo.core.ioc.rbean;
 
 import com.silentgo.utils.log.Log;
 import com.silentgo.utils.log.LogFactory;
 import com.silentgo.utils.reflect.SGField;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
-/**
- * Project : silentgo
- * com.silentgo.core.ioc.bean
- *
- * @author <a href="mailto:teddyzhu15@gmail.com" target="_blank">teddyzhu</a>
- *         <p>
- *         Created by teddyzhu on 16/8/20.
- */
-public class FieldBean {
-
+public class BeanFiledModel {
     private static final Log LOGGER = LogFactory.get();
-
-    private Boolean isLazy;
 
     private String beanName;
 
     private SGField field;
+
+    public BeanFiledModel(String beanName, SGField field) {
+        this.beanName = beanName;
+        this.field = field;
+    }
 
     public Object getValue(Object source) {
         if (field.getGetMethod() != null) {
@@ -66,28 +59,12 @@ public class FieldBean {
         return false;
     }
 
-    public FieldBean(SGField field, String beanName) {
+    public SGField getField() {
+        return field;
+    }
+
+    public void setField(SGField field) {
         this.field = field;
-        this.isLazy = false;
-        this.beanName = beanName;
-    }
-
-    public FieldBean(SGField field, String beanName, Boolean isLazy) {
-        this.field = field;
-        this.beanName = beanName;
-        this.isLazy = isLazy;
-    }
-
-    public Boolean getLazy() {
-        return isLazy;
-    }
-
-    public void setLazy(Boolean lazy) {
-        isLazy = lazy;
-    }
-
-    public Field getField() {
-        return field.getField();
     }
 
     public String getBeanName() {

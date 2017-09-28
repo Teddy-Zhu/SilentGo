@@ -2,7 +2,7 @@ package com.silentgo.core.ioc.bean.support;
 
 import com.silentgo.core.aop.annotationintercept.annotation.CustomInterceptor;
 import com.silentgo.core.exception.annotaion.ExceptionHandler;
-import com.silentgo.core.ioc.bean.BeanDefinition;
+import com.silentgo.core.ioc.rbean.BeanModel;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -25,12 +25,12 @@ public class NoValueBeanHandler implements BeanHandler {
 
 
     @Override
-    public <T extends Annotation> boolean hasHandle(T t, Class<?> clz) {
+    public <T extends Annotation> boolean preHandle(T t, Class<?> clz) {
         return anList.contains(t.annotationType()) && !clz.isInterface();
     }
 
     @Override
-    public <T extends Annotation> void handle(T t, Class<?> clz, List<BeanDefinition> beanDefinitions) {
+    public <T extends Annotation> void handle(T t, Class<?> clz, List<BeanModel> beanDefinitions) {
         BeanBuildKit.commonBuildNoValue(beanDefinitions, clz, true);
     }
 }

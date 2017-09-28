@@ -6,10 +6,10 @@ import com.silentgo.orm.sqlparser.SQLKit;
 import com.silentgo.orm.sqlparser.daoresolve.ResolvedParam;
 import com.silentgo.orm.sqlparser.daoresolve.parameterresolver.ObjectToNamedDaoParamResolver;
 import com.silentgo.orm.sqltool.SqlTokenGroup;
-import com.silentgo.orm.sqltool.sqltoken.ForEachSqlToken;
-import com.silentgo.orm.sqltool.sqltoken.IfSqlToken;
-import com.silentgo.orm.sqltool.sqltoken.ListContainIfSqlToken;
-import com.silentgo.orm.sqltool.sqltoken.ParamSqlToken;
+import com.silentgo.orm.sqltool.condition.CommonSqlCondition;
+import com.silentgo.orm.sqltool.condition.ListSqlCondition;
+import com.silentgo.orm.sqltool.condition.SqlCondition;
+import com.silentgo.orm.sqltool.sqltoken.*;
 import com.silentgo.utils.StringKit;
 import com.silentgo.utils.log.Log;
 import com.silentgo.utils.log.LogFactory;
@@ -72,22 +72,10 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
 
         String name = SQLKit.objectPrefix + "obj";
         PropertyKit.getCachedProps(table).forEach((k, propertyDescriptor) -> {
-            Object target = null;
-            try {
-                target = propertyDescriptor.getReadMethod().invoke(t);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
-            }
-
-            if (target == null) {
-                return;
-            }
-            if (target instanceof String && StringKit.isBlank(target.toString())) {
-                return;
-            }
             Column column = table.get(k);
-
-            sqlTool.where(column.getFullName() + "=<#" + name + "." + column.getPropName() + "/>");
+            SqlTokenGroup sqlTokenGroup = new SqlTokenGroup();
+            sqlTokenGroup.appendToken(new IfSqlToken(name + "." + column.getPropName(), column.getFullName() + "=<#" + name + "." + column.getPropName() + "/>"));
+            sqlTool.where(sqlTokenGroup);
         });
 
         sqlTool.addParamResolver(new ObjectToNamedDaoParamResolver(new ResolvedParam(name, 0)));
@@ -103,31 +91,22 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
 
         String name = SQLKit.objectPrefix + "obj";
         PropertyKit.getCachedProps(table).forEach((k, propertyDescriptor) -> {
-            Object target = t.get(k);
-
-            if (target == null) {
-                return;
-            }
-            if (target instanceof String && StringKit.isBlank(target.toString())) {
-                return;
-            }
             Column column = table.get(k);
-
-            sqlTool.where(column.getFullName() + "=<#" + name + "." + column.getPropName() + "/>");
-
+            SqlTokenGroup sqlTokenGroup = new SqlTokenGroup();
+            sqlTokenGroup.appendToken(new IfSqlToken(name + "." + column.getPropName(), column.getFullName() + "=<#" + name + "." + column.getPropName() + "/>"));
+            sqlTool.where(sqlTokenGroup);
         });
 
-        Object orderBy = t.get("orderBy");
 
-        if (orderBy != null && orderBy instanceof String) {
-            sqlTool.orderBy(String.valueOf(orderBy));
-        }
+        SqlTokenGroup sqlTokenGroupOrder = new SqlTokenGroup();
+        sqlTokenGroupOrder.appendToken(new IfSqlToken(name + ".orderBy", " <#" + name + ".orderBy/>"));
+        sqlTool.orderBy(sqlTokenGroupOrder);
 
-        Object limitBy = t.get("limitBy");
 
-        if (limitBy != null && limitBy instanceof String) {
-            sqlTool.limit(String.valueOf(limitBy));
-        }
+        SqlTokenGroup sqlTokenGroup = new SqlTokenGroup();
+        sqlTokenGroup.appendToken(new IfSqlToken(name + ".limitBy", " limit <#" + name + ".limitBy.start/>,<#" + name + ".limitBy.pageSize/>"));
+        sqlTool.limit(new CommonSqlCondition(sqlTokenGroup));
+
 
         sqlTool.addParamResolver(new ObjectToNamedDaoParamResolver(new ResolvedParam(name, 0)));
 
@@ -140,7 +119,12 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
         SQLTool sqlTool = new SQLTool().insert(table.getTableName());
 
         String objName = SQLKit.objectPrefix + "obj";
-        SqlTokenGroup sqlTokenGroup = new SqlTokenGroup();
+
+        SqlCondition valueSqlCondition = sqlTool.getInsertValueSqlCondition();
+        if (valueSqlCondition instanceof ListSqlCondition) {
+            ((ListSqlCondition) valueSqlCondition).setPrefix(" values ( ");
+            ((ListSqlCondition) valueSqlCondition).setSuffix(" ) ");
+        }
 
         PropertyKit.getCachedProps(table).forEach((k, propertyDescriptor) -> {
             Object target = null;
@@ -154,7 +138,7 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
                 if (column.isAutoIncrement()) return;
                 if (column.isNullable()) {
                     sqlTool.insertCol(column.getFullName());
-                    sqlTokenGroup.appendToken(new ParamSqlToken(objName + "." + column.getPropName()));
+                    sqlTool.insertValue(new SqlTokenGroup(new ParamSqlToken(objName + "." + column.getPropName())));
                 } else {
                     if (column.isHasDefault()) {
                         //ignore
@@ -164,11 +148,9 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
                 }
             } else {
                 sqlTool.insertCol(column.getFullName());
-                sqlTokenGroup.appendToken(new ParamSqlToken(objName + "." + column.getPropName()));
+                sqlTool.insertValue(new SqlTokenGroup(new ParamSqlToken(objName + "." + column.getPropName())));
             }
         });
-        sqlTool.insertValue(sqlTokenGroup);
-
         sqlTool.addParamResolver(new ObjectToNamedDaoParamResolver(new ResolvedParam(objName, 0)));
 
         return sqlTool;
@@ -278,21 +260,10 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
             if (table.getPrimaryKeys().contains(k)) {
                 return;
             }
-            Object target = null;
-            try {
-                target = propertyDescriptor.getReadMethod().invoke(t);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
-            }
-
-            if (target == null) {
-                return;
-            }
-            if (target instanceof String && StringKit.isBlank(target.toString())) {
-                return;
-            }
             Column column = table.get(k);
-            sqlTool.set(column.getFullName() + "=<#" + objName + "." + column.getPropName() + "/>");
+            SqlTokenGroup sqlTokenGroup = new SqlTokenGroup();
+            sqlTokenGroup.appendToken(new IfSqlToken(objName + "." + column.getPropName(), column.getFullName() + "=<#" + objName + "." + column.getPropName() + "/>"));
+            sqlTool.set(sqlTokenGroup);
         });
 
         sqlTool.addParamResolver(new ObjectToNamedDaoParamResolver(new ResolvedParam(objName, 0)));
@@ -349,26 +320,20 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
         sqlTool.count(table.getTableName());
         String objName = SQLKit.objectPrefix + "obj";
         PropertyKit.getCachedProps(table).forEach((k, propertyDescriptor) -> {
-            Object target = t.get(k);
 
-            if (target == null) {
-                return;
-            }
-            if (target instanceof String && StringKit.isBlank(target.toString())) {
-                return;
-            }
             Column column = table.get(k);
-            sqlTool.where(column.getFullName() + "=<#" + objName + "." + column.getPropName() + "/>");
+            SqlTokenGroup sqlTokenGroup = new SqlTokenGroup();
+            sqlTokenGroup.appendToken(new IfSqlToken(objName + "." + column.getPropName(), column.getFullName() + "=<#" + objName + "." + column.getPropName() + "/>"));
+            sqlTool.where(sqlTokenGroup);
+            //sqlTool.where(column.getFullName() + "=<#" + objName + "." + column.getPropName() + "/>");
         });
+
+        SqlTokenGroup sqlTokenGroup = new SqlTokenGroup();
+        sqlTokenGroup.appendToken(new IfSqlToken(objName + ".limitBy", " limit <#" + objName + ".limitBy.start/>,<#" + objName + ".limitBy.pageSize/>"));
+        sqlTool.limit(new CommonSqlCondition(sqlTokenGroup));
 
 
         sqlTool.addParamResolver(new ObjectToNamedDaoParamResolver(new ResolvedParam(objName, 0)));
-
-        Object limitBy = t.get("limitBy");
-
-        if (limitBy != null && limitBy instanceof String) {
-            sqlTool.limit(String.valueOf(limitBy));
-        }
 
         return sqlTool;
     }
@@ -383,14 +348,6 @@ public class MysqlBaseDaoDialect implements BaseDaoDialect {
     public static <T extends TableModel> SQLTool setUpdateCondition(BaseTableInfo table, T t, Map<String, PropertyDescriptor> propsMap, SQLTool sqlTool) {
         String objName = SQLKit.objectPrefix + "obj";
         table.getPrimaryKeys().forEach(key -> {
-
-            PropertyDescriptor propertyDescriptor = propsMap.get(key);
-            Object target;
-            try {
-                target = propertyDescriptor.getReadMethod().invoke(t);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                target = null;
-            }
             Column column = table.get(key);
             sqlTool.where(key + "=<#" + objName + "." + column.getPropName() + "/>");
         });

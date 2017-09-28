@@ -2,7 +2,7 @@ package com.silentgo.core.aop.annotationintercept.support;
 
 import com.silentgo.core.aop.AOPPoint;
 import com.silentgo.core.aop.annotationintercept.IAnnotation;
-import com.silentgo.core.ioc.bean.BeanWrapper;
+import com.silentgo.core.ioc.bean.Bean;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
@@ -21,7 +21,7 @@ public class AnnotationInterceptChain {
 
     private AOPPoint point;
 
-    private List<Map.Entry<Annotation, BeanWrapper>> interceptors;
+    private List<Map.Entry<Annotation, Bean>> interceptors;
 
     private int size = 0;
 
@@ -29,7 +29,7 @@ public class AnnotationInterceptChain {
         return point;
     }
 
-    public AnnotationInterceptChain(AOPPoint point, List<Map.Entry<Annotation, BeanWrapper>> interceptors) {
+    public AnnotationInterceptChain(AOPPoint point, List<Map.Entry<Annotation, Bean>> interceptors) {
         this.point = point;
         this.interceptors = interceptors;
         this.size = interceptors.size();
@@ -39,7 +39,7 @@ public class AnnotationInterceptChain {
     public Object intercept() throws Throwable {
         Object returnValue = null;
         if (index < size) {
-            Map.Entry<Annotation, BeanWrapper> entry = interceptors.get(index++);
+            Map.Entry<Annotation, Bean> entry = interceptors.get(index++);
 
             //noinspection unchecked
             returnValue = ((IAnnotation) entry.getValue().getObject()).intercept(this, point.getResponse(), point.getRequest(), entry.getKey());

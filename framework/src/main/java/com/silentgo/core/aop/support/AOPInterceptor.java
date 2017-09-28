@@ -60,7 +60,7 @@ public class AOPInterceptor implements MethodInterceptor {
 
         Object returnVal = point.proceed();
 
-        LOGGER.debug("aop method speed :{}", System.currentTimeMillis() - start);
+        LOGGER.info("aop method spend : {} ms", System.currentTimeMillis() - start);
 
         return returnVal;
     }

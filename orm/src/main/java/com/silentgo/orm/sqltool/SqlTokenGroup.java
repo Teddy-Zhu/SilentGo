@@ -17,6 +17,11 @@ public class SqlTokenGroup {
         return sqlResult;
     }
 
+    public SqlTokenGroup(SqlToken sqlToken) {
+        this.sqlTokens = new ArrayList<>();
+        appendToken(sqlToken);
+    }
+
     public SqlTokenGroup() {
         this.sqlTokens = new ArrayList<>();
     }

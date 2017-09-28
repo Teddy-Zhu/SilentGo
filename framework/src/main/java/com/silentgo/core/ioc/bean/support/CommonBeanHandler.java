@@ -1,10 +1,9 @@
 package com.silentgo.core.ioc.bean.support;
 
 import com.silentgo.core.aop.validator.annotation.Validator;
-import com.silentgo.core.exception.annotaion.ExceptionHandler;
 import com.silentgo.core.ioc.annotation.Component;
 import com.silentgo.core.ioc.annotation.Service;
-import com.silentgo.core.ioc.bean.BeanDefinition;
+import com.silentgo.core.ioc.rbean.BeanModel;
 import com.silentgo.core.route.annotation.Controller;
 
 import java.lang.annotation.Annotation;
@@ -29,12 +28,12 @@ public class CommonBeanHandler implements BeanHandler {
     }};
 
     @Override
-    public <T extends Annotation> boolean hasHandle(T t, Class<?> clz) {
+    public <T extends Annotation> boolean preHandle(T t, Class<?> clz) {
         return anList.contains(t.annotationType()) && !clz.isInterface();
     }
 
     @Override
-    public <T extends Annotation> void handle(T t, Class<?> clz, List<BeanDefinition> beanDefinitions) {
+    public <T extends Annotation> void handle(T t, Class<?> clz, List<BeanModel> beanDefinitions) {
         BeanBuildKit.commonBuild(beanDefinitions, t, clz, true);
     }
 }

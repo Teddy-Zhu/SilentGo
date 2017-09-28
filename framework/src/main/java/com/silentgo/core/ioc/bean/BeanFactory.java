@@ -13,7 +13,7 @@ import java.util.List;
  *         <p>
  *         Created by teddyzhu on 16/7/20.
  */
-public abstract class BeanFactory<T extends BeanWrapper> extends BaseFactory {
+public abstract class BeanFactory<T extends Bean> extends BaseFactory {
 
     public abstract void build(List<T> beans, SilentGoConfig config);
 

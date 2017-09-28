@@ -2,7 +2,7 @@ package com.silentgo.core.action;
 
 import com.silentgo.core.base.Priority;
 import com.silentgo.core.config.Const;
-import com.silentgo.core.ioc.bean.BeanWrapper;
+import com.silentgo.core.ioc.bean.Bean;
 
 /**
  * Project : silentgo
@@ -18,7 +18,7 @@ public abstract class ActionChain implements Priority {
         return Const.DefaultMax;
     }
 
-    public BeanWrapper beanWrapper;
+    public Bean beanWrapper;
 
     public abstract void doAction(ActionParam param) throws Throwable;
 

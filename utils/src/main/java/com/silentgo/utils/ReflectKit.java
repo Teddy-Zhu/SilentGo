@@ -1,5 +1,7 @@
 package com.silentgo.utils;
 
+import com.silentgo.utils.log.Log;
+import com.silentgo.utils.log.LogFactory;
 import com.silentgo.utils.reflect.SGClass;
 import com.silentgo.utils.reflect.SGClassParseKit;
 import com.silentgo.utils.reflect.SGField;
@@ -18,6 +20,8 @@ import java.util.Map;
  * Created by teddyzhu on 2017/1/5.
  */
 public class ReflectKit {
+
+    private static final Log LOGGER = LogFactory.get();
 
     private static final Map<Class<?>, SGClass> cachedSGClass = new HashMap<>();
 
@@ -66,5 +70,14 @@ public class ReflectKit {
 
     public static boolean contain(List<Annotation> annotations, Class<? extends Annotation> clz) {
         return annotations.stream().anyMatch(annotation -> annotation.annotationType().equals(clz));
+    }
+
+    public static Object init(Class<?> clz) {
+        try {
+            return clz.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            LOGGER.error(e);
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -10,7 +10,7 @@ import com.silentgo.core.build.Factory;
 import com.silentgo.core.exception.AppBuildException;
 import com.silentgo.core.exception.AppReleaseException;
 import com.silentgo.core.ioc.bean.BeanFactory;
-import com.silentgo.core.ioc.bean.BeanWrapper;
+import com.silentgo.core.ioc.bean.Bean;
 import com.silentgo.core.support.BaseFactory;
 import com.silentgo.utils.CollectionKit;
 
@@ -107,7 +107,7 @@ public class InterceptFactory extends BaseFactory {
         BeanFactory beanFactory = me.getFactory(me.getConfig().getBeanClass());
 
 
-        Map<String, BeanWrapper> beanDefinitionMap = (Map<String, BeanWrapper>) beanFactory.getBeans();
+        Map<String, Bean> beanDefinitionMap = (Map<String, Bean>) beanFactory.getBeans();
         beanDefinitionMap.forEach((k, v) -> {
             Intercept classIntercept = v.getBeanClass().getAnnotation(Intercept.class);
             if (classIntercept != null && classIntercept.value().length != 0) {

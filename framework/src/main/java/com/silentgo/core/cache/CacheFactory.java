@@ -4,8 +4,9 @@ import com.silentgo.core.SilentGo;
 import com.silentgo.core.build.Factory;
 import com.silentgo.core.exception.AppBuildException;
 import com.silentgo.core.exception.AppReleaseException;
-import com.silentgo.core.ioc.bean.BeanDefinition;
 import com.silentgo.core.ioc.bean.BeanFactory;
+import com.silentgo.core.ioc.rbean.BeanInitModel;
+import com.silentgo.core.ioc.rbean.BeanModel;
 import com.silentgo.core.support.BaseFactory;
 
 /**
@@ -31,7 +32,14 @@ public class CacheFactory extends BaseFactory {
 
         BeanFactory beanFactory = me.getFactory(me.getConfig().getBeanClass());
 
-        BeanDefinition beanDefinition = new BeanDefinition(CacheManager.class, me.getConfig().getCacheManager(), false, true, false);
+        BeanInitModel beanInitModel = new BeanInitModel();
+        beanInitModel.setBeanClass(CacheManager.class);
+        beanInitModel.setOriginObject(me.getConfig().getCacheManager());
+        beanInitModel.setSingle(true);
+        beanInitModel.setNeedInject(false);
+        beanInitModel.setCreateImmediately(false);
+
+        BeanModel beanDefinition = new BeanModel(beanInitModel);
 
         beanFactory.addBean(beanDefinition);
         return true;
